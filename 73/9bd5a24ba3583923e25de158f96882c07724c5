@@ -1,0 +1,193 @@
+.env.example
+  s_42d527d4782719::t_0099bf20a982dd 1-18
+README.md
+  s_42d527d4782719::t_0344780600400b 1-133
+app/(app)/history/page.tsx
+  s_42d527d4782719::t_7759bb8d1192ee 1-160
+app/(app)/layout.tsx
+  s_42d527d4782719::t_9115831f090f74 1-6
+app/(app)/movie/[id]/page.tsx
+  s_42d527d4782719::t_5337ca385c0188 1-30
+app/(app)/my-movies/page.tsx
+  s_42d527d4782719::t_5270f08eecb249 1-84
+app/(app)/page.tsx
+  s_42d527d4782719::t_6c4c10feb3bbeb 1-38
+app/(auth)/forgot-password/page.tsx
+  s_42d527d4782719::t_64f45d5cbc85f7 1-66
+app/(auth)/layout.tsx
+  s_42d527d4782719::t_885804aa2ab05c 1-32
+app/(auth)/login/page.tsx
+  s_42d527d4782719::t_4ee194f0147ab1 1-144
+app/auth/callback/page.tsx
+  s_42d527d4782719::t_1884f0c7880f38 1-58
+app/globals.css
+  s_42d527d4782719::t_256e32ff3ba180 1-261
+app/not-found.tsx
+  s_42d527d4782719::t_b1a9a4707f363e 1-19
+app/onboarding/layout.tsx
+  s_42d527d4782719::t_4fe1e6bc2f1a40 1-6
+app/redux-provider.tsx
+  s_42d527d4782719::t_275d0d1a8aa4bb 1-12
+components/auth/auth-card.tsx
+  s_42d527d4782719::t_bb8f75e9788ddf 1-35
+components/auth/country-combobox.tsx
+  s_42d527d4782719::t_742b708b6dd1fb 1-209
+components/auth/form-field.tsx
+  s_42d527d4782719::t_a2fb9968b1ad47 1-90
+components/auth/google-button.tsx
+  s_42d527d4782719::t_52edef289b23f4 1-22
+components/auth/poster-wall.tsx
+  s_42d527d4782719::t_4af919074e7831 1-31
+components/auth/use-auth-redirect.ts
+  s_42d527d4782719::t_4523f5a39623d8 1-21
+components/discover/filters-panel.tsx
+  s_42d527d4782719::t_10379a26ea7181 1-316
+components/discover/hero-section.tsx
+  s_42d527d4782719::t_d9500cf4b2cd63 1-64
+components/discover/idle-showcase.tsx
+  s_42d527d4782719::t_60b38269cf5a9f 1-64
+components/discover/loading-recommendations.tsx
+  s_42d527d4782719::t_f82fe614aedfdc 1-70
+components/discover/mood-selector.tsx
+  s_42d527d4782719::t_39fa659a5482a8 1-45
+components/discover/prompt-input.tsx
+  s_42d527d4782719::t_63de4c8f67e2bb 1-79
+components/feedback/feedback-panel.tsx
+  s_42d527d4782719::t_347cd383cdd028 1-100
+components/layout/app-shell.tsx
+  s_42d527d4782719::t_d6b0efe58c2cbb 1-31
+components/layout/header.tsx
+  s_42d527d4782719::t_a497ba25698255 1-67
+components/layout/mobile-nav.tsx
+  s_42d527d4782719::t_cd2543cabdba72 1-49
+components/layout/search-overlay.tsx
+  s_42d527d4782719::t_68f57fdceb3cf9 1-108
+components/movies/emotional-profile.tsx
+  s_42d527d4782719::t_72024a5dec193f 1-43
+components/movies/match-badge.tsx
+  s_42d527d4782719::t_866522bc30914b 1-26
+components/movies/movie-card.tsx
+  s_42d527d4782719::t_8c490d11b8ac24 1-163
+components/movies/movie-catalog.tsx
+  s_42d527d4782719::t_e015c0d1962d95 1-64
+components/movies/movie-details-context.tsx
+  s_42d527d4782719::t_505acc416fbec2 1-37
+components/movies/movie-details-modal.tsx
+  s_42d527d4782719::t_50b071538420f2 1-43
+components/movies/movie-details.tsx
+  s_42d527d4782719::t_855bab66184163 1-216
+components/movies/movie-grid.tsx
+  s_42d527d4782719::t_a8d2e03e355c90 1-20
+components/movies/movie-row.tsx
+  s_42d527d4782719::t_370f15b1af9017 1-88
+components/movies/poster-image.tsx
+  s_42d527d4782719::t_5cfb71e17b2cd0 1-51
+components/movies/rating-badge.tsx
+  s_42d527d4782719::t_6ec5fea692ffe6 1-27
+components/movies/recommendation-reason.tsx
+  s_42d527d4782719::t_bc556eb8d72175 1-29
+components/movies/streaming-provider-badge.tsx
+  s_42d527d4782719::t_683f0760bbbc75 1-48
+components/onboarding/content-rating-select.tsx
+  s_42d527d4782719::t_15bffd42bfff4f 1-68
+components/onboarding/genre-card.tsx
+  s_42d527d4782719::t_4dc59afd63cc18 1-49
+components/onboarding/provider-card.tsx
+  s_42d527d4782719::t_00e71428837b91 1-49
+components/onboarding/step-indicator.tsx
+  s_42d527d4782719::t_47b69e0bc07e7e 1-55
+components/providers.tsx
+  s_42d527d4782719::t_be742b6d3f2cd8 1-22
+components/shared/button-styles.ts
+  s_42d527d4782719::t_28d02e7ef9e228 1-37
+components/shared/button.tsx
+  s_42d527d4782719::t_ba0a4a3a6ffda4 1-37
+components/shared/icon-button.tsx
+  s_42d527d4782719::t_47280431c56138 1-42
+components/shared/logo.tsx
+  s_42d527d4782719::t_4793de911e1d85 1-36
+components/shared/section-heading.tsx
+  s_42d527d4782719::t_9ff2e7c7e73bde 1-33
+components/shared/skeleton.tsx
+  s_42d527d4782719::t_0cde3aa1b5d123 1-5
+components/shared/toast.tsx
+  s_42d527d4782719::t_438f78eaebdbf7 1-91
+lib/auth/amplify-config.ts
+  s_42d527d4782719::t_28d4f002dadd5a 1-78
+lib/auth/pending-signup.ts
+  s_42d527d4782719::t_78d8909e5a86af 1-33
+lib/data/content-ratings.ts
+  s_42d527d4782719::t_125d6f3f7aa740 1-33
+lib/data/genres.ts
+  s_42d527d4782719::t_53674fce74a738 1-28
+lib/data/moods.ts
+  s_42d527d4782719::t_3f0636696bd1d5 1-73
+lib/data/movies.ts
+  s_42d527d4782719::t_1c8817e331c789 1-1298
+lib/data/providers.ts
+  s_42d527d4782719::t_e17000b7275686 1-68
+lib/data/world-countries.ts
+  s_42d527d4782719::t_609d04e95a4d3a 1-39
+lib/format.ts
+  s_42d527d4782719::t_bf36b461fe14ea 1-94
+lib/hooks/use-media-query.ts
+  s_42d527d4782719::t_ebc55d367be4a3 1-15
+lib/hooks/use-movie-actions.ts
+  s_42d527d4782719::t_8284ce4cbdb757 1-40
+lib/hooks/use-scroll-lock.ts
+  s_42d527d4782719::t_15bdc4e346a279 1-18
+lib/recommendation/engine.ts
+  s_42d527d4782719::t_9352ca2c97f3ac 1-593
+lib/services/auth-types.ts
+  s_42d527d4782719::t_0ff27f4ffed36e 1-81
+lib/services/authService.ts
+  s_42d527d4782719::t_a825ae92b4fbce 1-180
+lib/services/cognitoAuthService.ts
+  s_42d527d4782719::t_64cbec44767daa 1-202
+lib/services/movieService.ts
+  s_42d527d4782719::t_1b62418f131db7 1-53
+lib/services/recommendationService.ts
+  s_42d527d4782719::t_336c8f743fc2ac 1-45
+lib/storage.ts
+  s_42d527d4782719::t_330a6bb4e602f6 1-60
+lib/store/discovery-context.tsx
+  s_42d527d4782719::t_92a4a314683a42 1-164
+lib/tmdb.ts
+  s_42d527d4782719::t_c5588da10dada9 1-24
+next-env.d.ts
+  s_42d527d4782719::t_0bf1e3d79e83ed 1-7
+public/icon.svg
+  s_42d527d4782719::t_b1c8367282a58e 1-5
+store/hooks.ts
+  s_42d527d4782719::t_8b86ae67a99dc4 1-5
+store/rootSaga.ts
+  s_42d527d4782719::t_81e57227ee8abe 1-10
+store/rootStore.ts
+  s_42d527d4782719::t_ecaf2f483dc7c8 1-31
+tsconfig.tsbuildinfo
+  s_40ac74530e59d2::t_a24ffb2e939fee 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "739bd5a24ba3583923e25de158f96882c07724c5",
+  "prompts": {},
+  "sessions": {
+    "s_40ac74530e59d2": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "1dd31626-b163-4dfa-94f3-b13fe0326a8c",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Yanick Kazadi <yanickkazadi@Mac.cgocable.net>"
+    },
+    "s_42d527d4782719": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f44eef17-7e2f-4c8e-afab-ae9c5d640b1a",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Yanick Kazadi <yanickkazadi@Mac.cgocable.net>"
+    }
+  }
+}
