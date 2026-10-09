@@ -17,7 +17,7 @@ import { profileSyncFailed, profileSynced } from '@/store/auth/slice'
  * and stored but never blocks the person from using the app. The endpoint is
  * called after every Google sign-in, so it should behave as an upsert.
  */
-export function* registerUserWithBackend(user: UserDetails): SagaIterator<UserDetails | null> {
+export function* registerUserWithBackend(user: User): SagaIterator<UserDetails | null> {
   if (authService.kind !== 'cognito') return null
 
   try {
@@ -26,10 +26,10 @@ export function* registerUserWithBackend(user: UserDetails): SagaIterator<UserDe
     const pending: PendingSignup | null = yield call(readPendingSignup, user.email)
     const path = endpoints.createUser()
     const body: CreateUserRequest = {
-      userId: user.userId,
+      userId: user.id,
       email: user.email,
-      fullName: user.fullName,
-      provider: user.provider === 'google' ? 'google' : 'cognito',
+      fullName: user.name,
+      provider: user.authProvider === 'google' ? 'google' : 'cognito',
       ...(pending?.country && { country: pending.country }),
     }
     const response: AxiosResponse<UserDetails> = yield call(

@@ -52,7 +52,7 @@ export function UserMenu() {
         className="flex h-10 items-center gap-2 rounded-full border border-white/10 bg-white/5 py-1 pl-1 pr-2.5 text-sm transition hover:border-white/20 hover:bg-white/8 outline-none focus-visible:ring-2 focus-visible:ring-brand/70"
       >
         <Avatar name={user.fullName} />
-        <span className="hidden max-w-[120px] truncate text-white/80 md:inline">{user.fullName.split(' ')[0]}</span>
+        <span className="hidden max-w-[120px] truncate text-white/80 md:inline">{user.fullName?.split(' ')[0]}</span>
         <ChevronDown className={cn('size-3.5 text-white/40 transition-transform', open && 'rotate-180')} />
       </button>
 

@@ -2,7 +2,6 @@ import {
   autoSignIn,
   confirmSignUp,
   fetchAuthSession,
-  fetchUserAttributes,
   getCurrentUser,
   resendSignUpCode,
   resetPassword,
@@ -12,6 +11,8 @@ import {
   signUp,
 } from 'aws-amplify/auth'
 import { Hub } from 'aws-amplify/utils'
+import { cognitoUserPoolsTokenProvider } from 'aws-amplify/auth/cognito'
+import type { AuthTokens } from '@/app/(auth)/signup/store/state'
 import type { User } from '@/lib/types'
 import { configureAmplify, isGoogleConfigured, setRememberSession } from '@/lib/auth/amplify-config'
 import {
@@ -60,19 +61,23 @@ function isFederatedGoogle(username: string, identities?: string): boolean {
   }
 }
 
+const claim = (value: unknown) => (typeof value === 'string' ? value : undefined)
+
+// Read the ID token instead of GetUser, which needs the aws.cognito.signin.user.admin scope Google sign-in doesn't request.
 async function loadUser(): Promise<User> {
-  const [{ userId, username }, attributes] = await Promise.all([getCurrentUser(), fetchUserAttributes()])
-  const email = attributes.email ?? username
+  const [{ userId, username }, session] = await Promise.all([getCurrentUser(), fetchAuthSession()])
+  const claims = session.tokens?.idToken?.payload ?? {}
+  const email = claim(claims.email) ?? username
   const name =
-    attributes.name ||
-    [attributes.given_name, attributes.family_name].filter(Boolean).join(' ') ||
+    claim(claims.name) ||
+    [claim(claims.given_name), claim(claims.family_name)].filter(Boolean).join(' ') ||
     email.split('@')[0]
   return {
-    id: attributes.sub ?? userId,
+    id: claim(claims.sub) ?? userId,
     name,
     email,
-    avatarUrl: attributes.picture,
-    authProvider: isFederatedGoogle(username, attributes.identities) ? 'google' : 'password',
+    avatarUrl: claim(claims.picture),
+    authProvider: isFederatedGoogle(username, claims.identities ? JSON.stringify(claims.identities) : undefined) ? 'google' : 'password',
     createdAt: new Date().toISOString(),
   }
 }
@@ -187,6 +192,25 @@ export class CognitoAuthProvider implements AuthProvider {
       return session.tokens?.idToken?.toString() ?? null
     } catch {
       return null
+    }
+  }
+
+  async getSessionTokens(): Promise<AuthTokens | null> {
+    const session = await fetchAuthSession()
+    const stored = await cognitoUserPoolsTokenProvider.authTokenStore.loadTokens()
+    const idToken = session.tokens?.idToken
+    const accessToken = session.tokens?.accessToken
+    const refreshToken = stored?.refreshToken
+    if (!idToken || !accessToken || !refreshToken) return null
+    const expiresAt = Math.min(Number(idToken.payload.exp), Number(accessToken.payload.exp))
+    const expiresIn = Math.floor(expiresAt - Date.now() / 1000)
+    if (!Number.isFinite(expiresIn) || expiresIn <= 0) return null
+    return {
+      idToken: idToken.toString(),
+      accessToken: accessToken.toString(),
+      refreshToken,
+      expiresIn,
+      tokenType: 'Bearer',
     }
   }
 

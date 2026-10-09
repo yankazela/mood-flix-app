@@ -1,5 +1,5 @@
 'use client'
-
+import { signInWithRedirect } from 'aws-amplify/auth';
 import { Suspense, useEffect, useState, type FormEvent } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
@@ -56,6 +56,11 @@ function LoginForm() {
     dispatch(signInRequested({ email, password, remember }))
   }
 
+  const handleGoogleSignIn = () => {
+    // dispatch(googleSignInRequested())
+    signInWithRedirect({ provider: 'Google' })
+  }
+
   const useDemo = () => {
     setEmail(DEMO_CREDENTIALS.email)
     setPassword(DEMO_CREDENTIALS.password)
@@ -79,7 +84,7 @@ function LoginForm() {
     >
       {authService.googleEnabled && (
         <>
-          <GoogleButton onClick={() => dispatch(googleSignInRequested())} loading={pending === 'google'} disabled={pending === 'password'} />
+          <GoogleButton onClick={handleGoogleSignIn} loading={pending === 'google'} disabled={pending === 'password'} />
           <AuthDivider label="or log in with email" />
         </>
       )}

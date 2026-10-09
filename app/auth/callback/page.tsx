@@ -33,15 +33,16 @@ function AuthCallback() {
 
   useEffect(() => {
     const message = error ?? providerError
-    if (message) router.replace(`/login?error=${encodeURIComponent(message)}`)
-  }, [error, providerError, router])
+    if (status !== 'authenticated' && message) router.replace(`/login?error=${encodeURIComponent(message)}`)
+  }, [status, error, providerError, router])
 
   useEffect(() => {
+    if (status === 'authenticated') return
     const timer = setTimeout(() => {
       router.replace(`/login?error=${encodeURIComponent('Google sign-in took too long. Please try again.')}`)
     }, TIMEOUT_MS)
     return () => clearTimeout(timer)
-  }, [router])
+  }, [status, router])
 
   return <CallbackSplash />
 }

@@ -70,6 +70,7 @@ export interface AuthProvider {
   requestPasswordReset(email: string): Promise<void>
   /** JWT for calling our own backend, or `null` when not applicable. */
   getIdToken(): Promise<string | null>
+  getSessionTokens?(): Promise<import('@/app/(auth)/signup/store/state').AuthTokens | null>
   /** Subscribe to the outcome of an OAuth redirect (Google). Returns an unsubscribe function. */
   onRedirectResult(callback: (result: RedirectResult) => void): () => void
 }
