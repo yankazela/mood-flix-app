@@ -1,0 +1,33 @@
+lib/services/cognitoAuthService.ts
+  s_40ac74530e59d2::t_c08c5cecdd8b2c 14-15,198-213
+  s_40ac74530e59d2::t_1f3aad97ea82f5 64-66,68-70,72-73,76,79-80
+  s_40ac74530e59d2::t_9aea779e46fa51 214-216
+store/auth/saga.ts
+  s_40ac74530e59d2::t_3610fde25a75d4 35,43-44,101-104
+  s_40ac74530e59d2::t_c08c5cecdd8b2c 4-5,9,30,33-34,36-42,45-58,100,105-114,116,155,157-158,191-197
+  s_40ac74530e59d2::t_1f3aad97ea82f5 115
+lib/services/auth-types.ts
+  s_40ac74530e59d2::t_c08c5cecdd8b2c 73
+store/auth/registration.ts
+  s_40ac74530e59d2::t_c08c5cecdd8b2c 20,29,31-32
+tsconfig.tsbuildinfo
+  s_40ac74530e59d2::t_104ec5ef6a1eef 1
+app/auth/callback/page.tsx
+  s_40ac74530e59d2::t_c08c5cecdd8b2c 36-37,40,45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6690deb2f6f182c3257d28493eb6d7c3226b42b3",
+  "prompts": {},
+  "sessions": {
+    "s_40ac74530e59d2": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "1dd31626-b163-4dfa-94f3-b13fe0326a8c",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Yanick Kazadi <yanickkazadi@Mac.cgocable.net>"
+    }
+  }
+}
