@@ -1,0 +1,157 @@
+components/layout/app-shell.tsx
+  s_ce1c6b45a0582a::t_b1f317868faaee 8,27
+lib/services/backendAuthService.ts
+  s_ce1c6b45a0582a::t_85077f9fc1d267 4,17
+components/movies/poster-image.tsx
+  s_ce1c6b45a0582a::t_d816680a770e86 8,16-17,19,22,42,45
+components/movies/streaming-provider-badge.tsx
+  s_ce1c6b45a0582a::t_d4e08c2ff7f714 1,6,19-23,28-35,37,49,51-52
+lib/auth/token-refresh.ts
+  s_ce1c6b45a0582a::t_2849ad4f57830c 1-64
+components/providers.tsx
+  s_ce1c6b45a0582a::t_087a2d62f0b847 3,12-13
+components/discover/hero-section.tsx
+  s_ce1c6b45a0582a::t_b7f579e863c03e 9,14,62
+components/feedback/feedback-panel.tsx
+  s_ce1c6b45a0582a::t_07ce1a68c98ae9 12,24,31
+lib/store/preferences-context.tsx
+  s_ce1c6b45a0582a::t_e0ba9a33770084 3,58,60-64,66,68,77,79-80,89,91-92
+  s_ce1c6b45a0582a::t_a6ed2b5837cea1 5-10,15,28-52,54-57,71,83,95-106
+next.config.mjs
+  s_ce1c6b45a0582a::t_4ce03223aa9554 3-4
+store/auth/registration.ts
+  s_ce1c6b45a0582a::t_85077f9fc1d267 9,43
+app/(auth)/signup/store/saga.ts
+  s_ce1c6b45a0582a::t_85077f9fc1d267 7,17-27
+components/movies/movie-card.tsx
+  s_ce1c6b45a0582a::t_84ab4d38e347cf 5-6,43,82-87,100,109
+lib/hooks/use-async.ts
+  s_ce1c6b45a0582a::t_c53c98780646e1 1-33
+app/(app)/page.tsx
+  s_ce1c6b45a0582a::t_cf0c52aab5c1d2 3,12-19,21-24,35-37,40-41,43-47
+  s_13095346a3033d::t_09ab530e123463 8,29
+app/(app)/movie/page.tsx
+  s_ce1c6b45a0582a::t_b15b888064fe09 3-4,6-8,10,14-30,36
+lib/store/auth-context.tsx
+  s_ce1c6b45a0582a::t_17617308c39832 5,28
+  s_ce1c6b45a0582a::t_0b5b25bbe673de 6,27
+components/discover/objective-toggle.tsx
+  s_ce1c6b45a0582a::t_c93e51ab0869a6 1-51
+components/layout/library-sync-toaster.tsx
+  s_ce1c6b45a0582a::t_083b7512d151ba 1-19
+lib/types/index.ts
+  s_ce1c6b45a0582a::t_a2ea67f9ed1157 62-65
+  s_ce1c6b45a0582a::t_a9d1fd617f5dfc 4-5,134,149,152-154,158,163-168,193,201-202,244
+  s_ce1c6b45a0582a::t_ff893a688f72d3 135
+lib/api/user.ts
+  s_ce1c6b45a0582a::t_bed2dd82496852 1-15
+lib/api/client.ts
+  s_ce1c6b45a0582a::t_cf526b82b66bf6 1-37
+lib/hooks/use-movie-actions.ts
+  s_ce1c6b45a0582a::t_086c40df5fd062 6,12,21-23,25,27,30,32,35,37,40,42
+lib/api/types.ts
+  s_ce1c6b45a0582a::t_027b43ce0523ec 1-124
+app/(app)/history/page.tsx
+  s_ce1c6b45a0582a::t_2bdad26c6c9389 5-6,25,37-44,68-77,82-84,86,89,96,107-109,146-163,169,172
+lib/auth/backend-session.ts
+  s_ce1c6b45a0582a::t_581d4ab1382574 3,9-15,23-27,34,44,46,51-59
+  s_ce1c6b45a0582a::t_90efbf605025ee 60
+app/onboarding/page.tsx
+  s_ce1c6b45a0582a::t_8d4a98fef09554 54-55,175,177,190
+lib/data/moods.ts
+  s_ce1c6b45a0582a::t_5a24fee20b271f 3,5-12,22-25
+components/layout/search-overlay.tsx
+  s_ce1c6b45a0582a::t_cf3995c3c7e48a 4,6-7,22,31,48-49,54-66,93,95-101,112,115,117
+app/(app)/my-movies/page.tsx
+  s_ce1c6b45a0582a::t_b803844b9109fd 3,21,24,57-63,72
+lib/api/config.ts
+  s_ce1c6b45a0582a::t_9a67ae1b8fdba7 1-10
+lib/api/recommendations.ts
+  s_ce1c6b45a0582a::t_be734a21ef2208 1,3-63
+  s_ce1c6b45a0582a::t_d5ebc63af82aaa 2
+lib/store/discovery-context.tsx
+  s_ce1c6b45a0582a::t_d1b6d1d5d886af 3-6,8,18-19,23,26,31,36,56,60,66,68,77,81,86,91-92,96-98,100,103-105,110,113,116,119,122-123,125,134,137-145,150,156,161,168
+lib/format.ts
+  s_ce1c6b45a0582a::t_3d00a9a9e41e79 1,3-4,16,18-23,26-34,37,41-43
+  s_ce1c6b45a0582a::t_e276ff6ff84b1a 44-45
+app/(auth)/signup/store/state.ts
+  s_ce1c6b45a0582a::t_da9cb725ed58fe 1-2
+  s_ce1c6b45a0582a::t_167492e9a9867b 67-68,78-83
+  s_ce1c6b45a0582a::t_f798e25b520962 64-66
+app/api/requests/index.ts
+  s_ce1c6b45a0582a::t_4a494bb1be3624 2,5-15,25,27-32,35-38,42-59,62,64,66,68,70,72,74
+lib/api/adapters.ts
+  s_ce1c6b45a0582a::t_e849438305458d 129-130
+  s_ce1c6b45a0582a::t_cbd9ed98cf8ad5 1-128,131-155
+components/discover/saved-movies.tsx
+  s_ce1c6b45a0582a::t_ea9e7d9bdbc83c 1-26
+components/movies/movie-details.tsx
+  s_ce1c6b45a0582a::t_075332ea893d91 5,8,40-42,44-45,54,56-59,63-71,76-77,115,126-139,150-154,175-180,182-204,208-220,224,227-230,234,244
+components/auth/poster-wall.tsx
+  s_ce1c6b45a0582a::t_3e9b8b5ec0e2bb 3,12
+app/api/requests/types.ts
+  s_ce1c6b45a0582a::t_5a65400d7ea753 7-9
+README.md
+  s_ce1c6b45a0582a::t_320bc83a0586b5 7,13,17,39,42-43,48-55,58-76,80,84-85,87-93,97,101
+  s_661790e6368816::t_ae04bc2482e7a7 1,5
+components/discover/idle-showcase.tsx
+  s_ce1c6b45a0582a::t_6ad9ba52f2b2ba 4-6,18-19,23,25-35,64-77
+components/movies/movie-catalog.tsx
+  s_ce1c6b45a0582a::t_90577041e58516 3,15-30,42-43,46-51
+lib/data/providers.ts
+  s_ce1c6b45a0582a::t_d7ac8c05a8de56 1,3-6,15-16,25-26,35-36,45-46,55-56,65-66,75-76,87-130
+lib/store/library-context.tsx
+  s_ce1c6b45a0582a::t_5f2d3453aa9096 4-10,13-31,33-38,40-51,56-58,63-64,67-75,77-78,80-111,114-117,119-120,125-135,139-158,161,164-184,188-194,196-210,212-223,227-233,235-243,245-249,251,253-257,260-284,289-293,295,299,304,306-309,311-334
+.env.example
+  s_ce1c6b45a0582a::t_260db7df845fe8 19-27
+app/(auth)/layout.tsx
+  s_661790e6368816::t_156b6197882f31 23,26
+app/(auth)/login/page.tsx
+  s_661790e6368816::t_124ea3dbc26d06 78
+app/(auth)/signup/page.tsx
+  s_661790e6368816::t_6916f89aaa4227 251
+app/layout.tsx
+  s_661790e6368816::t_fac0ae138d3b4a 24-25,28
+capacitor.config.ts
+  s_661790e6368816::t_74ab92877f7d20 1-9
+components/shared/logo.tsx
+  s_661790e6368816::t_af205d53bf1338 26,32
+lib/data/poster-wall.ts
+  s_ce1c6b45a0582a::t_0c195afc28fdb4 1-45
+lib/services/cognitoAuthService.ts
+  s_661790e6368816::t_d1e6ecc7196d0b 109
+tsconfig.tsbuildinfo
+  s_ce1c6b45a0582a::t_1fd27cfd7ed3b7 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "cb7600d873000085d1b53cda0ca03402a8486253",
+  "prompts": {},
+  "sessions": {
+    "s_13095346a3033d": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "fe1694ad-6063-4329-9c42-36a63568c081",
+        "model": "copilot/claude-sonnet-5.5"
+      },
+      "human_author": "Yanick Kazadi <yanickkazadi@Mac.cgocable.net>"
+    },
+    "s_661790e6368816": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "efcceb37-2e68-488a-b6c3-6b133c8cdc33",
+        "model": "copilot/claude-sonnet-5.5"
+      },
+      "human_author": "Yanick Kazadi <yanickkazadi@Mac.cgocable.net>"
+    },
+    "s_ce1c6b45a0582a": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "c2528f76-97c7-4b25-b926-a03cd2b51419",
+        "model": "copilot/claude-sonnet-5.5"
+      },
+      "human_author": "Yanick Kazadi <yanickkazadi@Mac.cgocable.net>"
+    }
+  }
+}
