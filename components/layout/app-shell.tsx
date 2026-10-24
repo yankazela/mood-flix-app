@@ -5,6 +5,7 @@ import { RequireAuth } from '@/components/layout/require-auth'
 import { Header } from '@/components/layout/header'
 import { MobileNav } from '@/components/layout/mobile-nav'
 import { SearchOverlay } from '@/components/layout/search-overlay'
+import { LibrarySyncToaster } from '@/components/layout/library-sync-toaster'
 import { MovieDetailsProvider } from '@/components/movies/movie-details-context'
 import { ToastProvider } from '@/components/shared/toast'
 
@@ -23,6 +24,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <main className="flex-1">{children}</main>
             <MobileNav onOpenSearch={() => setSearchOpen(true)} />
             <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
+            <LibrarySyncToaster />
           </div>
         </MovieDetailsProvider>
       </ToastProvider>

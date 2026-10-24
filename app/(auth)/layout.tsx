@@ -20,10 +20,10 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
               Start <span className="font-display italic text-brand">feeling</span> something.
             </h2>
             <p className="mt-6 max-w-md text-base leading-7 text-white/55">
-              Tell MoodFlix how your day went. It understands what you need tonight and finds it on the services you already pay for.
+              Tell UpMyMood how your day went. It understands what you need tonight and finds it on the services you already pay for.
             </p>
           </div>
-          <p className="text-xs text-white/35">© {new Date().getFullYear()} MoodFlix. Movie data and artwork via TMDB.</p>
+          <p className="text-xs text-white/35">© {new Date().getFullYear()} UpMyMood. Movie data and artwork via TMDB.</p>
         </aside>
         <main className="flex items-center justify-center px-5 py-10 sm:px-8 lg:px-12">{children}</main>
       </div>

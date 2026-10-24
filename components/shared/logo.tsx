@@ -23,13 +23,13 @@ export function Logo({ href = '/', size = 'md', className, markOnly = false }: L
       <span className={cn('flex shrink-0 items-center justify-center bg-brand text-brand-foreground', sizes.box)}>
         <Sparkles className={sizes.icon} strokeWidth={2.4} />
       </span>
-      {!markOnly && <span className={cn('font-semibold tracking-[-0.045em] text-white', sizes.text)}>moodflix</span>}
+      {!markOnly && <span className={cn('font-semibold tracking-[-0.045em] text-white', sizes.text)}>UpMyMood</span>}
     </>
   )
   const classes = cn('flex items-center gap-2.5 outline-none focus-visible:ring-2 focus-visible:ring-brand/60 rounded-xl', className)
   if (!href) return <div className={classes}>{content}</div>
   return (
-    <Link href={href} className={classes} aria-label="MoodFlix home">
+    <Link href={href} className={classes} aria-label="UpMyMood home">
       {content}
     </Link>
   )

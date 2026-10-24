@@ -1,19 +1,20 @@
-# MoodFlix
+# UpMyMood
 
 Tell us how you feel. We'll find the perfect movie for this moment.
 
-MoodFlix is a cinematic, mood-driven movie discovery app. Users describe their evening in plain language ("Long day at work, I want something funny and easy to watch"), optionally tap a few mood chips, and get a personalised, explainable catalog of movies available on the streaming services they already pay for.
+UpMyMood is a cinematic, mood-driven movie discovery app. Users describe their evening in plain language ("Long day at work, I want something funny and easy to watch"), optionally tap a few mood chips, and get a personalised, explainable catalog of movies available on the streaming services they already pay for.
 
-This repository is the MVP front-end. Authentication, the recommendation engine and the catalog are **mocked** but structured behind service interfaces so TMDB, an AI provider and a real auth provider can be dropped in without touching the UI.
+This repository is the front-end. It talks to the serverless MoodFlix API (`../MovieMood`): sign-in, the recommendation engine, the catalogue, search, history and each user's library all come from it. Nothing is mocked.
 
 ## Running it
 
 ```bash
 pnpm install
+cp .env.example .env.local   # then fill in the values
 pnpm dev
 ```
 
-Open http://localhost:3000. Use the **demo account** (`demo@moodflix.app` / `moodflix`) to see a pre-populated library and history, or sign up to walk through onboarding.
+Open http://localhost:3000, sign up, and walk through onboarding.
 
 Type-check with `pnpm exec tsc --noEmit`.
 
@@ -35,67 +36,69 @@ app/
   (auth)/            Login, sign up, forgot password  (route group, no app chrome)
   (app)/             Discover, My Movies, History, Movie page  (wrapped in AppShell)
   onboarding/        Streaming services + region
-  api/recommendations/route.ts   POST endpoint: the only place the engine (and later AI/TMDB keys) run
+  api/requests/      axios helpers: bearer token, silent refresh on expiry, one retry on 401
 components/
   movies/            MovieCard, MovieRow, MovieCatalog, MovieGrid, MovieDetails(+Modal),
-                     EmotionalProfile, RecommendationReason, badges, PosterImage
-  discover/          HeroSection, PromptInput, MoodSelector, FiltersPanel, LoadingRecommendations, IdleShowcase
+                     RecommendationReason, badges, PosterImage
+  discover/          HeroSection, PromptInput, MoodSelector, ObjectiveToggle, FiltersPanel, LoadingRecommendations, IdleShowcase
   feedback/          FeedbackPanel
   layout/            Header, UserMenu, MobileNav, SearchOverlay, RequireAuth, AppShell
   auth/, onboarding/, shared/
 lib/
-  types/             Movie, MovieGenre, StreamingProvider, UserMood, EmotionalProfile,
-                     Recommendation, RecommendationRequest/Response, UserPreference, HistoryEntry …
-  data/              Mock catalog (real titles + real TMDB artwork paths), providers, moods, countries
-  recommendation/    Pure, deterministic rules engine standing in for the AI pipeline
-  services/          authService, movieService, recommendationService, libraryService
-  store/             React contexts: auth, preferences, library (saved/liked/watched/history), discovery
-  hooks/             useMovieActions, useScrollLock, useMediaQuery
+  types/             Movie, StreamingProvider, UserMood, Recommendation, RecommendationRequest/Response, UserPreference, HistoryEntry …
+  api/               Typed client for the MoodFlix API: types (the wire format), adapters (API item -> Movie),
+                     movies, recommendations, user
+  auth/              Session storage, token refresh
+  data/              Streaming providers (with their catalogue slugs), moods, genres, countries, poster-wall backdrop
+  services/          authService (Cognito via Amplify, plus the backend sign-in)
+  store/             React contexts: auth, preferences (from the profile), library (saved/liked/watched/history), discovery
+  hooks/             useMovieActions, useAsync, useScrollLock, useMediaQuery
 ```
 
-Business logic lives in `lib/`; components in `components/` are presentational and talk to the contexts/services only.
+Business logic lives in `lib/`; components in `components/` are presentational and talk to the contexts and `lib/api` only.
+
+### Backend integration
+
+Set `NEXT_PUBLIC_API_BASE_URL` (the API Gateway stage URL ending in `/api/v1/movie-mood`) and `NEXT_PUBLIC_POSTERS_BASE_URL` (the `PostersBaseUrl` stack output) in `.env.local`; both have defaults for the `dev` stage.
+
+| Feature | API call | Where |
+| --- | --- | --- |
+| Sign in / sign up | `POST /auth/signin`, `POST /user` | `store/auth`, `app/(auth)/signup/store` |
+| Session renewal | `POST /auth/refresh` | `lib/auth/token-refresh.ts` (before expiry, and on a 401) |
+| Profile, services, genres, rating, country | `GET /user/me`, `PATCH /user` | onboarding, `preferences-context` |
+| Recommendations | `POST /recommendations` | `discovery-context` |
+| Saved, liked, watched, ratings | `PATCH /user` (`myMovies`, `votes`, `watched`, `ratings`) | `library-context` |
+| History and per-request outcome | `GET /recommendations/history`, `PATCH /recommendations/{requestId}` | `library-context`, History page |
+| Search | `GET /movies/search` | `SearchOverlay` |
+| Popular / top rated rows | `GET /movies/popular` | `IdleShowcase` |
+| Movie page, library hydration | `GET /movies/{itemId}`, `GET /movies?ids=` | `/movie/[id]`, `library-context` |
+
+Library changes apply on screen first and are saved in order in the background; if a save fails the library reloads from the server and a toast says so.
 
 ### Recommendation contract
 
-`POST /api/recommendations`
+`POST /recommendations` (country, streaming services, content rating and taste come from the saved profile)
 
 ```json
 {
-  "prompt": "I had a stressful day. I want something funny and easy to watch.",
+  "text": "I had a stressful day. I want something funny and easy to watch.",
+  "objective": "keep",
   "moods": ["stressed", "tired"],
-  "streamingProviders": ["netflix", "prime"],
-  "country": "CA",
-  "favouriteGenres": ["comedy", "thriller"],
-  "maxContentRating": "PG-13",
-  "filters": { "maxRuntime": 120 }
+  "mediaTypes": ["movie", "documentary"],
+  "maxRuntimeMin": 120,
+  "genres": ["comedy"],
+  "releaseYearMin": 2010,
+  "minRating": 7,
+  "language": "en",
+  "services": ["netflix"]
 }
 ```
 
-```json
-{
-  "id": "rec_…",
-  "interpretation": {
-    "currentMood": ["stressed", "tired"],
-    "desiredMood": ["funny", "relaxing", "easy to watch"],
-    "intensity": "low",
-    "cognitiveLoad": "low",
-    "summary": "something funny, relaxing and easy to watch",
-    "targetProfile": { "funny": 100, "comforting": 100, "exciting": 32, "dark": 0, "romantic": 30, "intensity": 0 },
-    "keywords": ["funny", "relaxing", "stressed"]
-  },
-  "recommendations": [{ "movie": { … }, "matchScore": 97, "reason": "You said you …", "highlights": ["Under 2 hours", "On Netflix"] }],
-  "sections": [{ "id": "more-for-mood", "title": "More movies for your mood", "layout": "row", "recommendations": [] }]
-}
-```
-
-The route validates input and never trusts client-supplied scores. `favouriteGenres` nudge scoring and drive the "Because you like …" row; `maxContentRating` is a hard ceiling (G < PG < PG-13 < R) that only relaxes when the catalog would otherwise return fewer than six titles. No API keys exist in the client bundle; when TMDB/AI are wired up they stay in this route via `process.env`.
+`objective` is `keep` (match the mood) or `improve` (lift it); the Discover page exposes it as a toggle. The reply holds `requestId`, the model's `moodProfile`, and up to eight `results` with `why`, `matchScore`, `availability`, `rating` and `details`. `lib/api/adapters.ts` turns it into a `RecommendationResponse`: the first three results are the top picks, the rest form a row. A `422` carries a supportive message (shown without a retry), a `429` means the daily limit was reached, and `notice: "few_matches"` is surfaced as a banner.
 
 ## Authentication (Cognito + Google)
 
-Auth state lives in Redux (`store/auth`, `app/(auth)/signup/store`) and is driven by redux-saga. Sagas only call the `AuthProvider` interface in `lib/services/auth-types.ts`:
-
-- **No Cognito env vars** → the built-in mock provider (demo account, no email verification).
-- **Cognito env vars set** → `CognitoAuthProvider` (AWS Amplify v6).
+Auth state lives in Redux (`store/auth`, `app/(auth)/signup/store`) and is driven by redux-saga. Email sign-in and sign-up go through the MoodFlix API (`POST /auth/signin`, `POST /user`); Google goes through Cognito's Hosted UI (`CognitoAuthProvider`, AWS Amplify v6) and the saga then loads the profile with `GET /user/me`. The id, access and refresh tokens are stored by `lib/auth/backend-session.ts`; `lib/auth/token-refresh.ts` renews them a minute before they expire, and signs the user out if the refresh token is rejected.
 
 Copy `.env.example` to `.env.local` and fill it in. Values are inlined at build time, so restart `pnpm dev` or rebuild after changing them.
 
@@ -117,16 +120,6 @@ After Cognito creates the identity, the saga registers the user with the MoodFli
 3. **Domain**: add a Cognito or custom domain; this is `NEXT_PUBLIC_COGNITO_DOMAIN`.
 4. **Google**: create an OAuth client in Google Cloud with authorized redirect URI `https://<your-cognito-domain>/oauth2/idpresponse`. Add Google as an identity provider in the pool (scopes `openid email profile`) and map `email → email`, `name → name`, `picture → picture`.
 5. **Hosted UI on the app client**: enable Google and the Cognito user pool as identity providers, OAuth grant *Authorization code*, scopes `openid email profile`, callback URL `http://localhost:3000/auth/callback` (plus production), sign-out URL `http://localhost:3000/login` (plus production).
-
-## Swapping the mocks
-
-| Mock | Where | Replace with |
-| --- | --- | --- |
-| Auth | `lib/services/authService.ts` | Cognito is built in: set the env vars in `.env.example` (see Authentication above) |
-| Catalog | `lib/services/movieService.ts` | Fetch from a server route that proxies TMDB (`/movie`, `/watch/providers`) |
-| Engine | `lib/recommendation/engine.ts`, called from `app/api/recommendations/route.ts` | Send `prompt` + `moods` to the AI API for `MoodInterpretation`, query TMDB, keep the response shape |
-| Library & preferences | `lib/services/libraryService.ts` (localStorage) | Backend persistence; the context stores keep the same interface |
-| Images | `lib/tmdb.ts` | Already uses real TMDB image CDN paths, no key required |
 
 ## Design
 

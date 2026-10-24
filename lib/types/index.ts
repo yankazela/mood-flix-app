@@ -1,8 +1,8 @@
 /**
  * Core domain types for MoodFlix.
  *
- * These mirror the shape of the future backend contract so that the mocked
- * services can be swapped for TMDB / AI / backend calls without touching UI.
+ * `Movie` is the app's view of a catalogue item; lib/api/adapters.ts builds it
+ * from the MoodFlix API's item shape (lib/api/types.ts).
  */
 
 // ---------------------------------------------------------------------------
@@ -29,7 +29,7 @@ export type MovieGenre =
 
 export type MediaType = 'movie' | 'tv'
 
-/** MPAA-style content rating, ordered from gentlest to most mature. */
+/** MPAA-style content rating the user picks as their ceiling, ordered from gentlest to most mature. */
 export type ContentRating = 'G' | 'PG' | 'PG-13' | 'R'
 
 export type StreamingProviderId =
@@ -59,63 +59,57 @@ export interface StreamingProvider {
   textColor: string
   /** Countries where the service operates. */
   countries: CountryCode[]
+  /** The catalogue's provider slugs for this service. */
+  slugs: string[]
+  /** The service's own search page; `{title}` is replaced with the URL-encoded title. */
+  searchUrl: string
 }
 
-export type AvailabilityType = 'subscription' | 'rent' | 'buy'
-
-export interface MovieAvailability {
-  providerId: StreamingProviderId
-  countries: CountryCode[]
-  type: AvailabilityType
+/** A streaming service a title is on, as the catalogue names it. */
+export interface ServiceRef {
+  /** The catalogue's provider slug, e.g. "amazon-prime-video". */
+  slug: string
+  name: string
+  /** Set when the app knows the service (it can be picked at onboarding). */
+  providerId?: StreamingProviderId
+  /** Where to search for the title on this service. */
+  url?: string
 }
 
 export interface CastMember {
   name: string
-  character: string
+  character?: string
 }
-
-/**
- * Six-axis emotional fingerprint. Every value is 0–100.
- * Used both to describe movies and to describe what a user is looking for.
- */
-export interface EmotionalProfile {
-  funny: number
-  comforting: number
-  exciting: number
-  dark: number
-  romantic: number
-  intensity: number
-}
-
-export type EmotionalAxis = keyof EmotionalProfile
 
 export interface Movie {
+  /** The backend item id, e.g. "movie:tmdb-movie:508442". */
   id: string
-  tmdbId: number
   mediaType: MediaType
   title: string
   tagline?: string
   overview: string
-  releaseYear: number
-  runtimeMinutes: number
-  /** TMDB-style rating, 0–10. */
-  rating: number
+  releaseYear: number | null
+  /** A film's runtime, or a series' typical episode length. */
+  runtimeMinutes: number | null
+  /** Audience score, 0–10. Null when the catalogue has none. */
+  rating: number | null
   voteCount: number
-  contentRating: ContentRating
-  genres: MovieGenre[]
-  /** TMDB poster path, e.g. "/abc123.jpg". Resolved via `lib/tmdb`. */
-  posterPath: string
-  /** TMDB backdrop path. Null falls back to a blurred poster. */
-  backdropPath: string | null
-  director: string
+  /** The content rating in the user's country, as certified there (e.g. "PG-13" or "16"). */
+  contentRating: string | null
+  /** Lower-case catalogue genre names, e.g. "science fiction". */
+  genres: string[]
+  posterUrl: string | null
+  backdropUrl: string | null
+  director: string | null
   cast: CastMember[]
   /** ISO 639-1 original language code. */
-  language: string
-  availability: MovieAvailability[]
-  emotionalProfile: EmotionalProfile
-  /** Free-form descriptors used by the recommendation engine. */
-  tags: string[]
-  /** 0–100 relative popularity, used for "Popular tonight". */
+  language: string | null
+  /** Where it streams in the user's country. */
+  services: ServiceRef[]
+  /** Fallback place to find where to watch when no known service has a link. */
+  watchUrl: string | null
+  seasons?: number
+  episodes?: number
   popularity: number
 }
 
@@ -137,10 +131,8 @@ export interface UserMood {
   id: UserMoodId
   label: string
   emoji: string
-  /** What someone in this mood usually wants to feel. */
-  desired: Partial<EmotionalProfile>
-  /** Words used to describe this mood in generated copy. */
-  descriptors: string[]
+  /** How the mood reads after "I’m feeling", when it differs from the lower-cased label. */
+  phrase?: string
 }
 
 export interface DiscoveryFilters {
@@ -154,33 +146,27 @@ export interface DiscoveryFilters {
 }
 
 // ---------------------------------------------------------------------------
-// Recommendation contract (POST /api/recommendations)
+// Recommendation contract (POST /recommendations on the MoodFlix API)
 // ---------------------------------------------------------------------------
+
+/** Whether to match the mood the user is in, or lift it. */
+export type MoodObjective = 'keep' | 'improve'
 
 export interface RecommendationRequest {
   prompt: string
   moods: UserMoodId[]
-  streamingProviders: StreamingProviderId[]
-  country: CountryCode
-  /** Standing taste preferences captured at onboarding. */
-  favouriteGenres?: MovieGenre[]
-  maxContentRating?: ContentRating
+  objective: MoodObjective
   filters?: DiscoveryFilters
 }
 
-export type IntensityLevel = 'low' | 'medium' | 'high'
-
 export interface MoodInterpretation {
-  currentMood: string[]
-  desiredMood: string[]
-  intensity: IntensityLevel
-  cognitiveLoad: IntensityLevel
-  /** Human-readable summary used for subtitles, e.g. "something relaxing, funny and easy to watch". */
+  /** How the model read the user's feeling, e.g. "drained". */
+  emotion: string
+  /** Themes the recommendations are aimed at, e.g. ["warmth", "humour"]. */
+  themes: string[]
+  objective: MoodObjective
+  /** Human-readable summary used for subtitles, e.g. "warmth, humour and friendship". */
   summary: string
-  /** Target emotional fingerprint the engine scores against. */
-  targetProfile: EmotionalProfile
-  /** Keywords extracted from the natural-language prompt. */
-  keywords: string[]
 }
 
 export interface Recommendation {
@@ -204,6 +190,7 @@ export interface RecommendationSection {
 }
 
 export interface RecommendationResponse {
+  /** The backend request id; also the history entry id. */
   id: string
   createdAt: string
   interpretation: MoodInterpretation
@@ -211,6 +198,8 @@ export interface RecommendationResponse {
   recommendations: Recommendation[]
   /** Additional catalog sections shown after the top picks. */
   sections: RecommendationSection[]
+  /** Set when fewer titles than usual matched, even after relaxing constraints. */
+  notice?: 'few_matches'
 }
 
 // ---------------------------------------------------------------------------
@@ -249,11 +238,10 @@ export interface MovieFeedback {
   liked?: boolean
   watched: boolean
   saved: boolean
-  recommendationId?: string
-  updatedAt: string
 }
 
 export interface HistoryEntry {
+  /** The backend request id. */
   id: string
   createdAt: string
   prompt: string

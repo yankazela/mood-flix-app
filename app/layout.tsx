@@ -21,11 +21,11 @@ const instrumentSerif = Instrument_Serif({
 
 export const metadata: Metadata = {
   title: {
-    default: 'MoodFlix — What do you feel like watching?',
-    template: '%s · MoodFlix',
+    default: 'UpMyMood — What do you feel like watching?',
+    template: '%s · UpMyMood',
   },
   description: 'Tell us how you feel. We’ll find the perfect movie for this moment.',
-  applicationName: 'MoodFlix',
+  applicationName: 'UpMyMood',
   icons: {
     icon: [{ url: '/icon.svg', type: 'image/svg+xml' }],
     apple: '/apple-icon.png',

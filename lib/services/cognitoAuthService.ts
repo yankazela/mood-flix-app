@@ -106,7 +106,7 @@ export class CognitoAuthProvider implements AuthProvider {
       if (nextStep.signInStep === 'CONFIRM_SIGN_UP') {
         throw new AuthError('user-not-confirmed', 'Your email isn’t verified yet.')
       }
-      throw new AuthError('unsupported-step', `This account needs an extra sign-in step (${nextStep.signInStep}) that MoodFlix doesn’t support yet.`)
+      throw new AuthError('unsupported-step', `This account needs an extra sign-in step (${nextStep.signInStep}) that UpMyMood doesn’t support yet.`)
     } catch (error) {
       if ((error as { name?: string })?.name === 'UserAlreadyAuthenticatedException') return loadUser()
       throw toAuthError(error)

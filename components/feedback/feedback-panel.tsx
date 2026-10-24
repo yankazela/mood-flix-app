@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils'
 
 interface FeedbackPanelProps {
   movie: Movie
-  recommendationId?: string
+  /** The recommendation request this title came from, when it is on screen as one of its results. */
   historyId?: string | null
   className?: string
 }
@@ -21,14 +21,14 @@ const RATINGS: { value: FeedbackRating; emoji: string; label: string }[] = [
   { value: 'not-for-me', emoji: '👎', label: 'Not for me' },
 ]
 
-export function FeedbackPanel({ movie, recommendationId, historyId, className }: FeedbackPanelProps) {
+export function FeedbackPanel({ movie, historyId, className }: FeedbackPanelProps) {
   const library = useLibrary()
   const toast = useToast()
   const { feedback, saved, liked, disliked, watched, toggleSaved, like, dislike, toggleWatched } = useMovieActions(movie)
   const current = feedback?.rating
 
   const rate = (rating: FeedbackRating) => {
-    library.rateMovie(movie.id, rating, recommendationId)
+    library.rateMovie(movie, rating)
     if (historyId) library.recordHistoryFeedback(historyId, rating)
     toast.show('Thanks! This helps us learn your taste.', 'success')
   }

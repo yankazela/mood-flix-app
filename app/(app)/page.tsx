@@ -1,35 +1,50 @@
 'use client'
 
-import { AlertTriangle, RotateCcw } from 'lucide-react'
+import { AlertTriangle, Heart, RotateCcw } from 'lucide-react'
 import { useDiscovery } from '@/lib/store/discovery-context'
 import { HeroSection } from '@/components/discover/hero-section'
 import { IdleShowcase } from '@/components/discover/idle-showcase'
 import { LoadingRecommendations } from '@/components/discover/loading-recommendations'
+import { SavedMovies } from '@/components/discover/saved-movies'
 import { MovieCatalog } from '@/components/movies/movie-catalog'
 import { Button } from '@/components/shared/button'
 
+const ERROR_COPY = {
+  safety: { title: 'We’re here for you', tone: 'care' },
+  'rate-limit': { title: 'That’s all for today', tone: 'notice' },
+  unavailable: { title: 'We’re still warming up', tone: 'notice' },
+  invalid: { title: 'We need a little more', tone: 'notice' },
+  generic: { title: 'We couldn’t find your movie', tone: 'error' },
+} as const
+
 export default function DiscoverPage() {
-  const { status, response, error, findMovies } = useDiscovery()
+  const { status, response, error, errorKind, findMovies } = useDiscovery()
+  const copy = ERROR_COPY[errorKind ?? 'generic']
+  // A supportive message or a daily limit is not something a retry fixes.
+  const retryable = errorKind !== 'safety' && errorKind !== 'rate-limit'
 
   return (
     <div className="mx-auto max-w-[1600px]">
       <HeroSection />
+      <SavedMovies />
       {status === 'idle' && <IdleShowcase />}
       {status === 'loading' && <LoadingRecommendations />}
       {status === 'success' && response && <MovieCatalog key={response.id} response={response} />}
       {status === 'error' && (
         <div className="page-gutter pb-24">
-          <div role="alert" className="mx-auto flex max-w-lg flex-col items-center gap-4 rounded-3xl border border-destructive/20 bg-destructive/8 p-8 text-center animate-fade-up">
-            <span className="flex size-12 items-center justify-center rounded-2xl bg-destructive/15 text-destructive">
-              <AlertTriangle className="size-6" />
+          <div role="alert" className={`mx-auto flex max-w-lg flex-col items-center gap-4 rounded-3xl border p-8 text-center animate-fade-up ${copy.tone === 'error' ? 'border-destructive/20 bg-destructive/8' : 'border-brand/20 bg-brand/8'}`}>
+            <span className={`flex size-12 items-center justify-center rounded-2xl ${copy.tone === 'error' ? 'bg-destructive/15 text-destructive' : 'bg-brand/15 text-brand'}`}>
+              {copy.tone === 'error' ? <AlertTriangle className="size-6" /> : <Heart className="size-6" />}
             </span>
             <div>
-              <h2 className="text-lg font-semibold text-white">We couldn’t find your movie</h2>
-              <p className="mt-1 text-sm text-white/55">{error}</p>
+              <h2 className="text-lg font-semibold text-white">{copy.title}</h2>
+              <p className="mt-1 text-sm leading-6 text-white/65 text-pretty">{error}</p>
             </div>
-            <Button variant="secondary" onClick={findMovies} leadingIcon={<RotateCcw />}>
-              Try again
-            </Button>
+            {retryable && (
+              <Button variant="secondary" onClick={findMovies} leadingIcon={<RotateCcw />}>
+                Try again
+              </Button>
+            )}
           </div>
         </div>
       )}

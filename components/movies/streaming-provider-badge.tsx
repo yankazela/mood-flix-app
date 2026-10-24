@@ -1,9 +1,9 @@
-import type { StreamingProviderId } from '@/lib/types'
+import type { ServiceRef } from '@/lib/types'
 import { getProvider } from '@/lib/data/providers'
 import { cn } from '@/lib/utils'
 
 interface StreamingProviderBadgeProps {
-  providerId: StreamingProviderId
+  service: ServiceRef
   size?: 'xs' | 'sm' | 'md'
   /** `solid` fills with the brand colour; `subtle` shows a coloured dot on glass. */
   variant?: 'solid' | 'subtle'
@@ -16,18 +16,25 @@ const SIZES = {
   md: 'h-8 px-3 text-xs gap-2',
 }
 
-export function StreamingProviderBadge({ providerId, size = 'sm', variant = 'subtle', className }: StreamingProviderBadgeProps) {
-  const provider = getProvider(providerId)
-  if (!provider) return null
+/** A service chip. Services the app knows get their brand colours; any other service the catalogue names gets a neutral chip. */
+export function StreamingProviderBadge({ service, size = 'sm', variant = 'subtle', className }: StreamingProviderBadgeProps) {
+  const provider = service.providerId ? getProvider(service.providerId) : undefined
+  const label = provider?.shortName ?? service.name
+  const title = `Available on ${provider?.name ?? service.name}`
 
   if (variant === 'solid') {
     return (
       <span
-        className={cn('inline-flex items-center rounded-md font-semibold tracking-tight whitespace-nowrap', SIZES[size], className)}
-        style={{ backgroundColor: provider.brandColor, color: provider.textColor }}
-        title={`Available on ${provider.name}`}
+        className={cn(
+          'inline-flex items-center rounded-md font-semibold tracking-tight whitespace-nowrap',
+          !provider && 'border border-white/15 bg-white/10 text-white/85',
+          SIZES[size],
+          className,
+        )}
+        style={provider ? { backgroundColor: provider.brandColor, color: provider.textColor } : undefined}
+        title={title}
       >
-        {provider.shortName}
+        {label}
       </span>
     )
   }
@@ -39,10 +46,10 @@ export function StreamingProviderBadge({ providerId, size = 'sm', variant = 'sub
         SIZES[size],
         className,
       )}
-      title={`Available on ${provider.name}`}
+      title={title}
     >
-      <span className="size-1.5 shrink-0 rounded-full" style={{ backgroundColor: provider.brandColor }} aria-hidden />
-      {provider.shortName}
+      <span className="size-1.5 shrink-0 rounded-full" style={{ backgroundColor: provider?.brandColor ?? '#9ca3af' }} aria-hidden />
+      {label}
     </span>
   )
 }

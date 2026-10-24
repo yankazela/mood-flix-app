@@ -2,9 +2,8 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Clock3, MessageSquareQuote, Play, RotateCcw, Sparkles } from 'lucide-react'
-import type { FeedbackRating, HistoryEntry } from '@/lib/types'
-import { MOVIE_MAP } from '@/lib/data/movies'
+import { AlertTriangle, Clock3, MessageSquareQuote, Play, RotateCcw, Sparkles } from 'lucide-react'
+import type { FeedbackRating, HistoryEntry, Movie } from '@/lib/types'
 import { getMood } from '@/lib/data/moods'
 import { formatLongDate, formatRelativeDate, formatTime } from '@/lib/format'
 import { useLibrary } from '@/lib/store/library-context'
@@ -23,7 +22,7 @@ const FEEDBACK: Record<FeedbackRating, { emoji: string; label: string }> = {
 }
 
 export default function HistoryPage() {
-  const { history, ready } = useLibrary()
+  const { history, ready, loadError } = useLibrary()
 
   return (
     <div className="mx-auto max-w-[1600px] page-gutter pb-28 pt-8 sm:pt-12 md:pb-16">
@@ -35,7 +34,14 @@ export default function HistoryPage() {
         className="mb-8 animate-fade-up"
       />
 
-      {!ready ? null : history.length === 0 ? (
+      {!ready ? (
+        <HistorySkeleton />
+      ) : loadError && history.length === 0 ? (
+        <div role="alert" className="flex flex-col items-center gap-3 rounded-3xl border border-destructive/20 bg-destructive/8 px-6 py-12 text-center animate-fade-up">
+          <AlertTriangle className="size-6 text-destructive" />
+          <p className="max-w-sm text-sm text-white/60">We couldn’t load your history right now. {loadError}</p>
+        </div>
+      ) : history.length === 0 ? (
         <div className="flex flex-col items-center gap-4 rounded-3xl border border-dashed border-white/10 px-6 py-16 text-center animate-fade-up">
           <span className="flex size-14 items-center justify-center rounded-2xl bg-brand/10 text-brand">
             <Clock3 className="size-6" />
@@ -59,23 +65,35 @@ export default function HistoryPage() {
   )
 }
 
+function HistorySkeleton() {
+  return (
+    <div className="space-y-5" aria-hidden>
+      {[0, 1, 2].map((item) => (
+        <div key={item} className="skeleton h-56 rounded-3xl" />
+      ))}
+    </div>
+  )
+}
+
 function HistoryCard({ entry, index }: { entry: HistoryEntry; index: number }) {
   const router = useRouter()
   const { rerun } = useDiscovery()
   const { open } = useMovieDetails()
-  const recommended = entry.recommendedMovieIds.map((id) => MOVIE_MAP[id]).filter(Boolean)
-  const selected = entry.selectedMovieId ? MOVIE_MAP[entry.selectedMovieId] : undefined
+  const { getMovie } = useLibrary()
+  const recommended = entry.recommendedMovieIds.map(getMovie).filter((movie): movie is Movie => Boolean(movie))
+  const selected = entry.selectedMovieId ? getMovie(entry.selectedMovieId) : undefined
   const feedback = entry.feedback ? FEEDBACK[entry.feedback] : null
+  const firstMood = entry.moods[0]
 
   const runAgain = () => {
-    void rerun(entry.prompt, entry.moods)
+    void rerun(entry.prompt, entry.moods, entry.interpretation.objective)
     router.push('/')
   }
 
   return (
     <li className="relative animate-fade-up stagger" style={{ '--stagger-index': Math.min(index, 8) } as React.CSSProperties}>
       <span className="absolute -left-12 top-6 hidden size-[31px] items-center justify-center rounded-full border border-white/10 bg-surface-2 text-xs md:flex" aria-hidden>
-        {entry.moods[0] ? getMood(entry.moods[0]).emoji : '✨'}
+        {firstMood ? getMood(firstMood).emoji : '✨'}
       </span>
       <article className="overflow-hidden rounded-3xl border border-white/8 bg-surface/70 transition hover:border-white/15">
         <div className="flex flex-col gap-5 p-5 sm:p-6 lg:flex-row lg:items-start lg:justify-between">
@@ -86,7 +104,9 @@ function HistoryCard({ entry, index }: { entry: HistoryEntry; index: number }) {
               </time>
               <span>{formatTime(entry.createdAt)}</span>
               <span>·</span>
-              <span className="truncate">Wanted {entry.interpretation.summary}</span>
+              <span className="truncate">
+                {entry.interpretation.objective === 'improve' ? 'Wanted a lift' : 'Matched the mood'}: {entry.interpretation.summary}
+              </span>
             </div>
             <blockquote className="mt-3 flex gap-3">
               <MessageSquareQuote className="mt-1 size-5 shrink-0 text-brand" aria-hidden />
@@ -123,29 +143,33 @@ function HistoryCard({ entry, index }: { entry: HistoryEntry; index: number }) {
         <div className="grid gap-5 border-t border-white/6 p-5 sm:grid-cols-[1fr_auto] sm:p-6">
           <div>
             <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/40">Movies recommended</p>
-            <ul className="flex gap-2.5 overflow-x-auto no-scrollbar">
-              {recommended.map((movie) => (
-                <li key={movie.id} className="shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => open(movie)}
-                    className={cn('block w-[72px] overflow-hidden rounded-xl ring-1 ring-white/10 transition hover:scale-[1.04] hover:ring-white/30 sm:w-[84px]', selected?.id === movie.id && 'ring-2 ring-brand')}
-                    aria-label={`View ${movie.title}`}
-                  >
-                    <PosterImage movie={movie} size="w185" className="aspect-[2/3]" sizes="84px" />
-                  </button>
-                </li>
-              ))}
-            </ul>
+            {recommended.length > 0 ? (
+              <ul className="flex gap-2.5 overflow-x-auto no-scrollbar">
+                {recommended.map((movie) => (
+                  <li key={movie.id} className="shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => open(movie)}
+                      className={cn('block w-[72px] overflow-hidden rounded-xl ring-1 ring-white/10 transition hover:scale-[1.04] hover:ring-white/30 sm:w-[84px]', selected?.id === movie.id && 'ring-2 ring-brand')}
+                      aria-label={`View ${movie.title}`}
+                    >
+                      <PosterImage movie={movie} className="aspect-[2/3]" sizes="84px" />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-white/45">These titles are no longer in the catalog.</p>
+            )}
           </div>
           <div className="sm:w-[260px] sm:border-l sm:border-white/6 sm:pl-5">
             <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/40">Movie selected</p>
             {selected ? (
               <button type="button" onClick={() => open(selected)} className="group flex w-full items-center gap-3 rounded-2xl border border-white/8 bg-surface-2/60 p-2.5 text-left transition hover:border-white/20">
-                <PosterImage movie={selected} size="w185" className="aspect-[2/3] w-11 shrink-0 rounded-lg" sizes="44px" />
+                <PosterImage movie={selected} className="aspect-[2/3] w-11 shrink-0 rounded-lg" sizes="44px" />
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm font-semibold text-white">{selected.title}</span>
-                  <span className="block text-xs text-white/45">{selected.releaseYear}</span>
+                  {selected.releaseYear && <span className="block text-xs text-white/45">{selected.releaseYear}</span>}
                 </span>
                 <Play className="size-4 shrink-0 text-white/35 transition group-hover:text-brand" />
               </button>

@@ -1,3 +1,5 @@
+import type { ApiFeedback, ApiItem, ApiVote } from '@/lib/api/types';
+
 export interface User {
     email: string;
     password?: string;
@@ -47,6 +49,23 @@ export interface UserResponse {
   user: User;
 }
 
+export enum MediaType {
+    MOVIE = "movie",
+    SERIES = "series",
+    DOCUMENTARY = "documentary",
+    MUSIC = "music",
+    BOOK = "book",
+}
+
+export interface Availability {
+    /** Service slugs the item is available on in this country, e.g. "netflix". */
+    services: string[];
+    links?: Record<string, string>;
+    checkedAt: string;
+}
+
+export type RecommendedItem = ApiItem;
+
 export interface UserDetails {
     userId: string;
     email: string;
@@ -56,10 +75,16 @@ export interface UserDetails {
     services: string[];
     ratingsAllowed: string[];
     genrePrefs: GenrePreferences;
-    votes: Record<string, unknown>;
+    votes: Record<string, ApiVote>;
+    /** Item ids the user saved, newest first. */
+    myMovies?: string[];
+    /** Item ids the user has watched, newest first. */
+    watched?: string[];
+    ratings?: Record<string, ApiFeedback>;
     createdAt: string;
     dailyCount: number;
     fullyOnboarded: boolean;
+    savedMovies: RecommendedItem[];
 }
 
 export interface AuthTokens {

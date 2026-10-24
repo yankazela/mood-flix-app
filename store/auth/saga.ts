@@ -6,8 +6,8 @@ import type { User } from '@/lib/types'
 import { all, call, fork, put, select, take, takeLatest } from 'redux-saga/effects'
 import type { UpdateUserRequest, UserDetails } from '@/app/(auth)/signup/store/state'
 import { endpoints } from '@/app/api/endpoints'
-import { getRequest, patchRequest } from '@/app/api/requests'
-import { EbaseUrls } from '@/app/api/requests/types'
+import { getRequest, patchRequest, ApiError } from '@/app/api/requests'
+import { MOOD_API_URL } from '@/app/api/requests/types'
 import { updateBackendSessionUser } from '@/lib/auth/backend-session'
 import type { RootState } from '@/store/rootStore'
 import { clearBackendSession, readBackendSession, saveBackendSession } from '@/lib/auth/backend-session'
@@ -30,15 +30,16 @@ import {
   profileSynced,
 } from '@/store/auth/slice'
 
-async function fetchBackendUser(tokens: AuthTokens): Promise<UserDetails> {
+/** The signed-in user's profile. Pass fresh `tokens` when the session is not stored yet; otherwise the stored, auto-refreshed session is used. */
+async function fetchBackendUser(tokens?: AuthTokens): Promise<UserDetails> {
   const path = endpoints.me()
   const response = await getRequest<{ user: UserDetails }>(
     {
       path: path.endpoint,
-      auth: false,
-      headers: { ...path.headers, Authorization: `Bearer ${tokens.idToken}` },
+      auth: !tokens,
+      headers: tokens ? { ...path.headers, Authorization: `Bearer ${tokens.idToken}` } : path.headers,
     },
-    EbaseUrls.MOOD_BE,
+    MOOD_API_URL,
   )
   const user = response.data.user;
   if (!user?.userId || !user.email) throw new Error('Unable to load your account profile.')
@@ -65,7 +66,7 @@ const sendUpdateUserRequest = async (data: UpdateUserRequest) => {
       headers: path.headers,
       data,
     },
-    EbaseUrls.MOOD_BE,
+    MOOD_API_URL,
   )
   return response.data
 }
@@ -80,8 +81,6 @@ function* handleUpdateUser(action: PayloadAction<UpdateUserRequest>): SagaIterat
 
     const response: { user: UserDetails } = yield call(sendUpdateUserRequest, action.payload)
     const currentUser: UserDetails | null = yield select((state: RootState) => state.auth.user)
-    console.log('Current user before update:', currentUser)
-    console.log('Response from update request:', response)
 
     if (currentUser?.userId !== user.userId) return
 
@@ -95,10 +94,13 @@ function* handleUpdateUser(action: PayloadAction<UpdateUserRequest>): SagaIterat
 }
 
 function* restoreSession(): SagaIterator {
+  let storedUser: UserDetails | null = null
   try {
     const backendSession: ReturnType<typeof readBackendSession> = yield call(readBackendSession)
     if (backendSession) {
-      const user: UserDetails = yield call(fetchBackendUser, backendSession.auth.tokens)
+      storedUser = backendSession.user
+      // Renews the tokens first when they have expired, so a returning visitor stays signed in.
+      const user: UserDetails = yield call(fetchBackendUser)
       yield call(updateBackendSessionUser, user)
       yield put(profileSynced(user))
       yield put(sessionResolved(user))
@@ -112,6 +114,12 @@ function* restoreSession(): SagaIterator {
       yield put(sessionResolved(null))
     }
   } catch (error) {
+    // Offline or the API is down: the stored session is still good, so keep the person signed in.
+    const unreachable = error instanceof ApiError && (error.status === undefined || error.status >= 500)
+    if (storedUser && unreachable) {
+      yield put(sessionResolved(storedUser))
+      return
+    }
     console.warn('[auth] Session restore failed:', error)
     yield put(signInFailed(authErrorMessage(error)))
     yield put(sessionResolved(null))

@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useMemo, type ReactNode } from 'react'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
-import { sessionRequested, signOutRequested, type AuthStatus } from '@/store/auth/slice'
+import { sessionRequested, signOutRequested, signedOut, type AuthStatus } from '@/store/auth/slice'
+import { onSessionExpired } from '@/lib/auth/token-refresh'
 import { UserDetails } from '@/app/(auth)/signup/store/state'
 
 export type { AuthStatus }
@@ -23,6 +24,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     dispatch(sessionRequested())
   }, [dispatch])
+  // A refresh token that is rejected mid-session sends the person back to log in.
+  useEffect(() => onSessionExpired(() => dispatch(signedOut())), [dispatch])
   return <>{children}</>
 }
 

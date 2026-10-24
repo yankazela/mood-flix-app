@@ -51,6 +51,8 @@ function Onboarding() {
   const genreCount = preferences.favouriteGenres.length
   const rating = getContentRating(preferences.maxContentRating)
   const isLast = step === STEPS.length - 1
+  // The profile only counts as set up with at least one service and one genre; without them the app would keep sending the user back here.
+  const missing = (step === 0 && serviceCount === 0) || (step === 1 && genreCount === 0) || (isLast && (serviceCount === 0 || genreCount === 0))
 
   useEffect(() => {
     dispatch(updateUserReset())
@@ -73,7 +75,6 @@ function Onboarding() {
       ratingsAllowed: CONTENT_RATINGS.filter((option) => option.rank <= rating.rank).map((option) => option.id),
       genrePrefs: Object.fromEntries(preferences.favouriteGenres.map((genre) => [genre, 1])),
     }))
-    console.log('Finishing onboarding with preferences:', preferences)  
   }
   const next = () => (isLast ? finish() : setStep((s) => Math.min(s + 1, STEPS.length - 1)))
   const back = () => setStep((s) => Math.max(s - 1, 0))
@@ -171,9 +172,9 @@ function Onboarding() {
         <div className="page-gutter mx-auto flex max-w-5xl items-center justify-between gap-4 py-3">
           <p className="min-w-0 text-sm text-white/55">
             {current === 'services' &&
-              (serviceCount === 0 ? 'Select at least one service for the best results.' : <><span className="font-semibold text-white">{serviceCount}</span> service{serviceCount === 1 ? '' : 's'} selected</>)}
+              (serviceCount === 0 ? 'Select at least one service to continue.' : <><span className="font-semibold text-white">{serviceCount}</span> service{serviceCount === 1 ? '' : 's'} selected</>)}
             {current === 'genres' &&
-              (genreCount === 0 ? 'Pick 3 or more for the sharpest picks.' : <><span className="font-semibold text-white">{genreCount}</span> genre{genreCount === 1 ? '' : 's'} selected</>)}
+              (genreCount === 0 ? 'Pick at least one genre. Three or more gives the sharpest picks.' : <><span className="font-semibold text-white">{genreCount}</span> genre{genreCount === 1 ? '' : 's'} selected</>)}
             {current === 'rating' && (
               <>
                 Up to <span className="font-semibold text-white">{rating.id}</span> · {rating.title}
@@ -186,7 +187,7 @@ function Onboarding() {
                 <span className="hidden sm:inline">Back</span>
               </Button>
             )}
-            <Button size="lg" onClick={next} loading={saving} disabled={saving} trailingIcon={isLast ? <Check /> : <ArrowRight />}>
+            <Button size="lg" onClick={next} loading={saving} disabled={saving || missing} trailingIcon={isLast ? <Check /> : <ArrowRight />}>
               {isLast ? (editing ? 'Save changes' : 'Finish') : 'Continue'}
             </Button>
           </div>

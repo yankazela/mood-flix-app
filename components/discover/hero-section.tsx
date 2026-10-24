@@ -6,11 +6,12 @@ import { getCountry } from '@/lib/data/countries'
 import { getProvider } from '@/lib/data/providers'
 import { PromptInput } from '@/components/discover/prompt-input'
 import { MoodSelector } from '@/components/discover/mood-selector'
+import { ObjectiveToggle } from '@/components/discover/objective-toggle'
 import { FiltersPanel } from '@/components/discover/filters-panel'
 import { cn } from '@/lib/utils'
 
 export function HeroSection() {
-  const { prompt, moods, filters, status, setPrompt, toggleMood, setFilters, resetFilters, findMovies, activeFilterCount } = useDiscovery()
+  const { prompt, moods, objective, filters, status, setPrompt, toggleMood, setObjective, setFilters, resetFilters, findMovies, activeFilterCount } = useDiscovery()
   const { preferences } = usePreferences()
   const loading = status === 'loading'
   const canSubmit = prompt.trim().length > 0 || moods.length > 0
@@ -58,6 +59,7 @@ export function HeroSection() {
         </div>
 
         <MoodSelector selected={moods} onToggle={toggleMood} disabled={loading} className="mt-5" />
+        <ObjectiveToggle value={objective} onChange={setObjective} disabled={loading} className="mt-3" />
       </div>
     </section>
   )

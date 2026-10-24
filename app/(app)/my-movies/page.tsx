@@ -1,9 +1,8 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { Bookmark, Eye, Heart, Sparkles } from 'lucide-react'
-import { MOVIE_MAP } from '@/lib/data/movies'
 import { useLibrary } from '@/lib/store/library-context'
 import { MovieGrid } from '@/components/movies/movie-grid'
 import { SectionHeading } from '@/components/shared/section-heading'
@@ -19,18 +18,10 @@ const TABS: { id: Tab; label: string; icon: typeof Bookmark; empty: { title: str
 ]
 
 export default function MyMoviesPage() {
-  const { savedIds, likedIds, watchedIds, ready } = useLibrary()
+  const { savedMovies, likedMovies, watchedMovies, ready, loadError } = useLibrary()
   const [tab, setTab] = useState<Tab>('saved')
 
-  const lists = useMemo(
-    () => ({
-      saved: savedIds.map((id) => MOVIE_MAP[id]).filter(Boolean),
-      liked: likedIds.map((id) => MOVIE_MAP[id]).filter(Boolean),
-      watched: watchedIds.map((id) => MOVIE_MAP[id]).filter(Boolean),
-    }),
-    [savedIds, likedIds, watchedIds],
-  )
-
+  const lists = { saved: savedMovies, liked: likedMovies, watched: watchedMovies }
   const active = TABS.find((item) => item.id === tab)!
   const movies = lists[tab]
 
@@ -63,7 +54,13 @@ export default function MyMoviesPage() {
         })}
       </div>
 
-      {!ready ? null : movies.length > 0 ? (
+      {!ready ? (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6" aria-hidden>
+          {Array.from({ length: 6 }).map((_, index) => (
+            <div key={index} className="skeleton aspect-[2/3] rounded-2xl" />
+          ))}
+        </div>
+      ) : movies.length > 0 ? (
         <MovieGrid key={tab} movies={movies} />
       ) : (
         <div className="flex flex-col items-center gap-4 rounded-3xl border border-dashed border-white/10 px-6 py-16 text-center animate-fade-up">
@@ -72,7 +69,7 @@ export default function MyMoviesPage() {
           </span>
           <div>
             <h2 className="text-lg font-semibold text-white">{active.empty.title}</h2>
-            <p className="mx-auto mt-1 max-w-sm text-sm text-white/50">{active.empty.body}</p>
+            <p className="mx-auto mt-1 max-w-sm text-sm text-white/50">{loadError ? `We couldn’t load your library right now. ${loadError}` : active.empty.body}</p>
           </div>
           <Link href="/" className={buttonStyles({ variant: 'secondary' })}>
             <Sparkles className="size-4" /> Discover movies

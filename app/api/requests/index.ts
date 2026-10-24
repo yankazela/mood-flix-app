@@ -1,6 +1,17 @@
 import axios, { AxiosResponse } from "axios";
-import { readBackendSession } from "@/lib/auth/backend-session";
+import { getValidIdToken, refreshSession } from "@/lib/auth/token-refresh";
 import { EbaseUrls, RequestParams } from "./types";
+
+/** An API failure, with the HTTP status when the server answered (absent for network errors). */
+export class ApiError extends Error {
+    status?: number;
+
+    constructor(message: string, status?: number) {
+        super(message);
+        this.name = "ApiError";
+        this.status = status;
+    }
+}
 
 const getErrorMessage = (error: any): string => {
     return (
@@ -11,142 +22,53 @@ const getErrorMessage = (error: any): string => {
     );
 };
 
-const getTokens = () => {
-    const session = readBackendSession();
-    return {
-        access: session?.auth.tokens.accessToken ?? null,
-        refresh: session?.auth.tokens.refreshToken ?? null,
-        id: session?.auth.tokens.idToken ?? null,
-    };
+type Method = "get" | "post" | "put" | "patch" | "delete";
+
+/**
+ * Sends one request. Authenticated calls carry a fresh id token; a 401 triggers one token
+ * refresh and a retry, so an expired token never surfaces as a failure to the person using the app.
+ */
+async function send<T>(method: Method, params: RequestParams, baseUrl: EbaseUrls | string, retried = false): Promise<AxiosResponse<T>> {
+    const headers: Record<string, string> = { ...(params.headers || {}) };
+
+    if (params.auth) {
+        try {
+            headers.Authorization = `Bearer ${await getValidIdToken()}`;
+        } catch (error: any) {
+            throw new ApiError(error?.message || "Unauthorized", 401);
+        }
+    }
+
+    try {
+        return await axios<T>({
+            method,
+            url: baseUrl + params.path,
+            headers,
+            data: params.data,
+            timeout: params.timeout || 30000,
+        });
+    } catch (error: any) {
+        const status: number | undefined = error?.response?.status;
+
+        if (params.auth && status === 401 && !retried) {
+            try {
+                await refreshSession();
+            } catch (refreshError: any) {
+                throw new ApiError(refreshError?.message || "Unauthorized", 401);
+            }
+            return send<T>(method, params, baseUrl, true);
+        }
+
+        console.warn("API request failed", method.toUpperCase(), params.path, status ?? error?.message);
+
+        throw new ApiError(getErrorMessage(error), status);
+    }
 }
 
-export const getRequest = async <T>(
-    params: RequestParams,
-    baseUrl: EbaseUrls | string
-): Promise<AxiosResponse<T>> => {
-    const BASE_URL = baseUrl;
+export const getRequest = <T>(params: RequestParams, baseUrl: EbaseUrls | string) => send<T>("get", params, baseUrl);
 
-    if (params.auth) {
-        const tokens = getTokens();
-        if (tokens.id && tokens.refresh) {
-            params.headers = {
-                ...params.headers,
-                Authorization: `Bearer ${tokens.id}`
-            };
-        } else {
-            throw new Error("Unauthorized");
-        }
-    }
+export const postRequest = <T>(params: RequestParams, baseUrl: EbaseUrls | string) => send<T>("post", params, baseUrl);
 
-    return axios({
-        method: "get",
-        url: BASE_URL + params.path,
-        headers: params.headers || {},
-        timeout: params.timeout || 30000,
-    }).then((response) => {
-        return response;
-    }).catch((error) => {
-        console.log("error", params.path, error.response);
+export const putRequest = <T>(params: RequestParams, baseUrl: EbaseUrls | string) => send<T>("put", params, baseUrl);
 
-        throw new Error(getErrorMessage(error));
-    });
-};
-
-export const postRequest = async <T>(
-    params: RequestParams,
-    baseUrl: EbaseUrls | string
-): Promise<AxiosResponse<T>> => {
-    const BASE_URL = baseUrl;
-
-    if (params.auth) {
-        const tokens = getTokens();
-        if (tokens.id && tokens.refresh) {
-            params.headers = {
-                ...params.headers,
-                Authorization: `Bearer ${tokens.id}`
-            };
-        } else {
-            throw new Error("Unauthorized");
-        }
-    }
-
-    return axios({
-        method: "post",
-        url: BASE_URL + params.path,
-        headers: params.headers || {},
-        data: params.data,
-        timeout: params.timeout || 30000,
-    }).then((response) => {
-        return response;
-    }).catch((error) => {
-        console.log("error", params.path, error.response);
-
-        throw new Error(getErrorMessage(error));
-    });
-};
-
-export const putRequest = async <T>(
-    params: RequestParams,
-    baseUrl: EbaseUrls | string,
-): Promise<AxiosResponse<T>> => {
-    const BASE_URL = baseUrl;
-
-    if (params.auth) {
-        const tokens = getTokens();
-        if (tokens.id && tokens.refresh) {
-            params.headers = {
-                ...params.headers,
-                Authorization: `Bearer ${tokens.id}`
-            };
-        } else {
-            throw new Error("Unauthorized");
-        }
-    }
-
-    return axios({
-        method: "put",
-        url: BASE_URL + params.path,
-        headers: params.headers || {},
-        data: params.data,
-        timeout: params.timeout || 30000,
-    }).then((response) => {
-        return response;
-    }).catch((error) => {
-        console.log("error", params.path, error);
-
-        throw new Error(getErrorMessage(error));
-    });
-};
-
-export const patchRequest = async <T>(
-    params: RequestParams,
-    baseUrl: EbaseUrls | string
-): Promise<AxiosResponse<T>> => {
-    const BASE_URL = baseUrl;
-
-    if (params.auth) {
-        const tokens = getTokens();
-        if (tokens.id && tokens.refresh) {
-            params.headers = {
-                ...params.headers,
-                Authorization: `Bearer ${tokens.id}`
-            };
-        } else {
-            throw new Error("Unauthorized");
-        }
-    }
-
-    return axios({
-        method: "patch",
-        url: BASE_URL + params.path,
-        headers: params.headers || {},
-        data: params.data,
-        timeout: params.timeout || 30000,
-    }).then((response) => {
-        return response;
-    }).catch((error) => {
-        console.log("error", params.path, error);
-
-        throw new Error(getErrorMessage(error));
-    });
-};
+export const patchRequest = <T>(params: RequestParams, baseUrl: EbaseUrls | string) => send<T>("patch", params, baseUrl);

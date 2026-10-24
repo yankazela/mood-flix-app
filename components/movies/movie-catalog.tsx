@@ -1,6 +1,6 @@
 'use client'
 
-import { Sparkles } from 'lucide-react'
+import { Info, Sparkles } from 'lucide-react'
 import type { RecommendationResponse } from '@/lib/types'
 import { MovieCard } from '@/components/movies/movie-card'
 import { MovieRow } from '@/components/movies/movie-row'
@@ -12,7 +12,22 @@ interface MovieCatalogProps {
 
 export function MovieCatalog({ response }: MovieCatalogProps) {
   const topPicks = response.recommendations.slice(0, 3)
-  const summary = response.interpretation.summary
+  const { emotion, summary, objective } = response.interpretation
+  const subtitle =
+    objective === 'improve'
+      ? `A lift from feeling ${emotion}, with ${summary}.`
+      : `Because you’re feeling ${emotion} and looking for ${summary}.`
+
+  if (topPicks.length === 0) {
+    return (
+      <section className="page-gutter pb-24">
+        <div className="mx-auto flex max-w-lg flex-col items-center gap-3 rounded-3xl border border-white/10 bg-surface/70 p-8 text-center animate-fade-up">
+          <h2 className="text-lg font-semibold text-white">Nothing matched just yet</h2>
+          <p className="text-sm text-white/55">Try loosening a filter, or describe the mood a different way.</p>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <div className="space-y-12 pb-24 sm:space-y-14 md:pb-16">
@@ -24,10 +39,16 @@ export function MovieCatalog({ response }: MovieCatalogProps) {
               <Sparkles className="size-3.5" /> Your recommendations
             </>
           }
-          title="Movies for your mood"
-          subtitle={`Because you’re looking for ${summary}.`}
+          title="Picks for your mood"
+          subtitle={subtitle}
           className="mb-7 animate-fade-up"
         />
+        {response.notice === 'few_matches' && (
+          <p role="status" className="mb-5 flex items-start gap-2.5 rounded-2xl border border-white/10 bg-white/4 px-4 py-3 text-sm text-white/65 animate-fade-up">
+            <Info className="mt-0.5 size-4 shrink-0 text-brand" />
+            Only a few titles matched everything you asked for, even after relaxing the runtime and rating limits.
+          </p>
+        )}
         <div className="mb-4 flex items-center gap-3 animate-fade-up stagger" style={{ '--stagger-index': 1 } as React.CSSProperties}>
           <span className="inline-flex h-7 items-center gap-1.5 rounded-full bg-brand px-3 text-[11px] font-bold uppercase tracking-[0.16em] text-brand-foreground">
             <Sparkles className="size-3" /> Top picks for you

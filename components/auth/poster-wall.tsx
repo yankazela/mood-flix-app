@@ -1,6 +1,6 @@
 'use client'
 
-import { MOVIES } from '@/lib/data/movies'
+import { POSTER_WALL } from '@/lib/data/poster-wall'
 import { posterUrl } from '@/lib/tmdb'
 import { cn } from '@/lib/utils'
 
@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils'
  * dark overlay. Pure CSS animation, no JS on the hot path.
  */
 export function PosterWall({ className }: { className?: string }) {
-  const posters = MOVIES.map((movie) => ({ id: movie.id, src: posterUrl(movie.posterPath, 'w342')!, title: movie.title }))
+  const posters = POSTER_WALL.map((poster) => ({ id: poster.path, src: posterUrl(poster.path, 'w342')!, title: poster.title }))
   const columns = [0, 1, 2, 3, 4, 5].map((column) => posters.filter((_, index) => index % 6 === column))
 
   return (

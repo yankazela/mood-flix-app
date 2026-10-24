@@ -1,10 +1,17 @@
 import type { User } from '@/lib/types'
 import { readJSON, removeKey, writeJSON } from '@/lib/storage'
-import type { AuthResponse, UserDetails } from '@/app/(auth)/signup/store/state'
+import type { AuthResponse, AuthTokens, UserDetails } from '@/app/(auth)/signup/store/state'
 
 const AUTH_KEY = 'backendAuth'
 const USER_KEY = 'backendUser'
 const EXPIRES_AT_KEY = 'backendAuthExpiresAt'
+
+export interface BackendSession {
+  auth: AuthResponse
+  user: UserDetails
+  /** Epoch ms when the id and access tokens stop being accepted. The refresh token lasts far longer. */
+  expiresAt: number
+}
 
 export function saveBackendSession(auth: AuthResponse, user: UserDetails, remember = true): void {
   const kind = remember ? 'local' : 'session'
@@ -13,14 +20,18 @@ export function saveBackendSession(auth: AuthResponse, user: UserDetails, rememb
   writeJSON(EXPIRES_AT_KEY, Date.now() + auth.tokens.expiresIn * 1000, kind)
 }
 
-export function readBackendSession(): { auth: AuthResponse; user: UserDetails } | null {
+/**
+ * The stored session, even when its access tokens have expired: the refresh token can still
+ * renew them (see lib/auth/token-refresh). Null when nothing usable is stored.
+ */
+export function readBackendSession(): BackendSession | null {
   const session = readStoredSession('local') ?? readStoredSession('session')
   if (session) return session
   clearBackendSession()
   return null
 }
 
-function readStoredSession(kind: 'local' | 'session'): { auth: AuthResponse; user: UserDetails } | null {
+function readStoredSession(kind: 'local' | 'session'): BackendSession | null {
   const auth = readJSON<AuthResponse | null>(AUTH_KEY, null, kind)
   const user = readJSON<UserDetails | null>(USER_KEY, null, kind)
   const expiresAt = readJSON<number | null>(EXPIRES_AT_KEY, null, kind)
@@ -30,12 +41,21 @@ function readStoredSession(kind: 'local' | 'session'): { auth: AuthResponse; use
     auth.tokens?.refreshToken &&
     user?.userId &&
     user.email &&
-    typeof expiresAt === 'number' &&
-    expiresAt > Date.now()
+    typeof expiresAt === 'number'
   ) {
-    return { auth, user }
+    return { auth, user, expiresAt }
   }
   return null
+}
+
+/** Stores renewed tokens next to the rest of the session, in whichever storage holds it. */
+export function updateBackendTokens(tokens: AuthTokens): void {
+  for (const kind of ['local', 'session'] as const) {
+    const session = readStoredSession(kind)
+    if (!session) continue
+    writeJSON(AUTH_KEY, { ...session.auth, tokens }, kind)
+    writeJSON(EXPIRES_AT_KEY, Date.now() + tokens.expiresIn * 1000, kind)
+  }
 }
 
 export function clearBackendSession(): void {

@@ -2,8 +2,8 @@
 
 import { Bookmark, BookmarkCheck, Info, ThumbsDown, ThumbsUp } from 'lucide-react'
 import type { Movie, Recommendation } from '@/lib/types'
-import { formatGenres, formatRuntime } from '@/lib/format'
-import { availableProviders } from '@/lib/recommendation/engine'
+import { movieMeta } from '@/lib/format'
+import { orderServices } from '@/lib/data/providers'
 import { usePreferences } from '@/lib/store/preferences-context'
 import { useMovieActions } from '@/lib/hooks/use-movie-actions'
 import { useMovieDetails } from '@/components/movies/movie-details-context'
@@ -40,7 +40,7 @@ export function MovieCard({ movie, recommendation, size = 'md', fluid = false, r
   const { preferences } = usePreferences()
   const { open } = useMovieDetails()
   const { saved, liked, disliked, toggleSaved, like, dislike } = useMovieActions(movie)
-  const providers = availableProviders(movie, preferences.country, preferences.streamingProviders)
+  const providers = orderServices(movie.services, preferences.streamingProviders)
   const provider = providers[0]
   const matchScore = recommendation?.matchScore
 
@@ -79,10 +79,12 @@ export function MovieCard({ movie, recommendation, size = 'md', fluid = false, r
 
         {/* Top row: match + rating */}
         <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-start justify-between p-2.5 sm:p-3">
-          {matchScore !== undefined ? <MatchBadge score={matchScore} size={rank !== undefined ? 'md' : 'sm'} /> : <span />}
-          <span className="rounded-full bg-black/45 px-2 py-1 backdrop-blur-md">
-            <RatingBadge rating={movie.rating} />
-          </span>
+          {matchScore !== undefined && matchScore > 0 ? <MatchBadge score={matchScore} size={rank !== undefined ? 'md' : 'sm'} /> : <span />}
+          {movie.rating !== null && (
+            <span className="rounded-full bg-black/45 px-2 py-1 backdrop-blur-md">
+              <RatingBadge rating={movie.rating} />
+            </span>
+          )}
         </div>
 
         {rank !== undefined && (
@@ -95,7 +97,7 @@ export function MovieCard({ movie, recommendation, size = 'md', fluid = false, r
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 p-3 sm:p-3.5">
           {provider && (
             <div className="mb-2 flex items-center gap-1.5">
-              <StreamingProviderBadge providerId={provider} size="xs" />
+              <StreamingProviderBadge service={provider} size="xs" />
               {saved && (
                 <span className="flex size-5 items-center justify-center rounded-md bg-brand text-brand-foreground" aria-label="Saved">
                   <BookmarkCheck className="size-3" strokeWidth={2.5} />
@@ -104,9 +106,7 @@ export function MovieCard({ movie, recommendation, size = 'md', fluid = false, r
             </div>
           )}
           <h3 className={cn('truncate font-semibold leading-tight text-white', rank !== undefined ? 'text-base sm:text-lg' : 'text-sm')}>{movie.title}</h3>
-          <p className="mt-1 truncate text-[11px] text-white/55 sm:text-xs">
-            {movie.releaseYear} · {formatRuntime(movie.runtimeMinutes)} · {formatGenres(movie.genres, 2)}
-          </p>
+          <p className="mt-1 truncate text-[11px] text-white/55 sm:text-xs">{movieMeta(movie)}</p>
 
           {/* Quick actions (hover / focus) */}
           <div className="pointer-events-auto mt-3 hidden translate-y-2 items-center gap-1.5 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100 sm:flex">

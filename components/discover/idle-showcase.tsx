@@ -1,9 +1,9 @@
 'use client'
 
 import { ArrowUpRight, Sparkles } from 'lucide-react'
-import type { UserMoodId } from '@/lib/types'
-import { MOVIES } from '@/lib/data/movies'
-import { availableProviders } from '@/lib/recommendation/engine'
+import type { Movie, UserMoodId } from '@/lib/types'
+import { fetchPopular } from '@/lib/api/movies'
+import { useAsync } from '@/lib/hooks/use-async'
 import { useDiscovery } from '@/lib/store/discovery-context'
 import { usePreferences } from '@/lib/store/preferences-context'
 import { MovieRow } from '@/components/movies/movie-row'
@@ -15,20 +15,24 @@ const EXAMPLES: { prompt: string; moods: UserMoodId[]; emoji: string }[] = [
   { emoji: '🧠', prompt: 'Bored and want something smart that makes me think. A twist would be great.', moods: ['bored'] },
 ]
 
+const NO_MOVIES: Movie[] = []
+
 export function IdleShowcase() {
   const { rerun } = useDiscovery()
   const { preferences } = usePreferences()
+  const services = preferences.streamingProviders
 
-  const trending = [...MOVIES]
-    .filter((movie) => availableProviders(movie, preferences.country, preferences.streamingProviders).length > 0)
-    .sort((a, b) => b.popularity - a.popularity)
-    .slice(0, 12)
-    .map((movie) => ({ movie }))
-
-  const easy = MOVIES.filter((movie) => movie.emotionalProfile.intensity <= 35 && movie.rating >= 7.5)
-    .sort((a, b) => b.rating - a.rating)
-    .slice(0, 12)
-    .map((movie) => ({ movie }))
+  // Titles on the user's own services; when none of them has any, fall back to everything streaming in their country.
+  const trending = useAsync(
+    async () => {
+      const mine = services.length > 0 ? await fetchPopular({ services, limit: 12 }) : NO_MOVIES
+      if (mine.length > 0) return { movies: mine, onMyServices: true }
+      return { movies: await fetchPopular({ limit: 12 }), onMyServices: false }
+    },
+    `trending:${services.join(',')}`,
+    { movies: NO_MOVIES, onMyServices: true },
+  )
+  const topRated = useAsync(() => fetchPopular({ sort: 'rating', limit: 12 }), 'top-rated', NO_MOVIES)
 
   return (
     <div className="space-y-12 pb-24 md:pb-16">
@@ -57,8 +61,20 @@ export function IdleShowcase() {
         </div>
       </section>
 
-      <MovieRow title="Popular tonight on your services" subtitle="What people are watching right now." items={trending} cardSize="md" />
-      <MovieRow title="Easy watches" subtitle="Highly rated, low effort. Perfect for a tired brain." items={easy} cardSize="md" />
+      <MovieRow
+        title={trending.data.onMyServices && services.length > 0 ? 'Popular tonight on your services' : 'Popular tonight'}
+        subtitle={trending.data.onMyServices && services.length > 0 ? 'What people are watching right now.' : 'What people are watching right now where you live.'}
+        items={trending.data.movies.map((movie) => ({ movie }))}
+        loading={trending.loading}
+        cardSize="md"
+      />
+      <MovieRow
+        title="Critically loved"
+        subtitle="Highly rated by audiences. Reliable picks when you can’t decide."
+        items={topRated.data.map((movie) => ({ movie }))}
+        loading={topRated.loading}
+        cardSize="md"
+      />
     </div>
   )
 }

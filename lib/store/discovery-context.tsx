@@ -1,37 +1,39 @@
 'use client'
 
-import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from 'react'
-import type { DiscoveryFilters, RecommendationRequest, RecommendationResponse, UserMoodId } from '@/lib/types'
-import { recommendationService } from '@/lib/services/recommendationService'
-import { delay } from '@/lib/storage'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import type { DiscoveryFilters, HistoryEntry, MoodObjective, RecommendationRequest, RecommendationResponse, UserMoodId } from '@/lib/types'
+import { buildRecommendBody } from '@/lib/api/adapters'
+import { RecommendationError, requestRecommendations, type RecommendationErrorKind } from '@/lib/api/recommendations'
 import { useLibrary } from '@/lib/store/library-context'
+import { useAuth } from '@/lib/store/auth-context'
 import { usePreferences } from '@/lib/store/preferences-context'
 
 export type DiscoveryStatus = 'idle' | 'loading' | 'success' | 'error'
 
 export const EMPTY_FILTERS: DiscoveryFilters = {}
 
-/** Minimum time the loading experience stays on screen so the staged messages can play. */
-const MIN_LOADING_MS = 3400
-
 export interface DiscoveryContextValue {
   prompt: string
   moods: UserMoodId[]
+  /** Match the mood the user is in, or lift it. */
+  objective: MoodObjective
   filters: DiscoveryFilters
   status: DiscoveryStatus
   response: RecommendationResponse | null
-  /** Id of the history entry created for the current response. */
+  /** Id of the history entry created for the current response (the backend request id). */
   historyId: string | null
   error: string | null
+  errorKind: RecommendationErrorKind | null
   activeFilterCount: number
   setPrompt: (prompt: string) => void
   toggleMood: (mood: UserMoodId) => void
   setMoods: (moods: UserMoodId[]) => void
+  setObjective: (objective: MoodObjective) => void
   setFilters: (filters: DiscoveryFilters) => void
   resetFilters: () => void
   findMovies: () => Promise<void>
   /** Prefill from a history entry and immediately run it. */
-  rerun: (prompt: string, moods: UserMoodId[]) => Promise<void>
+  rerun: (prompt: string, moods: UserMoodId[], objective?: MoodObjective) => Promise<void>
   reset: () => void
 }
 
@@ -51,15 +53,19 @@ export function countActiveFilters(filters: DiscoveryFilters): number {
 
 export function DiscoveryProvider({ children }: { children: ReactNode }) {
   const { preferences } = usePreferences()
+  const { user } = useAuth()
   const library = useLibrary()
   const [prompt, setPrompt] = useState('')
   const [moods, setMoods] = useState<UserMoodId[]>([])
+  const [objective, setObjective] = useState<MoodObjective>('keep')
   const [filters, setFilters] = useState<DiscoveryFilters>(EMPTY_FILTERS)
   const [status, setStatus] = useState<DiscoveryStatus>('idle')
   const [response, setResponse] = useState<RecommendationResponse | null>(null)
   const [historyId, setHistoryId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [errorKind, setErrorKind] = useState<RecommendationErrorKind | null>(null)
   const requestSeq = useRef(0)
+  const { addHistoryEntry } = library
 
   const toggleMood = useCallback((mood: UserMoodId) => {
     setMoods((current) => (current.includes(mood) ? current.filter((m) => m !== mood) : [...current, mood]))
@@ -68,60 +74,55 @@ export function DiscoveryProvider({ children }: { children: ReactNode }) {
   const resetFilters = useCallback(() => setFilters(EMPTY_FILTERS), [])
 
   const run = useCallback(
-    async (nextPrompt: string, nextMoods: UserMoodId[]) => {
+    async (nextPrompt: string, nextMoods: UserMoodId[], nextObjective: MoodObjective) => {
       const seq = ++requestSeq.current
       setStatus('loading')
       setError(null)
+      setErrorKind(null)
 
       const request: RecommendationRequest = {
         prompt: nextPrompt,
         moods: nextMoods,
-        streamingProviders: preferences.streamingProviders,
-        country: preferences.country,
-        favouriteGenres: preferences.favouriteGenres,
-        maxContentRating: preferences.maxContentRating,
+        objective: nextObjective,
         filters: countActiveFilters(filters) > 0 ? filters : undefined,
-      }
-      const context = {
-        likedMovieIds: library.likedIds,
-        excludeMovieIds: Object.values(library.feedback)
-          .filter((f) => f.liked === false || f.watched)
-          .map((f) => f.movieId),
       }
 
       try {
-        const [result] = await Promise.all([recommendationService.getRecommendations(request, context), delay(MIN_LOADING_MS)])
+        // Country, services, ratings and taste come from the saved profile on the server.
+        const result = await requestRecommendations(request, preferences.streamingProviders)
         if (seq !== requestSeq.current) return
         setResponse(result)
         setStatus('success')
-        const entryId = `hist_${result.id}`
-        setHistoryId(entryId)
-        library.addHistoryEntry({
-          id: entryId,
+        setHistoryId(result.id)
+        const entry: HistoryEntry = {
+          id: result.id,
           createdAt: result.createdAt,
-          prompt: nextPrompt,
+          prompt: buildRecommendBody(request).text,
           moods: nextMoods,
           interpretation: result.interpretation,
-          recommendedMovieIds: result.recommendations.slice(0, 6).map((rec) => rec.movie.id),
-        })
+          recommendedMovieIds: result.recommendations.map((rec) => rec.movie.id),
+        }
+        addHistoryEntry(entry, result.recommendations.map((rec) => rec.movie))
       } catch (err) {
         if (seq !== requestSeq.current) return
         setStatus('error')
         setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
+        setErrorKind(err instanceof RecommendationError ? err.kind : 'generic')
       }
     },
-    [filters, library, preferences.country, preferences.streamingProviders, preferences.favouriteGenres, preferences.maxContentRating],
+    [filters, preferences.streamingProviders, addHistoryEntry],
   )
 
-  const findMovies = useCallback(() => run(prompt, moods), [run, prompt, moods])
+  const findMovies = useCallback(() => run(prompt, moods, objective), [run, prompt, moods, objective])
 
   const rerun = useCallback(
-    async (nextPrompt: string, nextMoods: UserMoodId[]) => {
+    async (nextPrompt: string, nextMoods: UserMoodId[], nextObjective: MoodObjective = objective) => {
       setPrompt(nextPrompt)
       setMoods(nextMoods)
-      await run(nextPrompt, nextMoods)
+      setObjective(nextObjective)
+      await run(nextPrompt, nextMoods, nextObjective)
     },
-    [run],
+    [run, objective],
   )
 
   const reset = useCallback(() => {
@@ -130,28 +131,41 @@ export function DiscoveryProvider({ children }: { children: ReactNode }) {
     setResponse(null)
     setHistoryId(null)
     setError(null)
+    setErrorKind(null)
   }, [])
+
+  // Nothing from one person's session should be on screen for the next.
+  const userId = user?.userId ?? null
+  useEffect(() => {
+    reset()
+    setPrompt('')
+    setMoods([])
+    setFilters(EMPTY_FILTERS)
+  }, [userId, reset])
 
   const value = useMemo<DiscoveryContextValue>(
     () => ({
       prompt,
       moods,
+      objective,
       filters,
       status,
       response,
       historyId,
       error,
+      errorKind,
       activeFilterCount: countActiveFilters(filters),
       setPrompt,
       toggleMood,
       setMoods,
+      setObjective,
       setFilters,
       resetFilters,
       findMovies,
       rerun,
       reset,
     }),
-    [prompt, moods, filters, status, response, historyId, error, toggleMood, resetFilters, findMovies, rerun, reset],
+    [prompt, moods, objective, filters, status, response, historyId, error, errorKind, toggleMood, resetFilters, findMovies, rerun, reset],
   )
 
   return <DiscoveryContext.Provider value={value}>{children}</DiscoveryContext.Provider>

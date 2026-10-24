@@ -248,7 +248,7 @@ function ConfirmStep() {
 function VerifiedStep() {
   const email = useAppSelector((state) => state.signup.form.email)
   return (
-    <AuthCard title="Email verified" subtitle="Your account is ready. Log in to finish setting up MoodFlix.">
+    <AuthCard title="Email verified" subtitle="Your account is ready. Log in to finish setting up UpMyMood.">
       <div className="flex flex-col items-center gap-5 py-2 text-center animate-fade-up">
         <span className="flex size-14 items-center justify-center rounded-2xl bg-brand/15 text-brand">
           <ShieldCheck className="size-7" />

@@ -4,7 +4,7 @@ import { AxiosResponse } from "axios";
 
 import { endpoints } from "../../../api/endpoints";
 import { postRequest } from "../../../api/requests";
-import { EbaseUrls } from "../../../api/requests/types";
+import { MOOD_API_URL } from "../../../api/requests/types";
 import { saveBackendSession } from "@/lib/auth/backend-session";
 import { authenticateWithBackend } from '@/lib/services/backendAuthService';
 import type { User as AppUser } from '@/lib/types';
@@ -14,20 +14,17 @@ import { submitUser, submitUserSuccess, submitUserError } from "./slice";
 import { AuthResponse, User, UserDetails } from './state';
 
 const sendUserRequest = async (user: User) => {
-    try {
-        const path = endpoints.createUser();
-        const response: AxiosResponse<UserDetails> = await postRequest(
-            {
-                path: path.endpoint,
-                auth: path.auth,
-                headers: path.headers,
-                data: user
-            }, EbaseUrls.MOOD_BE
-        );
-        return response.data;
-    } catch (error) {
-        throw error;
-    }
+    const path = endpoints.createUser();
+    // POST /user answers { user }, and the profile it holds is what the rest of the app expects.
+    const response: AxiosResponse<{ user: UserDetails }> = await postRequest(
+        {
+            path: path.endpoint,
+            auth: path.auth,
+            headers: path.headers,
+            data: user
+        }, MOOD_API_URL
+    );
+    return response.data.user;
 };
 
 function* handleSubmitUser(action: PayloadAction<User>) {

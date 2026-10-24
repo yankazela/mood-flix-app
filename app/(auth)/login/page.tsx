@@ -75,7 +75,7 @@ function LoginForm() {
       subtitle="Log in to pick up where your mood left off."
       footer={
         <>
-          New to MoodFlix?{' '}
+          New to UpMyMood?{' '}
           <Link href="/signup" className="font-semibold text-white underline-offset-4 hover:text-brand hover:underline">
             Create an account
           </Link>

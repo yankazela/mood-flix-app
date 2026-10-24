@@ -24,7 +24,6 @@ const signupSlice = createSlice({
     reducers: {
         /** Create the Cognito user. The password only travels in this action, never into state. */
         submitUser: (state, action: PayloadAction<User>) => {
-            console.log('Submitting user with payload:', action.payload);
             state.form = {
                 email: action.payload.email.trim().toLowerCase(),
                 password: '',

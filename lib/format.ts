@@ -1,6 +1,7 @@
-import type { MovieGenre } from '@/lib/types'
+import type { Movie } from '@/lib/types'
 
-export function formatRuntime(minutes: number): string {
+export function formatRuntime(minutes: number | null | undefined): string {
+  if (!minutes) return ''
   const hours = Math.floor(minutes / 60)
   const mins = minutes % 60
   if (hours === 0) return `${mins}m`
@@ -12,31 +13,34 @@ export function formatRating(rating: number): string {
   return rating.toFixed(1)
 }
 
-const GENRE_LABELS: Record<MovieGenre, string> = {
-  action: 'Action',
-  adventure: 'Adventure',
-  animation: 'Animation',
-  comedy: 'Comedy',
-  crime: 'Crime',
-  drama: 'Drama',
-  family: 'Family',
-  fantasy: 'Fantasy',
-  history: 'History',
-  horror: 'Horror',
-  music: 'Music',
-  mystery: 'Mystery',
-  romance: 'Romance',
+const GENRE_LABELS: Record<string, string> = {
   'science-fiction': 'Sci-Fi',
-  thriller: 'Thriller',
-  war: 'War',
+  'science fiction': 'Sci-Fi',
+  'sci-fi & fantasy': 'Sci-Fi & Fantasy',
+  'action & adventure': 'Action & Adventure',
+  'war & politics': 'War & Politics',
+  tv_movie: 'TV Movie',
+  'tv movie': 'TV Movie',
 }
 
-export function formatGenre(genre: MovieGenre): string {
-  return GENRE_LABELS[genre] ?? genre
+/** A display label for a genre id ("science-fiction") or a catalogue name ("action & adventure"). */
+export function formatGenre(genre: string): string {
+  const known = GENRE_LABELS[genre.toLowerCase()]
+  if (known) return known
+  return genre
+    .split(/[\s-]+/)
+    .filter(Boolean)
+    .map((word) => (word === '&' ? word : word.charAt(0).toUpperCase() + word.slice(1)))
+    .join(' ')
 }
 
-export function formatGenres(genres: MovieGenre[], max = 2, separator = ' · '): string {
+export function formatGenres(genres: string[], max = 2, separator = ' · '): string {
   return genres.slice(0, max).map(formatGenre).join(separator)
+}
+
+/** "2021 · 1h 43m · Comedy · Drama": whichever parts the title has. */
+export function movieMeta(movie: Pick<Movie, 'releaseYear' | 'runtimeMinutes' | 'genres'>, genreCount = 2): string {
+  return [movie.releaseYear, formatRuntime(movie.runtimeMinutes), formatGenres(movie.genres, genreCount)].filter(Boolean).join(' · ')
 }
 
 export function formatRelativeDate(iso: string, now = new Date()): string {

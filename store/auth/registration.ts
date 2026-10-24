@@ -6,7 +6,7 @@ import { authService, authErrorMessage } from '@/lib/services/authService'
 import { clearPendingSignup, readPendingSignup, type PendingSignup } from '@/lib/auth/pending-signup'
 import { endpoints } from '@/app/api/endpoints'
 import { postRequest } from '@/app/api/requests'
-import { EbaseUrls } from '@/app/api/requests/types'
+import { MOOD_API_URL } from '@/app/api/requests/types'
 import type { CreateUserRequest, UserDetails } from '@/app/(auth)/signup/store/state'
 import { profileSyncFailed, profileSynced } from '@/store/auth/slice'
 
@@ -40,7 +40,7 @@ export function* registerUserWithBackend(user: User): SagaIterator<UserDetails |
         headers: { ...path.headers, ...(idToken ? { Authorization: `Bearer ${idToken}` } : {}) },
         data: body,
       },
-      EbaseUrls.MOOD_BE,
+      MOOD_API_URL,
     )
     yield call(clearPendingSignup)
     yield put(profileSynced(response.data))

@@ -1,10 +1,10 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { Search, X } from 'lucide-react'
+import { AlertTriangle, Search, X } from 'lucide-react'
 import type { Movie } from '@/lib/types'
-import { movieService } from '@/lib/services/movieService'
-import { formatGenres, formatRuntime } from '@/lib/format'
+import { searchMovies } from '@/lib/api/movies'
+import { movieMeta } from '@/lib/format'
 import { useScrollLock } from '@/lib/hooks/use-scroll-lock'
 import { useMovieDetails } from '@/components/movies/movie-details-context'
 import { PosterImage } from '@/components/movies/poster-image'
@@ -19,6 +19,7 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<Movie[]>([])
   const [searching, setSearching] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const { open: openDetails } = useMovieDetails()
   useScrollLock(open)
@@ -27,6 +28,7 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
     if (!open) {
       setQuery('')
       setResults([])
+      setError(null)
       return
     }
     const frame = requestAnimationFrame(() => inputRef.current?.focus())
@@ -43,15 +45,25 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
     let cancelled = false
     if (!query.trim()) {
       setResults([])
+      setSearching(false)
+      setError(null)
       return
     }
     setSearching(true)
     const timer = setTimeout(async () => {
-      const found = await movieService.searchMovies(query)
-      if (cancelled) return
-      setResults(found)
-      setSearching(false)
-    }, 160)
+      try {
+        const found = await searchMovies(query)
+        if (cancelled) return
+        setResults(found)
+        setError(null)
+      } catch (err) {
+        if (cancelled) return
+        setResults([])
+        setError(err instanceof Error ? err.message : 'Search is unavailable right now.')
+      } finally {
+        if (!cancelled) setSearching(false)
+      }
+    }, 250)
     return () => {
       cancelled = true
       clearTimeout(timer)
@@ -78,9 +90,15 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
           </button>
         </div>
 
-        <div className="max-h-[60vh] overflow-y-auto p-2 [scrollbar-width:thin]">
+        <div className="max-h-[60vh] overflow-y-auto p-2 [scrollbar-width:thin]" aria-busy={searching}>
           {!query.trim() && <p className="px-4 py-8 text-center text-sm text-white/40">Start typing to search the catalog.</p>}
-          {query.trim() && !searching && results.length === 0 && <p className="px-4 py-8 text-center text-sm text-white/40">No matches for “{query}”.</p>}
+          {query.trim() && searching && results.length === 0 && <p className="px-4 py-8 text-center text-sm text-white/40">Searching…</p>}
+          {error && (
+            <p role="alert" className="flex items-center justify-center gap-2 px-4 py-8 text-center text-sm text-destructive">
+              <AlertTriangle className="size-4 shrink-0" /> {error}
+            </p>
+          )}
+          {query.trim() && !searching && !error && results.length === 0 && <p className="px-4 py-8 text-center text-sm text-white/40">No matches for “{query}” on your region’s services.</p>}
           {results.map((movie) => (
             <button
               key={movie.id}
@@ -91,14 +109,12 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
               }}
               className="flex w-full items-center gap-4 rounded-2xl p-2 text-left transition hover:bg-white/6"
             >
-              <PosterImage movie={movie} size="w185" className="aspect-[2/3] w-12 shrink-0 rounded-lg" sizes="48px" />
+              <PosterImage movie={movie} className="aspect-[2/3] w-12 shrink-0 rounded-lg" sizes="48px" />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold text-white">{movie.title}</p>
-                <p className="truncate text-xs text-white/45">
-                  {movie.releaseYear} · {formatRuntime(movie.runtimeMinutes)} · {formatGenres(movie.genres, 2)}
-                </p>
+                <p className="truncate text-xs text-white/45">{movieMeta(movie)}</p>
               </div>
-              <RatingBadge rating={movie.rating} />
+              {movie.rating !== null && <RatingBadge rating={movie.rating} />}
             </button>
           ))}
         </div>
