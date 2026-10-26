@@ -8,6 +8,8 @@ import { PromptInput } from '@/components/discover/prompt-input'
 import { MoodSelector } from '@/components/discover/mood-selector'
 import { ObjectiveToggle } from '@/components/discover/objective-toggle'
 import { FiltersPanel } from '@/components/discover/filters-panel'
+import { Flag } from '@/components/shared/flag'
+import { UsagePill } from '@/components/billing/usage-pill'
 import { cn } from '@/lib/utils'
 
 export function HeroSection() {
@@ -52,8 +54,9 @@ export function HeroSection() {
         <div className="animate-fade-up stagger" style={{ '--stagger-index': 2 } as React.CSSProperties}>
           <PromptInput value={prompt} onChange={setPrompt} onSubmit={findMovies} loading={loading} canSubmit={canSubmit}>
             <FiltersPanel filters={filters} onChange={setFilters} onReset={resetFilters} activeCount={activeFilterCount} disabled={loading} />
+            <UsagePill />
             <span className="hidden truncate sm:inline">
-              {services.length > 0 ? `${services.slice(0, 3).join(', ')}${services.length > 3 ? ` +${services.length - 3}` : ''}` : 'All services'} · {country.flag} {country.name}
+              {services.length > 0 ? `${services.slice(0, 3).join(', ')}${services.length > 3 ? ` +${services.length - 3}` : ''}` : 'All services'} · <Flag code={country.code} /> {country.name}
             </span>
           </PromptInput>
         </div>

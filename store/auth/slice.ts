@@ -108,6 +108,12 @@ const authSlice = createSlice({
     profileSyncFailed: (state, action: PayloadAction<string>) => {
       state.profileError = action.payload
     },
+    /** The server re-read the profile (e.g. after a purchase); replace it without touching the update flags. */
+    profileRefreshed: (state, action: PayloadAction<UserDetails>) => {
+      if (state.user && state.user.userId !== action.payload.userId) return
+      state.user = action.payload
+      state.profile = action.payload
+    },
   },
 })
 
@@ -128,6 +134,7 @@ export const {
   authErrorCleared,
   profileSynced,
   profileSyncFailed,
+  profileRefreshed,
 } = authSlice.actions
 
 export default authSlice.reducer

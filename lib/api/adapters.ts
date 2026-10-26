@@ -101,6 +101,7 @@ export function toRecommendationResponse(
         ? [{ id: 'more-for-mood', title: 'More for your mood', subtitle: 'Other titles that fit how you feel right now.', layout: 'row', recommendations: rest }]
         : [],
     notice: result.notice,
+    usage: result.usage,
   }
 }
 

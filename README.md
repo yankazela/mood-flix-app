@@ -121,6 +121,45 @@ After Cognito creates the identity, the saga registers the user with the MoodFli
 4. **Google**: create an OAuth client in Google Cloud with authorized redirect URI `https://<your-cognito-domain>/oauth2/idpresponse`. Add Google as an identity provider in the pool (scopes `openid email profile`) and map `email → email`, `name → name`, `picture → picture`.
 5. **Hosted UI on the app client**: enable Google and the Cognito user pool as identity providers, OAuth grant *Authorization code*, scopes `openid email profile`, callback URL `http://localhost:3000/auth/callback` (plus production), sign-out URL `http://localhost:3000/login` (plus production).
 
+## Subscriptions
+
+Two plans: **Free** (2 recommendation requests a day) and **Advanced** (15 a day, a monthly subscription). The
+backend owns the plan and the daily counter; the app only sells and displays.
+
+| Piece | Where |
+| --- | --- |
+| Plan, usage, paywall state, purchase/restore/sync | `lib/store/billing-context.tsx` (`useBilling`) |
+| Store SDK (RevenueCat) behind a small adapter; no-op on the web | `lib/billing/store.ts` |
+| Env, entitlement id, legal links, plan limits for the comparison | `lib/billing/config.ts` |
+| Paywall sheet, usage pill, plan badge | `components/billing/` |
+| `POST /billing/sync` after a purchase or restore | `lib/api/billing.ts` |
+
+**How it flows**
+
+1. After sign-in the store SDK is identified with the Cognito `sub` (`Purchases.logIn`), which is how the backend's
+   webhook matches purchases to profiles. Sign-out detaches it.
+2. The profile from `GET /user/me` carries `plan` and `usage`; every `POST /recommendations` answer carries `usage` too,
+   and a `429` carries the plan, the limit and `resetsAt`. The usage pill under the prompt and the user menu read from
+   these, so the count is right without reloading the profile.
+3. Over the cap on the free plan, the Discover page offers the upgrade. The paywall buys through the App Store or
+   Google Play, then calls `POST /billing/sync` so the profile flips to Advanced at once (the webhook catches up
+   regardless). The paywall also restores purchases and shows the price from the store, the renewal terms and the
+   Terms and Privacy links, which App Review checks for.
+4. On the web the paywall explains that subscribing happens in the apps; the plan follows the account.
+
+**Setup**
+
+1. In RevenueCat, create the project with the iOS and Android apps, the entitlement `advanced`, a monthly product
+   attached to it (App Store Connect and Google Play Console each need the product too) and a default offering with
+   that package. Copy the public SDK keys into `NEXT_PUBLIC_REVENUECAT_IOS_KEY` and `NEXT_PUBLIC_REVENUECAT_ANDROID_KEY`.
+2. Set `NEXT_PUBLIC_PRIVACY_URL` (and `NEXT_PUBLIC_TERMS_URL` if you have your own terms). Apple rejects paywalls
+   without both links.
+3. `pnpm mobile` builds and syncs the native projects. In Xcode, add the **In-App Purchase** capability to the App
+   target; on Android the plugin adds the billing permission itself.
+4. Test with a sandbox tester (App Store Connect → Users and Access → Sandbox) or a StoreKit configuration file, and
+   with Google Play licence testers. A promotional grant from the RevenueCat dashboard also flips the plan, which is
+   the quickest way to see the Advanced state.
+
 ## Design
 
 Dark, cinematic, poster-first. Lime (`--color-brand`) is the only accent. Tokens live in `app/globals.css`; motion uses the `fade-up`, `scale-in`, `shimmer` and `drift` keyframes with a reduced-motion fallback. Cards use 2:3 posters, hover lift + gradient + quick actions on pointer devices, and a bottom tab bar on phones for one-handed use.

@@ -1,9 +1,9 @@
 'use client'
 
-import 'flag-icons/css/flag-icons.min.css'
 import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import { AlertCircle, Check, ChevronDown, Search } from 'lucide-react'
 import { WORLD_COUNTRIES, findWorldCountry, type WorldCountry } from '@/lib/data/world-countries'
+import { Flag } from '@/components/shared/flag'
 import { cn } from '@/lib/utils'
 
 interface CountryComboboxProps {
@@ -14,10 +14,6 @@ interface CountryComboboxProps {
   error?: string
   name?: string
   disabled?: boolean
-}
-
-export function Flag({ code, className }: { code: string; className?: string }) {
-  return <span className={cn('fi shrink-0 overflow-hidden rounded-[3px] shadow-[0_0_0_1px_rgba(255,255,255,0.12)]', `fi-${code.toLowerCase()}`, className)} aria-hidden />
 }
 
 /** Searchable country picker (ARIA combobox + listbox) with flag-icons flags. */

@@ -5,11 +5,14 @@ import { EbaseUrls, RequestParams } from "./types";
 /** An API failure, with the HTTP status when the server answered (absent for network errors). */
 export class ApiError extends Error {
     status?: number;
+    /** The response body when the server answered, e.g. the plan details on a 429. */
+    data?: unknown;
 
-    constructor(message: string, status?: number) {
+    constructor(message: string, status?: number, data?: unknown) {
         super(message);
         this.name = "ApiError";
         this.status = status;
+        this.data = data;
     }
 }
 
@@ -61,7 +64,7 @@ async function send<T>(method: Method, params: RequestParams, baseUrl: EbaseUrls
 
         console.warn("API request failed", method.toUpperCase(), params.path, status ?? error?.message);
 
-        throw new ApiError(getErrorMessage(error), status);
+        throw new ApiError(getErrorMessage(error), status, error?.response?.data);
     }
 }
 

@@ -7,11 +7,12 @@ import { MobileNav } from '@/components/layout/mobile-nav'
 import { SearchOverlay } from '@/components/layout/search-overlay'
 import { LibrarySyncToaster } from '@/components/layout/library-sync-toaster'
 import { MovieDetailsProvider } from '@/components/movies/movie-details-context'
+import { PaywallModal } from '@/components/billing/paywall-modal'
 import { ToastProvider } from '@/components/shared/toast'
 
 /**
- * Authenticated application chrome: header, mobile tab bar, global search and
- * the shared movie-details modal. Pages render inside <main>.
+ * Authenticated application chrome: header, mobile tab bar, global search, the shared
+ * movie-details modal and the upgrade sheet. Pages render inside <main>.
  */
 export function AppShell({ children }: { children: ReactNode }) {
   const [searchOpen, setSearchOpen] = useState(false)
@@ -25,6 +26,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <MobileNav onOpenSearch={() => setSearchOpen(true)} />
             <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
             <LibrarySyncToaster />
+            <PaywallModal />
           </div>
         </MovieDetailsProvider>
       </ToastProvider>

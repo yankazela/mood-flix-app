@@ -1,4 +1,5 @@
 import type { ApiFeedback, ApiItem, ApiVote } from '@/lib/api/types';
+import type { Plan, PlanSource, Usage } from '@/lib/types';
 
 export interface User {
     email: string;
@@ -85,6 +86,15 @@ export interface UserDetails {
     dailyCount: number;
     fullyOnboarded: boolean;
     savedMovies: RecommendedItem[];
+    /** The plan as it stands right now; a lapsed subscription reads as free. Absent from sessions stored before billing existed. */
+    plan?: Plan;
+    /** When the paid plan lapses, or lapsed (ISO 8601). */
+    planExpiresAt?: string;
+    planSource?: PlanSource;
+    /** False once cancelled or a payment failed; access continues until planExpiresAt. */
+    planWillRenew?: boolean;
+    /** Today's request allowance. */
+    usage?: Usage;
 }
 
 export interface AuthTokens {

@@ -43,10 +43,23 @@ export type StreamingProviderId =
 
 export type CountryCode = string
 
+export type Plan = 'free' | 'advanced'
+export type PlanSource = 'apple' | 'google' | 'stripe' | 'promotional' | 'other'
+
+/** Where the person stands against today's request cap, as the API reports it. */
+export interface Usage {
+  plan: Plan
+  used: number
+  limit: number
+  remaining: number
+  /** ISO 8601: when the counter restarts (UTC midnight). */
+  resetsAt: string
+}
+
+/** A country by code and name. Its flag is drawn by `<Flag code />` from flag-icons, never stored as text. */
 export interface Country {
   code: CountryCode
   name: string
-  flag: string
 }
 
 export interface StreamingProvider {
@@ -200,6 +213,8 @@ export interface RecommendationResponse {
   sections: RecommendationSection[]
   /** Set when fewer titles than usual matched, even after relaxing constraints. */
   notice?: 'few_matches'
+  /** Where the person stands against today's cap, counting this request. */
+  usage?: Usage
 }
 
 // ---------------------------------------------------------------------------

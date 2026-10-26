@@ -1,26 +1,21 @@
 import type { Country, CountryCode } from '@/lib/types'
 import { findWorldCountry } from '@/lib/data/world-countries'
 
+/** The countries the catalogue is built for. Flags are drawn from the code by `<Flag />`, never stored. */
 export const COUNTRIES: Country[] = [
-  { code: 'CA', name: 'Canada', flag: '🇨🇦' },
-  { code: 'US', name: 'United States', flag: '🇺🇸' },
-  { code: 'GB', name: 'United Kingdom', flag: '🇬🇧' },
-  { code: 'FR', name: 'France', flag: '🇫🇷' },
-  { code: 'DE', name: 'Germany', flag: '🇩🇪' },
-  { code: 'AU', name: 'Australia', flag: '🇦🇺' },
-  { code: 'ZA', name: 'South Africa', flag: '🇿🇦' },
-  { code: 'IN', name: 'India', flag: '🇮🇳' },
-  { code: 'BR', name: 'Brazil', flag: '🇧🇷' },
+  { code: 'CA', name: 'Canada' },
+  { code: 'US', name: 'United States' },
+  { code: 'GB', name: 'United Kingdom' },
+  { code: 'FR', name: 'France' },
+  { code: 'DE', name: 'Germany' },
+  { code: 'AU', name: 'Australia' },
+  { code: 'ZA', name: 'South Africa' },
+  { code: 'IN', name: 'India' },
+  { code: 'BR', name: 'Brazil' },
 ]
 
 export const DEFAULT_COUNTRY: CountryCode = 'CA'
 
 export function getCountry(code: CountryCode): Country {
-  const known = COUNTRIES.find((country) => country.code === code)
-  if (known) return known
-
-  const worldCountry = findWorldCountry(code)
-  if (!worldCountry) return COUNTRIES[0]
-  const flag = Array.from(worldCountry.code, (letter) => String.fromCodePoint(0x1f1e6 + letter.charCodeAt(0) - 65)).join('')
-  return { ...worldCountry, flag }
+  return COUNTRIES.find((country) => country.code === code) ?? findWorldCountry(code) ?? COUNTRIES[0]
 }

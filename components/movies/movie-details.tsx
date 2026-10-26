@@ -20,6 +20,7 @@ import { RatingBadge } from '@/components/movies/rating-badge'
 import { StreamingProviderBadge } from '@/components/movies/streaming-provider-badge'
 import { RecommendationReason } from '@/components/movies/recommendation-reason'
 import { FeedbackPanel } from '@/components/feedback/feedback-panel'
+import { Flag } from '@/components/shared/flag'
 import { cn } from '@/lib/utils'
 
 interface MovieDetailsProps {
@@ -231,7 +232,7 @@ export function MovieDetails({ movie, recommendation, variant = 'modal', onClose
                     ))}
                   </div>
                   <p className="mt-3 text-xs text-white/45">
-                    Streaming in {country.flag} {country.name}. {ownsOne ? 'Included with a service you already have.' : 'Not on your services yet.'}
+                    Streaming in <Flag code={country.code} /> {country.name}. {ownsOne ? 'Included with a service you already have.' : 'Not on your services yet.'}
                   </p>
                 </>
               ) : (

@@ -2,18 +2,24 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { ChevronDown, Clapperboard, Clock3, LogOut, Settings2, Shield, Tv } from 'lucide-react'
+import { ChevronDown, Clapperboard, Clock3, LogOut, Settings2, Shield, Sparkles, Tv } from 'lucide-react'
 import { useAuth } from '@/lib/store/auth-context'
+import { useBilling } from '@/lib/store/billing-context'
 import { usePreferences } from '@/lib/store/preferences-context'
+import { formatPlanDate } from '@/lib/billing/format'
+import { PlanBadge } from '@/components/billing/plan-badge'
+import { Button } from '@/components/shared/button'
 import { getProvider } from '@/lib/data/providers'
 import { getCountry } from '@/lib/data/countries'
 import { GENRE_MAP } from '@/lib/data/genres'
 import { initials } from '@/lib/format'
+import { Flag } from '@/components/shared/flag'
 import { cn } from '@/lib/utils'
 
 export function UserMenu() {
   const { user, signOut } = useAuth()
   const { preferences } = usePreferences()
+  const { plan, usage, expiresAt, willRenew, openPaywall, manageSubscription } = useBilling()
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
@@ -64,14 +70,39 @@ export function UserMenu() {
           <div className="flex items-center gap-3 border-b border-white/6 p-4">
             <Avatar name={user.fullName} size="lg" />
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-white">{user.fullName}</p>
+              <p className="flex items-center gap-2 text-sm font-semibold text-white">
+                <span className="truncate">{user.fullName}</span>
+                <PlanBadge plan={plan} />
+              </p>
               <p className="truncate text-xs text-white/45">{user.email}</p>
             </div>
           </div>
 
+          <div className="flex items-center justify-between gap-3 border-b border-white/6 p-4">
+            <div className="min-w-0">
+              <p className="mb-1 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/40">
+                <Sparkles className="size-3" /> Plan
+              </p>
+              <p className="text-sm text-white">{plan === 'advanced' ? 'Advanced' : 'Free'}</p>
+              <p className="text-xs text-white/45">
+                {usage ? `${usage.remaining}/${usage.limit} picks left today` : 'Picks per day depend on your plan'}
+                {plan === 'advanced' && expiresAt && ` · ${willRenew ? 'Renews' : 'Ends'} ${formatPlanDate(expiresAt)}`}
+              </p>
+            </div>
+            {plan === 'free' ? (
+              <Button size="sm" onClick={() => { setOpen(false); openPaywall() }} leadingIcon={<Sparkles />}>
+                Upgrade
+              </Button>
+            ) : (
+              <Button size="sm" variant="secondary" onClick={() => { setOpen(false); void manageSubscription() }}>
+                Manage
+              </Button>
+            )}
+          </div>
+
           <div className="border-b border-white/6 p-4">
             <p className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/40">
-              <Tv className="size-3" /> Your services · {country.flag} {country.code}
+              <Tv className="size-3" /> Your services · <Flag code={country.code} label={country.name} className="text-[13px]" /> {country.code}
             </p>
             <div className="flex flex-wrap gap-1.5">
               {services.length === 0 && <span className="text-xs text-white/50">No services selected</span>}

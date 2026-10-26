@@ -63,6 +63,14 @@ export interface ApiTarget {
   themes_seek: string[]
 }
 
+export interface ApiUsage {
+  plan: 'free' | 'advanced'
+  used: number
+  limit: number
+  remaining: number
+  resetsAt: string
+}
+
 export interface ApiRecommendationResult {
   requestId: string
   moodProfile: ApiMoodProfile
@@ -70,6 +78,7 @@ export interface ApiRecommendationResult {
   results: ApiItem[]
   notice?: 'few_matches'
   latencyMs: number
+  usage?: ApiUsage
 }
 
 export interface ApiRequestFilters {

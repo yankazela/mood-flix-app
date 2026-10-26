@@ -6,6 +6,7 @@ import { buildRecommendBody } from '@/lib/api/adapters'
 import { RecommendationError, requestRecommendations, type RecommendationErrorKind } from '@/lib/api/recommendations'
 import { useLibrary } from '@/lib/store/library-context'
 import { useAuth } from '@/lib/store/auth-context'
+import { useBilling } from '@/lib/store/billing-context'
 import { usePreferences } from '@/lib/store/preferences-context'
 
 export type DiscoveryStatus = 'idle' | 'loading' | 'success' | 'error'
@@ -54,6 +55,7 @@ export function countActiveFilters(filters: DiscoveryFilters): number {
 export function DiscoveryProvider({ children }: { children: ReactNode }) {
   const { preferences } = usePreferences()
   const { user } = useAuth()
+  const { recordUsage } = useBilling()
   const library = useLibrary()
   const [prompt, setPrompt] = useState('')
   const [moods, setMoods] = useState<UserMoodId[]>([])
@@ -103,14 +105,19 @@ export function DiscoveryProvider({ children }: { children: ReactNode }) {
           recommendedMovieIds: result.recommendations.map((rec) => rec.movie.id),
         }
         addHistoryEntry(entry, result.recommendations.map((rec) => rec.movie))
+        if (result.usage) recordUsage(result.usage)
       } catch (err) {
         if (seq !== requestSeq.current) return
         setStatus('error')
         setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
         setErrorKind(err instanceof RecommendationError ? err.kind : 'generic')
+        // A 429 says exactly where the person stands; show it rather than a stale count.
+        if (err instanceof RecommendationError && err.rateLimit) {
+          recordUsage({ plan: err.rateLimit.plan, used: err.rateLimit.used, limit: err.rateLimit.limit, remaining: 0, resetsAt: err.rateLimit.resetsAt })
+        }
       }
     },
-    [filters, preferences.streamingProviders, addHistoryEntry],
+    [filters, preferences.streamingProviders, addHistoryEntry, recordUsage],
   )
 
   const findMovies = useCallback(() => run(prompt, moods, objective), [run, prompt, moods, objective])
