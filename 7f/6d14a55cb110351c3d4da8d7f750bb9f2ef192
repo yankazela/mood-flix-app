@@ -1,0 +1,247 @@
+out/history/__next._tree.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2,7
+  s_d38d57ead48d53::t_2a77a5baa9987e 3
+out/login/__next._tree.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2,6
+out/auth/callback/__next._full.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-11,13,18-19,21-22,26,31
+out/movie/__next.!KGFwcCk.movie.__PAGE__.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-4,6-13,16,20-23,27-31
+  s_d38d57ead48d53::t_2a77a5baa9987e 14,32,34,36,40
+out/_next/static/chunks/2zthoufje2e2b.js
+  s_d38d57ead48d53::t_c56f2be7e9d692 1
+out/404.html
+  s_d38d57ead48d53::t_c56f2be7e9d692 1
+out/forgot-password/index.html
+  s_d38d57ead48d53::t_c56f2be7e9d692 1
+out/onboarding/__next.onboarding.__PAGE__.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-4,6-15,18,20-21
+out/404/index.html
+  s_d38d57ead48d53::t_c56f2be7e9d692 1
+out/onboarding/__next._full.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-12,14,19-20,22-23,27,31
+out/movie/index.html
+  s_d38d57ead48d53::t_c56f2be7e9d692 1
+.env.example
+  s_d38d57ead48d53::t_f0056205c5c136 28-40
+lib/billing/config.ts
+  s_d38d57ead48d53::t_f0056205c5c136 1-30
+components/onboarding/country-select.tsx
+  s_d38d57ead48d53::t_2342e50f101cdf 6,17
+README.md
+  s_d38d57ead48d53::t_c9b23da082154f 124-162
+out/my-movies/__next._tree.txt
+  s_d38d57ead48d53::t_2a77a5baa9987e 3
+  s_d38d57ead48d53::t_c56f2be7e9d692 2,7
+out/signup/__next._tree.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2,7
+out/_next/static/chunks/24vsn2-4z5sv2.js
+  s_d38d57ead48d53::t_c56f2be7e9d692 1-22
+out/_next/static/chunks/22gwpe0qxmoqf.js
+  s_d38d57ead48d53::t_2a77a5baa9987e 1
+out/onboarding/__next._tree.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2,7
+out/_next/static/chunks/30e1motgrwnbg.css
+  s_d38d57ead48d53::t_c56f2be7e9d692 1
+lib/data/countries.ts
+  s_d38d57ead48d53::t_2342e50f101cdf 4,6-14,20
+out/my-movies/index.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-10,12,18-21,23-24,32,37
+  s_d38d57ead48d53::t_2a77a5baa9987e 13,25
+components/billing/paywall-modal.tsx
+  s_d38d57ead48d53::t_f0056205c5c136 1-201
+out/movie/index.txt
+  s_d38d57ead48d53::t_2a77a5baa9987e 13,25
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-10,12,18-21,23-24,32,37
+components/shared/flag.tsx
+  s_d38d57ead48d53::t_2342e50f101cdf 1-23
+app/api/requests/index.ts
+  s_d38d57ead48d53::t_f0056205c5c136 8-9,11,15,67
+lib/api/recommendations.ts
+  s_d38d57ead48d53::t_f0056205c5c136 1,9-16,20,22,27-38,48
+android/capacitor.settings.gradle
+  s_d38d57ead48d53::t_c56f2be7e9d692 4-6
+components/discover/hero-section.tsx
+  s_d38d57ead48d53::t_4b2e8c350018ff 11
+  s_d38d57ead48d53::t_15203a12fab41a 12
+  s_d38d57ead48d53::t_8e392dba8a2f62 57
+  s_d38d57ead48d53::t_d2dd8aa5043cde 59
+out/_next/static/chunks/2rqy491umz-8o.js
+  s_d38d57ead48d53::t_c56f2be7e9d692 1
+out/onboarding/index.html
+  s_d38d57ead48d53::t_c56f2be7e9d692 1
+out/_not-found/index.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-9,11,13-14,16-17,25,28
+components/layout/user-menu.tsx
+  s_d38d57ead48d53::t_7ac4ac7b625d85 73-76,81-100
+  s_d38d57ead48d53::t_480da3476e45ac 22
+  s_d38d57ead48d53::t_caf2905de44694 16
+  s_d38d57ead48d53::t_c97a45d4f4e183 5,7,9-11
+  s_d38d57ead48d53::t_bc5cbc9aa67bb9 105
+  s_d38d57ead48d53::t_a7d80b06b148cd 101-102
+out/auth/callback/__next._tree.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2,6
+out/my-movies/__next.!KGFwcCk.my-movies.__PAGE__.txt
+  s_d38d57ead48d53::t_2a77a5baa9987e 14,32,34,36,40
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-4,6-13,16,20-23,27-31
+out/history/__next.!KGFwcCk.history.__PAGE__.txt
+  s_d38d57ead48d53::t_2a77a5baa9987e 14,32,34,36,40
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-4,6-13,16,20-23,27-31
+out/_not-found/index.html
+  s_d38d57ead48d53::t_c56f2be7e9d692 1
+out/_next/static/chunks/turbopack-3qpssn2f38aqc.js
+  s_d38d57ead48d53::t_c56f2be7e9d692 1
+out/__next.!KGFwcCk.__PAGE__.txt
+  s_d38d57ead48d53::t_2a77a5baa9987e 14,28,30,32,35
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-4,6-13,16,18-21,25-27
+out/history/index.txt
+  s_d38d57ead48d53::t_2a77a5baa9987e 13,25
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-10,12,18-21,23-24,29,32,37
+out/login/index.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-10,12,17-20,22-23,32,37
+out/signup/index.html
+  s_d38d57ead48d53::t_c56f2be7e9d692 1
+components/layout/app-shell.tsx
+  s_d38d57ead48d53::t_f0056205c5c136 10,14-15,29
+lib/store/billing-context.tsx
+  s_d38d57ead48d53::t_f0056205c5c136 1-204
+out/auth/callback/index.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-11,13,18-19,21-22,26,31
+app/(app)/page.tsx
+  s_d38d57ead48d53::t_f0056205c5c136 3,5-6,24-26,28,41,52-57
+out/index.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-10,12,17-20,22-23,27,30,34
+  s_d38d57ead48d53::t_2a77a5baa9987e 13,24
+store/auth/slice.ts
+  s_d38d57ead48d53::t_f0056205c5c136 111-116,137
+out/_next/static/chunks/1waa6z1tq8v4y.js
+  s_d38d57ead48d53::t_2a77a5baa9987e 1
+ios/App/App.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+  s_d38d57ead48d53::t_56d25ff576dd5a 12-29
+out/my-movies/__next._full.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-10,12,18-21,23-24,32,37
+  s_d38d57ead48d53::t_2a77a5baa9987e 13,25
+out/_not-found/__next._not-found.__PAGE__.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-4,6-10,12,16-19
+components/providers.tsx
+  s_d38d57ead48d53::t_f0056205c5c136 6,14-18
+out/__next._tree.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2,7
+  s_d38d57ead48d53::t_2a77a5baa9987e 3
+out/login/__next._full.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-10,12,17-20,22-23,32,37
+package.json
+  s_d38d57ead48d53::t_4a6ba560d7b67b 19
+out/signup/__next.!KGF1dGgp.signup.__PAGE__.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-4,6-12,17-21,23,31
+tsconfig.tsbuildinfo
+  s_d38d57ead48d53::t_029ff88c201484 1
+out/login/__next.!KGF1dGgp.login.__PAGE__.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-4,6-12,16-20,22,30
+out/_next/static/chunks/1pqa9ws0k9woh.js
+  s_d38d57ead48d53::t_c56f2be7e9d692 1
+out/index.html
+  s_d38d57ead48d53::t_c56f2be7e9d692 1
+components/billing/usage-pill.tsx
+  s_d38d57ead48d53::t_f0056205c5c136 1-31
+out/forgot-password/__next._full.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-10,12,17-20,22-23,32,37
+lib/types/index.ts
+  s_d38d57ead48d53::t_f0056205c5c136 46-58,216-217
+  s_d38d57ead48d53::t_834c798cb55274 59
+out/onboarding/index.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-12,14,19-20,22-23,27,31
+app/(auth)/signup/store/state.ts
+  s_d38d57ead48d53::t_f0056205c5c136 2,89-97
+out/auth/callback/__next.auth.callback.__PAGE__.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-4,6-14,16,20-21
+lib/api/adapters.ts
+  s_d38d57ead48d53::t_f0056205c5c136 104
+lib/api/types.ts
+  s_d38d57ead48d53::t_f0056205c5c136 66-73,81
+lib/store/discovery-context.tsx
+  s_d38d57ead48d53::t_4b8b07117536cc 108,114-117,120
+  s_d38d57ead48d53::t_64a78c844e97b7 9
+  s_d38d57ead48d53::t_002241c395c4b8 58
+lib/billing/types.ts
+  s_d38d57ead48d53::t_f0056205c5c136 1-17
+out/_next/static/chunks/0rg09ylqi7n23.js
+  s_d38d57ead48d53::t_c56f2be7e9d692 1
+out/my-movies/index.html
+  s_d38d57ead48d53::t_c56f2be7e9d692 1
+out/_not-found/__next._full.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-9,11,13-14,16-17,25,28
+ios/App/CapApp-SPM/Package.swift
+  s_d38d57ead48d53::t_c56f2be7e9d692 14-15,22-23
+out/forgot-password/index.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-10,12,17-20,22-23,32,37
+out/history/index.html
+  s_d38d57ead48d53::t_c56f2be7e9d692 1
+out/signup/__next._full.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-10,12,18-21,23-24,33,38
+  s_d38d57ead48d53::t_2a77a5baa9987e 30
+lib/billing/format.ts
+  s_d38d57ead48d53::t_f0056205c5c136 1-30
+lib/billing/store.ts
+  s_d38d57ead48d53::t_f0056205c5c136 1-111
+out/__next._full.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-10,12,17-20,22-23,27,30,34
+  s_d38d57ead48d53::t_2a77a5baa9987e 13,24
+out/auth/callback/index.html
+  s_d38d57ead48d53::t_c56f2be7e9d692 1
+components/movies/movie-details.tsx
+  s_d38d57ead48d53::t_29f7e2680ae573 23
+  s_d38d57ead48d53::t_d9b50e0ccac095 235
+out/_next/static/chunks/416gv-u8kz8k0.js
+  s_d38d57ead48d53::t_2a77a5baa9987e 1
+components/auth/country-combobox.tsx
+  s_d38d57ead48d53::t_3f1da3d5e21c3b 6
+out/forgot-password/__next._tree.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2,6
+out/login/index.html
+  s_d38d57ead48d53::t_c56f2be7e9d692 1
+components/billing/plan-badge.tsx
+  s_d38d57ead48d53::t_f0056205c5c136 1-16
+out/movie/__next._tree.txt
+  s_d38d57ead48d53::t_2a77a5baa9987e 3
+  s_d38d57ead48d53::t_c56f2be7e9d692 2,7
+lib/api/billing.ts
+  s_d38d57ead48d53::t_f0056205c5c136 1-8
+out/_not-found/__next._tree.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-3
+android/app/capacitor.build.gradle
+  s_d38d57ead48d53::t_c56f2be7e9d692 12
+out/_next/static/chunks/0x4_l8k2_a6io.js
+  s_d38d57ead48d53::t_c56f2be7e9d692 1
+out/movie/__next._full.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-10,12,18-21,23-24,32,37
+  s_d38d57ead48d53::t_2a77a5baa9987e 13,25
+out/forgot-password/__next.!KGF1dGgp.forgot-password.__PAGE__.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-4,6-12,16-20,22,30
+out/history/__next._full.txt
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-10,12,18-21,23-24,29,32,37
+  s_d38d57ead48d53::t_2a77a5baa9987e 13,25
+out/signup/index.txt
+  s_d38d57ead48d53::t_2a77a5baa9987e 30
+  s_d38d57ead48d53::t_c56f2be7e9d692 2-10,12,18-21,23-24,33,38
+out/_next/static/chunks/3269aslqon7ae.js
+  s_d38d57ead48d53::t_c56f2be7e9d692 1
+pnpm-lock.yaml
+  s_d38d57ead48d53::t_2262e33c3e7abd 26-28,786-793,3460-3466
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7f6d14a55cb110351c3d4da8d7f750bb9f2ef192",
+  "prompts": {},
+  "sessions": {
+    "s_d38d57ead48d53": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "35272b22-e545-4c09-974f-46608b06b576",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Yanick Kazadi <yanickkazadi@Mac.cgocable.net>"
+    }
+  }
+}
