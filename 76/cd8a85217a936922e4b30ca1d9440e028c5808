@@ -1,0 +1,14 @@
+.gitignore
+  h_76346b91dc1a33 17-19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "76cd8a85217a936922e4b30ca1d9440e028c5808",
+  "prompts": {},
+  "humans": {
+    "h_76346b91dc1a33": {
+      "author": "Yanick Kazadi <yanickkazadi@ip-192-168-0-139.eu-west-1.compute.internal>"
+    }
+  }
+}
