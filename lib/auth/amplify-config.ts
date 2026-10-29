@@ -17,11 +17,17 @@ const redirectSignOutEnv = process.env.NEXT_PUBLIC_COGNITO_REDIRECT_SIGN_OUT ?? 
 
 export const isCognitoConfigured = Boolean(userPoolId && userPoolClientId)
 export const isGoogleConfigured = isCognitoConfigured && Boolean(oauthDomain)
+/** What the apps need to run the Hosted UI flow themselves; see lib/auth/native-oauth.ts. */
+export const cognitoOAuth = { domain: oauthDomain, clientId: userPoolClientId }
 
 const REMEMBER_KEY = 'moodflix.auth.remember'
 
 function origin(): string {
   return typeof window === 'undefined' ? 'http://localhost:3000' : window.location.origin
+}
+
+function unique(urls: string[]): string[] {
+  return [...new Set(urls.filter(Boolean))]
 }
 
 let configured = false
@@ -43,8 +49,9 @@ export function configureAmplify(): void {
               oauth: {
                 domain: oauthDomain,
                 scopes: ['openid', 'email', 'profile'],
-                redirectSignIn: [redirectSignInEnv || `${origin()}/auth/callback`],
-                redirectSignOut: [redirectSignOutEnv || `${origin()}/login`],
+                // The configured URL plus this origin's, so a dev server or a preview still matches.
+                redirectSignIn: unique([redirectSignInEnv, `${origin()}/auth/callback`]),
+                redirectSignOut: unique([redirectSignOutEnv, `${origin()}/login`]),
                 responseType: 'code' as const,
                 providers: ['Google' as const],
               },

@@ -8,6 +8,10 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  // Dev-only badge. Bottom-left sat on top of the onboarding footer and the phone tab bar.
+  devIndicators: {
+    position: 'top-left',
+  },
 }
 
 export default nextConfig

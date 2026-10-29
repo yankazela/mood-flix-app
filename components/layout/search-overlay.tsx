@@ -73,7 +73,7 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-[85] flex items-start justify-center bg-ink/80 p-3 pt-[8vh] backdrop-blur-sm animate-fade-in sm:p-6 sm:pt-[12vh]" onClick={onClose}>
+    <div className="fixed inset-0 z-[85] flex items-start justify-center bg-ink/85 p-3 pt-[8vh] animate-fade-in sm:p-6 sm:pt-[12vh]" onClick={onClose}>
       <div role="dialog" aria-modal="true" aria-label="Search movies" className="w-full max-w-2xl overflow-hidden rounded-3xl border border-white/10 bg-surface-2 shadow-2xl animate-scale-in" onClick={(event) => event.stopPropagation()}>
         <div className="flex items-center gap-3 border-b border-white/6 px-4 py-3 sm:px-5">
           <Search className="size-5 shrink-0 text-white/40" />

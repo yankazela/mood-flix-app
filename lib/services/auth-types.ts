@@ -1,4 +1,5 @@
 import type { User } from '@/lib/types'
+import type { AuthTokens } from '@/app/(auth)/signup/store/state'
 
 /**
  * Provider-agnostic auth contract. The UI and Redux sagas only depend on this;
@@ -28,7 +29,12 @@ export type SignUpResult =
   /** The provider emailed a verification code that must be confirmed first. */
   | { status: 'confirm-email'; email: string; destination?: string }
 
-export type RedirectResult = { type: 'success' } | { type: 'failure'; message: string }
+export type RedirectResult =
+  /** `tokens` is set when the app exchanged the code itself (native); on the web Amplify holds the session. */
+  | { type: 'success'; tokens?: AuthTokens }
+  | { type: 'failure'; message: string }
+  /** The person closed the browser without finishing. */
+  | { type: 'cancelled' }
 
 export type AuthErrorCode =
   | 'invalid-credentials'
@@ -70,7 +76,7 @@ export interface AuthProvider {
   requestPasswordReset(email: string): Promise<void>
   /** JWT for calling our own backend, or `null` when not applicable. */
   getIdToken(): Promise<string | null>
-  getSessionTokens?(): Promise<import('@/app/(auth)/signup/store/state').AuthTokens | null>
+  getSessionTokens?(): Promise<AuthTokens | null>
   /** Subscribe to the outcome of an OAuth redirect (Google). Returns an unsubscribe function. */
   onRedirectResult(callback: (result: RedirectResult) => void): () => void
 }

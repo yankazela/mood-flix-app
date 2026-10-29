@@ -14,15 +14,23 @@ export function UsagePill({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        'inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium',
+        'inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium',
         exhausted ? 'border-brand/30 bg-brand/10 text-white/80' : 'border-white/10 bg-white/5 text-white/60',
         className,
       )}
     >
-      <Sparkles className="size-3 text-brand" aria-hidden />
-      <span>{exhausted ? `Picks reset ${formatResetsIn(usage.resetsAt)}` : `${usage.remaining}/${usage.limit} picks left today`}</span>
+      <Sparkles className="size-3 shrink-0 text-brand" aria-hidden />
+      <span className="truncate">
+        {exhausted ? (
+          `Picks reset ${formatResetsIn(usage.resetsAt)}`
+        ) : (
+          <>
+            {usage.remaining}/{usage.limit} picks left<span className="hidden sm:inline"> today</span>
+          </>
+        )}
+      </span>
       {plan === 'free' && (
-        <button type="button" onClick={openPaywall} className="font-semibold text-brand outline-none hover:underline focus-visible:underline">
+        <button type="button" onClick={openPaywall} className="shrink-0 font-semibold text-brand outline-none hover:underline focus-visible:underline">
           Upgrade
         </button>
       )}

@@ -69,11 +69,11 @@ export function PaywallModal() {
       role="dialog"
       aria-modal="true"
       aria-labelledby="paywall-title"
-      className="fixed inset-0 z-[85] flex items-end justify-center bg-ink/80 p-0 backdrop-blur-sm animate-fade-in sm:items-center sm:p-6"
+      className="fixed inset-0 z-[85] flex items-end justify-center bg-ink/85 p-0 animate-fade-in sm:items-center sm:p-6"
       onClick={closePaywall}
     >
       <div
-        className="relative max-h-[94dvh] w-full max-w-lg overflow-y-auto overscroll-contain rounded-t-[28px] bg-surface p-6 shadow-2xl ring-1 ring-white/10 animate-fade-up sm:rounded-[28px] sm:p-8 [scrollbar-width:thin]"
+        className="relative isolate max-h-[94dvh] w-full max-w-lg overflow-y-auto overscroll-contain rounded-t-[28px] bg-surface p-6 shadow-2xl ring-1 ring-white/10 animate-fade-up sm:rounded-[28px] sm:p-8 [scrollbar-width:thin]"
         onClick={(event) => event.stopPropagation()}
       >
         <button
@@ -156,7 +156,9 @@ export function PaywallModal() {
                 </>
               ) : (
                 <p className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm leading-6 text-white/70">
-                  Subscribe from the UpMyMood app on iPhone or Android. Your plan follows your account, so it works here too.
+                  {Capacitor.isNativePlatform()
+                    ? 'Subscriptions aren’t available in this version of the app yet. Please update the app, or check back soon.'
+                    : 'Subscribe from the UpMyMood app on iPhone or Android. Your plan follows your account, so it works here too.'}
                 </p>
               )}
             </div>

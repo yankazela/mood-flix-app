@@ -61,8 +61,10 @@ export function HeroSection() {
           </PromptInput>
         </div>
 
-        <MoodSelector selected={moods} onToggle={toggleMood} disabled={loading} className="mt-5" />
-        <ObjectiveToggle value={objective} onChange={setObjective} disabled={loading} className="mt-3" />
+        <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3 animate-fade-up stagger" style={{ '--stagger-index': 3 } as React.CSSProperties}>
+          <MoodSelector selected={moods} onToggle={toggleMood} disabled={loading} />
+          <ObjectiveToggle value={objective} onChange={setObjective} disabled={loading} />
+        </div>
       </div>
     </section>
   )

@@ -22,6 +22,7 @@ import { RecommendationReason } from '@/components/movies/recommendation-reason'
 import { FeedbackPanel } from '@/components/feedback/feedback-panel'
 import { Flag } from '@/components/shared/flag'
 import { cn } from '@/lib/utils'
+import { isAndroidApp } from '@/lib/platform'
 
 interface MovieDetailsProps {
   movie: Movie
@@ -78,7 +79,15 @@ export function MovieDetails({ movie, recommendation, variant = 'modal', onClose
           <img src={movie.backdropUrl} alt="" aria-hidden className="absolute inset-0 size-full object-cover object-top" draggable={false} />
         ) : (
           blurredPoster && (
-            <img src={blurredPoster} alt="" aria-hidden className="absolute inset-0 size-full scale-125 object-cover blur-2xl saturate-125" draggable={false} />
+            <img
+              src={blurredPoster}
+              alt=""
+              aria-hidden
+              // Android's WebView ghosts content when a blurred, scaled layer sits inside this scrolling sheet,
+              // so there the poster is simply dimmed under the gradients.
+              className={cn('absolute inset-0 size-full object-cover', isAndroidApp() ? 'object-top opacity-40' : 'scale-125 blur-2xl saturate-125')}
+              draggable={false}
+            />
           )
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/50 to-ink/20" />
@@ -88,7 +97,7 @@ export function MovieDetails({ movie, recommendation, variant = 'modal', onClose
           {variant === 'page' ? (
             <Link
               href="/"
-              className="inline-flex h-10 items-center gap-2 rounded-full bg-black/40 pl-3 pr-4 text-sm font-medium text-white/85 backdrop-blur-md transition hover:bg-black/60 hover:text-white"
+              className="inline-flex h-10 items-center gap-2 rounded-full bg-black/55 pl-3 pr-4 text-sm font-medium text-white/85 transition hover:bg-black/70 hover:text-white"
             >
               <ArrowLeft className="size-4" /> Back to Discover
             </Link>

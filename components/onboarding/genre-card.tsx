@@ -27,9 +27,13 @@ export function GenreCard({ genre, selected, onToggle, index = 0 }: GenreCardPro
       )}
     >
       <div className="flex items-start justify-between">
-        <span className="text-3xl leading-none" aria-hidden>
-          {genre.emoji}
-        </span>
+        {genre.image ? (
+          <img src={genre.image} alt="" aria-hidden draggable={false} className="size-11 shrink-0 select-none object-contain sm:size-12" />
+        ) : (
+          <span className="text-3xl leading-none" aria-hidden>
+            {genre.emoji}
+          </span>
+        )}
         <span
           className={cn(
             'flex size-6 items-center justify-center rounded-full border transition-all duration-300',

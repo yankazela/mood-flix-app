@@ -10,7 +10,7 @@ interface RecommendationReasonProps {
 export function RecommendationReason({ recommendation, className }: RecommendationReasonProps) {
   return (
     <section className={cn('relative overflow-hidden rounded-2xl border border-brand/25 bg-brand/8 p-5 sm:p-6', className)}>
-      <div className="pointer-events-none absolute -right-12 -top-12 size-40 rounded-full bg-brand/15 blur-3xl" aria-hidden />
+      <div className="pointer-events-none absolute -right-24 -top-24 size-64 rounded-full bg-[radial-gradient(closest-side,rgba(217,246,107,0.16),transparent)]" aria-hidden />
       <h3 className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-brand">
         <Sparkles className="size-3.5" /> Why we picked this for you
       </h3>

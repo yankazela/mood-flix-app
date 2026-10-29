@@ -146,6 +146,8 @@ export interface UserMood {
   emoji: string
   /** How the mood reads after "I’m feeling", when it differs from the lower-cased label. */
   phrase?: string
+  /** Illustration under public/, shown in the mood dropdown instead of the emoji. */
+  image?: string
 }
 
 export interface DiscoveryFilters {

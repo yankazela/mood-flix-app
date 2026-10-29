@@ -85,6 +85,10 @@ const authSlice = createSlice({
       state.pending = null
       state.unconfirmedEmail = action.payload
     },
+    /** The person backed out of the Google browser flow. Nothing to report. */
+    signInCancelled: (state) => {
+      state.pending = null
+    },
     signOutRequested: (state) => {
       state.pending = 'sign-out'
     },
@@ -129,6 +133,7 @@ export const {
   signInSucceeded,
   signInFailed,
   signInNeedsConfirmation,
+  signInCancelled,
   signOutRequested,
   signedOut,
   authErrorCleared,

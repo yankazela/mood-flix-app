@@ -1,19 +1,37 @@
 'use client'
 
-import { ArrowUpRight, Sparkles } from 'lucide-react'
 import type { Movie, UserMoodId } from '@/lib/types'
 import { fetchPopular } from '@/lib/api/movies'
+import { getMood } from '@/lib/data/moods'
 import { useAsync } from '@/lib/hooks/use-async'
 import { useDiscovery } from '@/lib/store/discovery-context'
 import { usePreferences } from '@/lib/store/preferences-context'
 import { MovieRow } from '@/components/movies/movie-row'
+import { SelectMenu, type SelectMenuOption } from '@/components/shared/select-menu'
 
-const EXAMPLES: { prompt: string; moods: UserMoodId[]; emoji: string }[] = [
-  { emoji: '🛋️', prompt: 'Long day at work. I want something funny, relaxing and easy to watch.', moods: ['stressed'] },
-  { emoji: '🍿', prompt: 'Saturday night with friends. Something exciting, loud and fun.', moods: ['excited'] },
-  { emoji: '🕯️', prompt: 'Date night. Romantic, a little funny, nothing too heavy.', moods: ['romantic'] },
-  { emoji: '🧠', prompt: 'Bored and want something smart that makes me think. A twist would be great.', moods: ['bored'] },
+type ExampleId = 'after-work' | 'friends' | 'date-night' | 'something-smart'
+
+interface Example {
+  id: ExampleId
+  label: string
+  prompt: string
+  moods: UserMoodId[]
+}
+
+/** Ready-made prompts for people who do not know where to start. Each borrows the illustration of its first mood. */
+const EXAMPLES: Example[] = [
+  { id: 'after-work', label: 'After a long day', prompt: 'Long day at work. I want something funny, relaxing and easy to watch.', moods: ['stressed'] },
+  { id: 'friends', label: 'Saturday night with friends', prompt: 'Saturday night with friends. Something exciting, loud and fun.', moods: ['excited'] },
+  { id: 'date-night', label: 'Date night', prompt: 'Date night. Romantic, a little funny, nothing too heavy.', moods: ['romantic'] },
+  { id: 'something-smart', label: 'Something smart', prompt: 'Bored and want something smart that makes me think. A twist would be great.', moods: ['bored'] },
 ]
+
+const EXAMPLE_OPTIONS: SelectMenuOption<ExampleId>[] = EXAMPLES.map((example) => ({
+  value: example.id,
+  label: example.label,
+  hint: `“${example.prompt}”`,
+  image: getMood(example.moods[0]).image,
+}))
 
 const NO_MOVIES: Movie[] = []
 
@@ -34,31 +52,16 @@ export function IdleShowcase() {
   )
   const topRated = useAsync(() => fetchPopular({ sort: 'rating', limit: 12 }), 'top-rated', NO_MOVIES)
 
+  const runExample = (id: ExampleId) => {
+    const example = EXAMPLES.find((candidate) => candidate.id === id)
+    if (example) void rerun(example.prompt, example.moods)
+  }
+
   return (
     <div className="space-y-12 pb-24 md:pb-16">
-      <section className="page-gutter">
-        <p className="mb-4 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-white/40">
-          <Sparkles className="size-3.5 text-brand" /> Not sure what to say? Try one of these
-        </p>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {EXAMPLES.map((example, index) => (
-            <button
-              key={example.prompt}
-              type="button"
-              onClick={() => rerun(example.prompt, example.moods)}
-              style={{ '--stagger-index': index + 3 } as React.CSSProperties}
-              className="group flex min-h-[112px] flex-col justify-between rounded-2xl border border-white/8 bg-surface/70 p-4 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-brand/40 hover:bg-surface-2 animate-fade-up stagger"
-            >
-              <span className="text-2xl" aria-hidden>
-                {example.emoji}
-              </span>
-              <span className="mt-3 flex items-end justify-between gap-3">
-                <span className="text-[13px] leading-5 text-white/75 group-hover:text-white">“{example.prompt}”</span>
-                <ArrowUpRight className="size-4 shrink-0 text-white/30 transition group-hover:text-brand" />
-              </span>
-            </button>
-          ))}
-        </div>
+      <section className="page-gutter animate-fade-up stagger" style={{ '--stagger-index': 4 } as React.CSSProperties}>
+        {/* Nothing stays selected: picking an example runs it, and the prompt above fills in with its words. */}
+        <SelectMenu label="Example prompts" prefix="Not sure what to say?" options={EXAMPLE_OPTIONS} selected={[]} onSelect={runExample} placeholder="Try one of these" />
       </section>
 
       <MovieRow

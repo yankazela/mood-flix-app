@@ -52,7 +52,7 @@ export async function loadOffer(): Promise<BillingOffer | null> {
 }
 
 export async function purchase(offer: BillingOffer): Promise<PurchaseOutcome> {
-  if (!storeAvailable()) throw new Error('Subscriptions are available in the UpMyMood app for iPhone and Android.')
+  if (!storeAvailable()) throw new Error(unavailableMessage('Subscriptions'))
   try {
     const { customerInfo } = await Purchases.purchasePackage({ aPackage: offer.package })
     return isEntitled(customerInfo) ? 'purchased' : 'pending'
@@ -64,7 +64,7 @@ export async function purchase(offer: BillingOffer): Promise<PurchaseOutcome> {
 
 /** Re-attaches purchases made with this store account. Resolves to whether Advanced is active afterwards. */
 export async function restore(): Promise<boolean> {
-  if (!storeAvailable()) throw new Error('Restoring purchases works in the UpMyMood app for iPhone and Android.')
+  if (!storeAvailable()) throw new Error(unavailableMessage('Restoring purchases'))
   try {
     const { customerInfo } = await Purchases.restorePurchases()
     return isEntitled(customerInfo)
@@ -82,6 +82,21 @@ export async function managementUrl(): Promise<string | null> {
   } catch {
     return null
   }
+}
+
+function unavailableMessage(what: string): string {
+  return Capacitor.isNativePlatform()
+    ? `${what} aren’t available in this version of the app yet.`
+    : `${what} work in the UpMyMood app for iPhone and Android.`
+}
+
+/** Says, once per session and only in an app build, which key is missing; the UI itself stays quiet about it. */
+let warnedAboutKey = false
+export function warnIfStoreUnconfigured(): void {
+  if (warnedAboutKey || !Capacitor.isNativePlatform() || revenueCatApiKey()) return
+  warnedAboutKey = true
+  const variable = Capacitor.getPlatform() === 'ios' ? 'NEXT_PUBLIC_REVENUECAT_IOS_KEY' : 'NEXT_PUBLIC_REVENUECAT_ANDROID_KEY'
+  console.warn(`[billing] No RevenueCat key for ${Capacitor.getPlatform()}: set ${variable} in .env and rebuild to enable purchases.`)
 }
 
 function toOffer(pkg: PurchasesPackage): BillingOffer {

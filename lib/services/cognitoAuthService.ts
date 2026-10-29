@@ -14,9 +14,11 @@ import { Hub } from 'aws-amplify/utils'
 import { cognitoUserPoolsTokenProvider } from 'aws-amplify/auth/cognito'
 import type { AuthTokens } from '@/app/(auth)/signup/store/state'
 import type { User } from '@/lib/types'
-import { configureAmplify, isGoogleConfigured, setRememberSession } from '@/lib/auth/amplify-config'
+import { cognitoOAuth, configureAmplify, isGoogleConfigured, setRememberSession } from '@/lib/auth/amplify-config'
+import { completeNativeGoogleSignIn, isNativeApp, listenForNativeCallback, startNativeGoogleSignIn } from '@/lib/auth/native-oauth'
 import {
   AuthError,
+  authErrorMessage,
   type AuthErrorCode,
   type AuthProvider,
   type ConfirmSignUpInput,
@@ -166,6 +168,11 @@ export class CognitoAuthProvider implements AuthProvider {
     }
     setRememberSession(true)
     try {
+      // Google blocks sign-in inside a WebView, so the apps hand the Hosted UI to the system browser.
+      if (isNativeApp()) {
+        await startNativeGoogleSignIn(cognitoOAuth)
+        return null
+      }
       await signInWithRedirect({ provider: 'Google' })
       return null
     } catch (error) {
@@ -215,6 +222,17 @@ export class CognitoAuthProvider implements AuthProvider {
   }
 
   onRedirectResult(callback: (result: RedirectResult) => void): () => void {
+    if (isNativeApp()) {
+      return listenForNativeCallback((outcome) => {
+        if (outcome.type === 'cancelled') {
+          callback({ type: 'cancelled' })
+          return
+        }
+        completeNativeGoogleSignIn(outcome.url, cognitoOAuth)
+          .then((tokens) => callback({ type: 'success', tokens }))
+          .catch((error: unknown) => callback({ type: 'failure', message: authErrorMessage(error) }))
+      })
+    }
     return Hub.listen('auth', ({ payload }) => {
       if (payload.event === 'signInWithRedirect') callback({ type: 'success' })
       if (payload.event === 'signInWithRedirect_failure') {

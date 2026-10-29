@@ -112,7 +112,7 @@ export function FiltersPanel({ filters, onChange, onReset, activeCount, disabled
 
   const panel = (
     <>
-      {!isDesktop && <div className="fixed inset-0 z-[70] bg-ink/70 backdrop-blur-sm animate-fade-in" onClick={() => setOpen(false)} aria-hidden />}
+      {!isDesktop && <div className="fixed inset-0 z-[70] bg-ink/80 animate-fade-in" onClick={() => setOpen(false)} aria-hidden />}
       <div
         ref={panelRef}
         role="dialog"

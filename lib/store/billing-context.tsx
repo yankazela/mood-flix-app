@@ -4,7 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import type { Plan, PlanSource, Usage } from '@/lib/types'
 import type { BillingOffer } from '@/lib/billing/types'
 import { subscriptionSettingsUrl } from '@/lib/billing/config'
-import { forget, identify, loadOffer, managementUrl, purchase as purchaseOffer, restore as restorePurchases, storeAvailable } from '@/lib/billing/store'
+import { forget, identify, loadOffer, managementUrl, purchase as purchaseOffer, restore as restorePurchases, storeAvailable, warnIfStoreUnconfigured } from '@/lib/billing/store'
 import { syncSubscription } from '@/lib/api/billing'
 import { updateBackendSessionUser } from '@/lib/auth/backend-session'
 import { useAuth } from '@/lib/store/auth-context'
@@ -66,6 +66,10 @@ export function BillingProvider({ children }: { children: ReactNode }) {
 
   const userId = user?.userId ?? null
   const canPurchase = storeAvailable()
+
+  useEffect(() => {
+    warnIfStoreUnconfigured()
+  }, [])
 
   // The store SDK follows the signed-in person, so purchases attach to their account.
   useEffect(() => {

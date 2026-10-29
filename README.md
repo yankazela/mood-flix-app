@@ -113,6 +113,15 @@ Copy `.env.example` to `.env.local` and fill it in. Values are inlined at build 
 
 After Cognito creates the identity, the saga registers the user with the MoodFlix backend (`POST /user` on `EbaseUrls.MOOD_BE`) with the Cognito ID token as `Authorization: Bearer`. For Google the body is `{ userId, email, fullName, provider, country }`, where `country` is the ISO 3166-1 alpha-2 code picked on the sign-up page (e.g. `"CA"`), carried across the redirect in localStorage. The email form sends `country` in its `submitUser` payload. A backend failure is logged and stored in `state.auth.profileError` but does not block sign-in. Because it runs after every Google sign-in, the endpoint should behave as an upsert.
 
+**Google in the iOS and Android apps.** Google refuses to sign people in inside an embedded WebView, and the
+app's origin there (`https://localhost` on Android, `capacitor://localhost` on iOS) never matches a web callback
+URL. So in the apps `lib/auth/native-oauth.ts` opens the Hosted UI in the system browser (a Custom Tab or
+SFSafariViewController) with PKCE, Cognito sends the browser back to `upmymood://auth/callback`, the `appUrlOpen`
+event delivers that URL, and the app exchanges the code at `/oauth2/token` itself. The tokens become the same backend
+session a password sign-in creates. The scheme is registered in `AndroidManifest.xml` and `Info.plist`, and
+`upmymood://auth/callback` must be among the app client's callback URLs (the auth stack in `../MovieMood` lists it).
+Closing the browser without finishing clears the spinner; nothing is reported.
+
 **AWS setup**
 
 1. **User pool**: sign-in with email, email as a required attribute, `name` enabled as a standard attribute, verification by email code.

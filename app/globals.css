@@ -72,7 +72,8 @@
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    /* `none`, not an identity translate: a settled element keeps no transform, which Android WebView scrolls more reliably. */
+    transform: none;
   }
 }
 
@@ -92,7 +93,7 @@
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: none;
   }
 }
 
@@ -258,4 +259,10 @@
 
 @utility safe-bottom {
   padding-bottom: max(env(safe-area-inset-bottom), 0.75rem);
+}
+
+/* A stray wide element must never make the page scroll sideways on a phone. */
+html,
+body {
+  overflow-x: clip;
 }

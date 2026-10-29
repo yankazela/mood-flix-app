@@ -63,7 +63,7 @@ export function PromptInput({ value, onChange, onSubmit, loading = false, canSub
           className="block w-full resize-none bg-transparent py-5 pl-14 pr-5 text-[17px] leading-7 text-white outline-none placeholder:text-white/30 disabled:opacity-60 sm:py-6 sm:pl-16 sm:pr-6 sm:text-lg sm:leading-8"
         />
         <div className="flex flex-col gap-3 border-t border-white/6 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5">
-          <div className="flex min-w-0 flex-1 items-center gap-2 text-xs text-white/40">{children}</div>
+          <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2 text-xs text-white/40">{children}</div>
           <div className="flex items-center justify-between gap-3 sm:justify-end">
             <span className="hidden text-[11px] text-white/30 sm:inline">
               <kbd className="rounded border border-white/15 px-1.5 py-0.5 font-sans">⌘</kbd> + <kbd className="rounded border border-white/15 px-1.5 py-0.5 font-sans">↵</kbd>

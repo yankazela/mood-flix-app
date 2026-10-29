@@ -2,7 +2,7 @@ import { Capacitor } from '@capacitor/core'
 import type { Plan } from '@/lib/types'
 
 /** The RevenueCat entitlement that unlocks the Advanced plan. Must match the backend's REVENUECAT_ENTITLEMENT_ID. */
-export const ENTITLEMENT_ID = process.env.NEXT_PUBLIC_REVENUECAT_ENTITLEMENT || 'advanced'
+export const ENTITLEMENT_ID = process.env.NEXT_PUBLIC_REVENUECAT_ENTITLEMENT || 'upmymood_pro'
 
 /** Apple requires both links on a paywall. The Terms default is Apple's standard EULA. */
 export const TERMS_URL = process.env.NEXT_PUBLIC_TERMS_URL || 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/'

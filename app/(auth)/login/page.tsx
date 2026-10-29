@@ -1,5 +1,5 @@
 'use client'
-import { signInWithRedirect } from 'aws-amplify/auth';
+
 import { Suspense, useEffect, useState, type FormEvent } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
@@ -57,8 +57,7 @@ function LoginForm() {
   }
 
   const handleGoogleSignIn = () => {
-    // dispatch(googleSignInRequested())
-    signInWithRedirect({ provider: 'Google' })
+    dispatch(googleSignInRequested())
   }
 
   const useDemo = () => {

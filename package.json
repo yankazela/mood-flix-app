@@ -8,11 +8,14 @@
     "build": "next build",
     "start": "next start",
     "deploy": "npm run build && aws s3 sync out/ s3://movie-mood-web --profile private --delete",
-    "mobile": "pnpm build && npx cap sync ios"
+    "ios": "pnpm build && npx cap sync ios",
+    "android": "pnpm build && npx cap sync android && npx cap open android"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
     "@capacitor/android": "^8.5.3",
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/browser": "^8.0.5",
     "@capacitor/core": "^8.5.3",
     "@capacitor/ios": "^8.5.3",
     "@reduxjs/toolkit": "^2.13.0",

@@ -20,6 +20,7 @@ import {
   sessionResolved,
   signInFailed,
   signInNeedsConfirmation,
+  signInCancelled,
   signInRequested,
   signInSucceeded,
   signOutRequested,
@@ -51,6 +52,14 @@ function* completeGoogleSession(identity: User): SagaIterator<UserDetails> {
   const tokens: AuthTokens | null = yield call([authService, authService.getSessionTokens])
   if (!tokens) throw new Error('Google sign-in did not return a valid token session. Please try again.')
   // yield call(registerUserWithBackend, identity)
+  const user: UserDetails = yield call(fetchBackendUser, tokens)
+  yield call(saveBackendSession, { outcome: 'authenticated', tokens, user }, user)
+  yield put(profileSynced(user))
+  return user
+}
+
+/** The apps exchange the Google code themselves; the tokens become the same session a password sign-in creates. */
+function* completeTokenSession(tokens: AuthTokens): SagaIterator<UserDetails> {
   const user: UserDetails = yield call(fetchBackendUser, tokens)
   yield call(saveBackendSession, { outcome: 'authenticated', tokens, user }, user)
   yield put(profileSynced(user))
@@ -196,7 +205,16 @@ function* watchRedirects(): SagaIterator {
         yield put(signInFailed(result.message))
         continue
       }
+      if (result.type === 'cancelled') {
+        yield put(signInCancelled())
+        continue
+      }
       try {
+        if (result.tokens) {
+          const user: UserDetails = yield call(completeTokenSession, result.tokens)
+          yield put(signInSucceeded(user))
+          continue
+        }
         const identity: User | null = yield call([authService, authService.getCurrentUser])
         if (!identity) throw new Error('Google sign-in did not complete. Please try again.')
         const user: UserDetails = yield call(completeGoogleSession, identity)
