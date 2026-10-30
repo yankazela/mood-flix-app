@@ -1,6 +1,6 @@
 import { Capacitor } from '@capacitor/core'
 import { LOG_LEVEL, PURCHASES_ERROR_CODE, Purchases, type CustomerInfo, type PurchasesPackage } from '@revenuecat/purchases-capacitor'
-import { ENTITLEMENT_ID, revenueCatApiKey } from '@/lib/billing/config'
+import { ENTITLEMENT_ID, OFFERING_ID, revenueCatApiKey } from '@/lib/billing/config'
 import { periodLabel } from '@/lib/billing/format'
 import type { BillingOffer, PurchaseOutcome } from '@/lib/billing/types'
 
@@ -43,12 +43,39 @@ export async function forget(): Promise<void> {
   }
 }
 
-/** The Advanced offer as the store prices it, or null when the store has nothing to sell here. */
-export async function loadOffer(): Promise<BillingOffer | null> {
-  if (!storeAvailable()) return null
-  const { current } = await Purchases.getOfferings()
-  const pkg = current?.monthly ?? current?.availablePackages[0] ?? null
-  return pkg ? toOffer(pkg) : null
+export interface OfferLookup {
+  offer: BillingOffer | null
+  /** When there is no offer: what RevenueCat returned, so the cause can be read on the device. */
+  detail: string | null
+}
+
+/**
+ * The Advanced offer as the store prices it. With no offer, `detail` distinguishes a RevenueCat
+ * dashboard without a current offering from an offering whose products the store would not price,
+ * which on Google Play means the product, track, signing or tester setup is incomplete.
+ */
+export async function loadOffer(): Promise<OfferLookup> {
+  if (!storeAvailable()) return { offer: null, detail: null }
+  const { current, all } = await Purchases.getOfferings()
+  // The current offering first; failing that, the configured one; failing that, the only one there is.
+  const offering = current ?? all[OFFERING_ID] ?? (Object.keys(all).length === 1 ? Object.values(all)[0] : null)
+  const pkg = offering?.monthly ?? offering?.availablePackages[0] ?? null
+  if (pkg) return { offer: toOffer(pkg), detail: null }
+
+  const store = Capacitor.getPlatform() === 'android' ? 'Google Play' : 'the App Store'
+  if (!offering) {
+    const known = Object.keys(all)
+    return {
+      offer: null,
+      detail: known.length > 0
+        ? `RevenueCat returned offerings (${known.join(', ')}) but none is current and none is named “${OFFERING_ID}”.`
+        : 'RevenueCat returned no offerings for this app.',
+    }
+  }
+  return {
+    offer: null,
+    detail: `Offering “${offering.identifier}” has no package ${store} could price. The product may be missing or inactive in ${store}, the app may not be on a testing track yet, or this build is not signed with the store key.`,
+  }
 }
 
 export async function purchase(offer: BillingOffer): Promise<PurchaseOutcome> {

@@ -36,7 +36,7 @@ export function PaywallModal() {
 
   if (!paywallOpen) return null
 
-  const { plan, offer, offerStatus, canPurchase, busy, error } = billing
+  const { plan, offer, offerStatus, offerError, canPurchase, busy, error } = billing
   const platform = Capacitor.getPlatform()
   const storeName = platform === 'android' ? 'Google Play' : 'the App Store'
   const accountName = platform === 'android' ? 'Google Play account' : 'Apple Account'
@@ -117,7 +117,7 @@ export function PaywallModal() {
               {PLAN_LIMITS.advanced} mood-matched picks a day instead of {PLAN_LIMITS.free}, for {price}.
             </p>
 
-            <div className="mt-6 grid grid-cols-2 gap-3">
+            <div className="mt-6 grid gap-3 min-[400px]:grid-cols-2">
               <PlanCard name="Free" points={FREE_POINTS} />
               <PlanCard name="Advanced" points={ADVANCED_POINTS} highlighted />
             </div>
@@ -146,9 +146,19 @@ export function PaywallModal() {
                     {offerStatus === 'loading' ? 'Checking the price' : offer ? `Subscribe for ${price}` : 'Not available right now'}
                   </Button>
                   {offerStatus === 'error' && (
-                    <Button variant="ghost" size="sm" onClick={() => void billing.loadOffer()} leadingIcon={<RotateCcw />}>
-                      Try loading the price again
-                    </Button>
+                    <>
+                      <p role="status" className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs leading-5 text-white/60">
+                        The store could not provide the price.{offerError && ` It said: “${offerError}”`}
+                      </p>
+                      <Button variant="ghost" size="sm" onClick={() => void billing.loadOffer()} leadingIcon={<RotateCcw />}>
+                        Try loading the price again
+                      </Button>
+                    </>
+                  )}
+                  {offerStatus === 'unavailable' && (
+                    <p role="status" className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs leading-5 text-white/60">
+                      {offerError ?? 'The store has no Advanced product to offer this app yet.'}
+                    </p>
                   )}
                   <Button variant="ghost" size="sm" onClick={() => void handleRestore()} loading={busy === 'restore'} disabled={busy !== null}>
                     Restore purchases
@@ -192,7 +202,7 @@ function PlanCard({ name, points, highlighted = false }: { name: string; points:
       <p className={cn('text-[11px] font-bold uppercase tracking-[0.16em]', highlighted ? 'text-brand' : 'text-white/50')}>{name}</p>
       <ul className="mt-3 space-y-2">
         {points.map((point) => (
-          <li key={point} className="flex items-start gap-2 text-[13px] leading-5 text-white/80">
+          <li key={point} className="flex items-start gap-2 text-[13px] leading-5 text-white/80 [overflow-wrap:anywhere]">
             <Check className={cn('mt-0.5 size-3.5 shrink-0', highlighted ? 'text-brand' : 'text-white/40')} strokeWidth={3} />
             {point}
           </li>

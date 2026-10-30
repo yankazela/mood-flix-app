@@ -28,6 +28,8 @@ export interface BillingContextValue {
   canPurchase: boolean
   offer: BillingOffer | null
   offerStatus: OfferStatus
+  /** What the store said when the offer could not be loaded; shown so the cause is visible on the device. */
+  offerError: string | null
   paywallOpen: boolean
   busy: BillingTask
   error: string | null
@@ -45,6 +47,14 @@ export interface BillingContextValue {
 
 const BillingContext = createContext<BillingContextValue | null>(null)
 
+/** The most specific text a RevenueCat error carries: its own message, then the store's, then a generic line. */
+function storeMessage(cause: unknown): string {
+  const failure = cause as { message?: unknown; underlyingErrorMessage?: unknown; readableErrorCode?: unknown } | null
+  const parts = [failure?.message, failure?.underlyingErrorMessage].filter((text): text is string => typeof text === 'string' && text.trim() !== '')
+  const code = typeof failure?.readableErrorCode === 'string' ? ` (${failure.readableErrorCode})` : ''
+  return parts.length > 0 ? `${parts.join(' ')}${code}` : 'The store did not answer.'
+}
+
 /** After the reset time the API would report a fresh day, so show one. */
 function currentUsage(usage: Usage | null, now: number): Usage | null {
   if (!usage) return null
@@ -59,6 +69,7 @@ export function BillingProvider({ children }: { children: ReactNode }) {
   const [latestUsage, setLatestUsage] = useState<Usage | null>(null)
   const [offer, setOffer] = useState<BillingOffer | null>(null)
   const [offerStatus, setOfferStatus] = useState<OfferStatus>('idle')
+  const [offerError, setOfferError] = useState<string | null>(null)
   const [paywallOpen, setPaywallOpen] = useState(false)
   const [busy, setBusy] = useState<BillingTask>(null)
   const [error, setError] = useState<string | null>(null)
@@ -110,12 +121,15 @@ export function BillingProvider({ children }: { children: ReactNode }) {
       return
     }
     setOfferStatus('loading')
+    setOfferError(null)
     try {
-      const loaded = await loadOffer()
+      const { offer: loaded, detail } = await loadOffer()
       setOffer(loaded)
+      setOfferError(detail)
       setOfferStatus(loaded ? 'ready' : 'unavailable')
     } catch (cause) {
       console.warn('[billing] Could not load the offer:', cause)
+      setOfferError(storeMessage(cause))
       setOfferStatus('error')
     }
   }, [canPurchase])
@@ -183,6 +197,7 @@ export function BillingProvider({ children }: { children: ReactNode }) {
       canPurchase,
       offer,
       offerStatus,
+      offerError,
       paywallOpen,
       busy,
       error,
@@ -195,7 +210,7 @@ export function BillingProvider({ children }: { children: ReactNode }) {
       manageSubscription,
       recordUsage,
     }),
-    [plan, usage, user, canPurchase, offer, offerStatus, paywallOpen, busy, error, openPaywall, closePaywall, fetchOffer, purchase, restore, refresh, manageSubscription, recordUsage],
+    [plan, usage, user, canPurchase, offer, offerStatus, offerError, paywallOpen, busy, error, openPaywall, closePaywall, fetchOffer, purchase, restore, refresh, manageSubscription, recordUsage],
   )
 
   return <BillingContext.Provider value={value}>{children}</BillingContext.Provider>
