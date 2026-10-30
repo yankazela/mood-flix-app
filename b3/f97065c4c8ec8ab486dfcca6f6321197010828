@@ -1,0 +1,38 @@
+android/.gitignore
+  s_d38d57ead48d53::t_266388d29c66a5 102-106
+.env.example
+  s_d38d57ead48d53::t_f500b8ad80f339 40-41
+tsconfig.tsbuildinfo
+  s_d38d57ead48d53::t_aedf7de9ffa606 1
+lib/billing/store.ts
+  s_d38d57ead48d53::t_aedf7de9ffa606 3,60-62,66,71-72,77
+  s_d38d57ead48d53::t_26f8ddf1144840 46-59,63-65,67-70,73-76,78
+lib/store/billing-context.tsx
+  s_d38d57ead48d53::t_26f8ddf1144840 126,128
+  s_d38d57ead48d53::t_a6da53e7f74365 31-32,50-57,72,124,132,200,213
+android/keystore.properties.example
+  s_d38d57ead48d53::t_266388d29c66a5 1-6
+components/billing/paywall-modal.tsx
+  s_d38d57ead48d53::t_a6da53e7f74365 39,120,149-159,161,205
+  s_d38d57ead48d53::t_26f8ddf1144840 160
+lib/billing/config.ts
+  s_d38d57ead48d53::t_aedf7de9ffa606 7-9
+android/app/build.gradle
+  s_d38d57ead48d53::t_266388d29c66a5 3-12,20-21,29-38,43-47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b3f97065c4c8ec8ab486dfcca6f6321197010828",
+  "prompts": {},
+  "sessions": {
+    "s_d38d57ead48d53": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "35272b22-e545-4c09-974f-46608b06b576",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Yanick Kazadi <yanickkazadi@ip-192-168-0-139.eu-west-1.compute.internal>"
+    }
+  }
+}
