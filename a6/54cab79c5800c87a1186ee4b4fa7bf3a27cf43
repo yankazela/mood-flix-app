@@ -1,0 +1,157 @@
+lib/speech/recognizer.ts
+  s_d38d57ead48d53::t_0fc5ffd551bf95 2,41,66-69,71-72,74-76,78
+  s_d38d57ead48d53::t_029d9f43f50619 1,3-40,42-65,70,73,77,79-180
+ios/App/CapApp-SPM/Package.swift
+  s_d38d57ead48d53::t_0fc5ffd551bf95 17,28
+lib/store/discovery-context.tsx
+  s_d38d57ead48d53::t_029d9f43f50619 4,18-19,31,62-63,81-85,87,98,132,139,141,160,165,185
+tsconfig.tsbuildinfo
+  s_d38d57ead48d53::t_0fc5ffd551bf95 1
+README.md
+  s_d38d57ead48d53::t_100af1c2ad8467 133-144
+android/app/capacitor.build.gradle
+  s_d38d57ead48d53::t_0fc5ffd551bf95 14
+android/app/src/main/AndroidManifest.xml
+  s_d38d57ead48d53::t_029d9f43f50619 46-52,56
+android/capacitor.settings.gradle
+  s_d38d57ead48d53::t_0fc5ffd551bf95 11-12
+  s_d38d57ead48d53::t_6f1feaf5dc5902 13
+components/discover/hero-section.tsx
+  s_d38d57ead48d53::t_029d9f43f50619 55
+components/discover/prompt-input.tsx
+  s_d38d57ead48d53::t_029d9f43f50619 4-5,12-13,22,24,26-27,37-41,54,69-72,74,78-81,83-107
+ios/App/App/Info.plist
+  s_d38d57ead48d53::t_029d9f43f50619 38-41
+lib/api/adapters.ts
+  s_d38d57ead48d53::t_029d9f43f50619 146
+lib/api/types.ts
+  s_d38d57ead48d53::t_029d9f43f50619 116
+lib/speech/use-speech-input.ts
+  s_d38d57ead48d53::t_029d9f43f50619 1-79
+lib/types/index.ts
+  s_d38d57ead48d53::t_029d9f43f50619 170-171,177-178
+out/404.html
+  s_d38d57ead48d53::t_35ff2a82edb398 1
+out/404/index.html
+  s_d38d57ead48d53::t_9d281b44a9e65d 1
+out/__next.!KGFwcCk.__PAGE__.txt
+  s_d38d57ead48d53::t_6298792c80d118 2-4,6-13,15,17-20,26
+out/__next._full.txt
+  s_d38d57ead48d53::t_969b1d4b499b93 2-11,16-19,21-22,26,28,32
+out/__next._tree.txt
+  s_d38d57ead48d53::t_31684667eeb4fa 1,6
+out/_not-found/__next._full.txt
+  s_d38d57ead48d53::t_d801ba57fbad27 2-10,12-13,15-16,22,25
+out/_not-found/__next._not-found.__PAGE__.txt
+  s_d38d57ead48d53::t_9e08313233480e 2-4,6-11,15-18
+out/_not-found/__next._tree.txt
+  s_d38d57ead48d53::t_b3f472cf9afc5b 1-2
+out/_not-found/index.html
+  s_d38d57ead48d53::t_3b65e1a4bd6942 1
+out/_not-found/index.txt
+  s_d38d57ead48d53::t_356ffe251ff5e6 2-10,12-13,15-16,22,25
+out/auth/callback/__next._full.txt
+  s_d38d57ead48d53::t_73cfaa74a33cbc 2-11,13-15,20-21,25,29
+out/auth/callback/__next._tree.txt
+  s_d38d57ead48d53::t_9f64c5a856be90 1,5
+out/auth/callback/__next.auth.callback.__PAGE__.txt
+  s_d38d57ead48d53::t_1a792dfdf0606c 2-4,6-15,19-20
+out/auth/callback/index.html
+  s_d38d57ead48d53::t_d7dbd2de503532 1
+out/auth/callback/index.txt
+  s_d38d57ead48d53::t_4bafd700efc099 2-11,13-15,20-21,25,29
+out/forgot-password/__next.!KGF1dGgp.forgot-password.__PAGE__.txt
+  s_d38d57ead48d53::t_9fc077cf595b46 2-4,6-12,16-21,29
+out/forgot-password/__next._full.txt
+  s_d38d57ead48d53::t_e65a0d8ce4d4ea 2-11,16-19,21-22,31,36
+out/forgot-password/__next._tree.txt
+  s_d38d57ead48d53::t_c5e409bbf0082a 1,5
+out/forgot-password/index.html
+  s_d38d57ead48d53::t_1ee88a2b430996 1
+out/forgot-password/index.txt
+  s_d38d57ead48d53::t_402f59f76bca52 2-11,16-19,21-22,31,36
+out/history/__next.!KGFwcCk.history.__PAGE__.txt
+  s_d38d57ead48d53::t_df48e38375833e 2-4,6-13,15,19-22,28
+out/history/__next._full.txt
+  s_d38d57ead48d53::t_ec98fb65e9d6d8 2-11,17-20,22-23,30,35
+out/history/__next._tree.txt
+  s_d38d57ead48d53::t_96389a55d817dc 1,6
+out/history/index.html
+  s_d38d57ead48d53::t_5ad0add468e8c8 1
+out/history/index.txt
+  s_d38d57ead48d53::t_cc1fda08d4ce46 2-11,17-20,22-23,30,35
+out/index.html
+  s_d38d57ead48d53::t_7a1f55223aada1 1
+out/index.txt
+  s_d38d57ead48d53::t_99d93085e8cd72 2-11,16-19,21-22,26,28,32
+out/login/__next.!KGF1dGgp.login.__PAGE__.txt
+  s_d38d57ead48d53::t_979de07d993280 2-4,6-12,16-21,29
+out/login/__next._full.txt
+  s_d38d57ead48d53::t_a102ec934d524e 2-11,16-19,21-22,31,36
+out/login/__next._tree.txt
+  s_d38d57ead48d53::t_c25a609bafbaac 1,5
+out/login/index.html
+  s_d38d57ead48d53::t_a4001030f5da14 1
+out/login/index.txt
+  s_d38d57ead48d53::t_cc2f7184f9c73d 2-11,16-19,21-22,31,36
+out/movie/__next.!KGFwcCk.movie.__PAGE__.txt
+  s_d38d57ead48d53::t_b301f132795646 2-4,6-13,15,19-22,28
+out/movie/__next._full.txt
+  s_d38d57ead48d53::t_288aa25f6c514b 2-11,17-20,22-23,30,35
+out/movie/__next._tree.txt
+  s_d38d57ead48d53::t_a731d611ea62d0 1,6
+out/movie/index.html
+  s_d38d57ead48d53::t_792fb517f4d6d8 1
+out/movie/index.txt
+  s_d38d57ead48d53::t_811b7f83468875 2-11,17-20,22-23,30,35
+out/my-movies/__next.!KGFwcCk.my-movies.__PAGE__.txt
+  s_d38d57ead48d53::t_dee9527efe1f95 2-4,6-13,15,19-22,28
+out/my-movies/__next._full.txt
+  s_d38d57ead48d53::t_1082937b36c0fd 2-11,17-20,22-23,30,35
+out/my-movies/__next._tree.txt
+  s_d38d57ead48d53::t_d8b3e4ef18227e 1,6
+out/my-movies/index.html
+  s_d38d57ead48d53::t_96b4227ecfd34e 1
+out/my-movies/index.txt
+  s_d38d57ead48d53::t_64c90fcbbc0f0d 2-11,17-20,22-23,30,35
+out/onboarding/__next._full.txt
+  s_d38d57ead48d53::t_7d175a854270b0 2-12,14-15,20-22,24,28
+out/onboarding/__next._tree.txt
+  s_d38d57ead48d53::t_1e87df2476711a 1,6
+out/onboarding/__next.onboarding.__PAGE__.txt
+  s_d38d57ead48d53::t_becbc66d1c0406 2-4,6-15,17,19-20
+out/onboarding/index.html
+  s_d38d57ead48d53::t_99fc0d5fe1eab5 1
+out/onboarding/index.txt
+  s_d38d57ead48d53::t_a048596a951312 2-12,14-15,20-22,24,28
+out/signup/__next.!KGF1dGgp.signup.__PAGE__.txt
+  s_d38d57ead48d53::t_3e455c4026f5b7 2-4,6-12,17-22,30
+out/signup/__next._full.txt
+  s_d38d57ead48d53::t_d0117b5351cb9f 2-11,17-20,22-23,32,37
+out/signup/__next._tree.txt
+  s_d38d57ead48d53::t_f7310ee7f257ad 1,6
+out/signup/index.html
+  s_d38d57ead48d53::t_bd79a235a5c662 1
+out/signup/index.txt
+  s_d38d57ead48d53::t_82023feabb142c 2-11,17-20,22-23,32,37
+package.json
+  s_d38d57ead48d53::t_9afa6170b1c7ac 21
+pnpm-lock.yaml
+  s_d38d57ead48d53::t_9d1bed92d5a008 29-31,433-437,3133-3136
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a654cab79c5800c87a1186ee4b4fa7bf3a27cf43",
+  "prompts": {},
+  "sessions": {
+    "s_d38d57ead48d53": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "35272b22-e545-4c09-974f-46608b06b576",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Yanick Kazadi <yanickkazadi@Mac.cgocable.net>"
+    }
+  }
+}
