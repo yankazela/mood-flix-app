@@ -113,6 +113,7 @@ export interface ApiVote {
 export interface ApiRecommendBody {
   text: string
   objective: ApiObjective
+  inputType?: 'text' | 'voice'
   mediaTypes?: ApiMediaType[]
   moods?: string[]
   services?: string[]

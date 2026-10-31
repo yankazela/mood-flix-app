@@ -52,7 +52,7 @@ export function HeroSection() {
         </div>
 
         <div className="animate-fade-up stagger" style={{ '--stagger-index': 2 } as React.CSSProperties}>
-          <PromptInput value={prompt} onChange={setPrompt} onSubmit={findMovies} loading={loading} canSubmit={canSubmit}>
+          <PromptInput value={prompt} onChange={setPrompt} onVoiceChange={(text) => setPrompt(text, 'voice')} onSubmit={findMovies} loading={loading} canSubmit={canSubmit}>
             <FiltersPanel filters={filters} onChange={setFilters} onReset={resetFilters} activeCount={activeFilterCount} disabled={loading} />
             <UsagePill />
             <span className="hidden truncate sm:inline">

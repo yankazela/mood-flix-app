@@ -130,6 +130,18 @@ Closing the browser without finishing clears the spinner; nothing is reported.
 4. **Google**: create an OAuth client in Google Cloud with authorized redirect URI `https://<your-cognito-domain>/oauth2/idpresponse`. Add Google as an identity provider in the pool (scopes `openid email profile`) and map `email → email`, `name → name`, `picture → picture`.
 5. **Hosted UI on the app client**: enable Google and the Cognito user pool as identity providers, OAuth grant *Authorization code*, scopes `openid email profile`, callback URL `http://localhost:3000/auth/callback` (plus production), sign-out URL `http://localhost:3000/login` (plus production).
 
+## Voice input
+
+The microphone in the prompt box dictates into it. `lib/speech/recognizer.ts` hides two engines behind one
+interface: the Web Speech API in browsers that have it (Chrome, Edge, Safari; not Firefox, where the button is
+hidden), and the platform recogniser in the apps through `@capgo/capacitor-speech-recognition`, since neither WebView
+exposes speech recognition. Words appear as they are heard, after whatever was already typed; typing or submitting
+stops the microphone. A dictated prompt is sent with `inputType: "voice"`, which the API keeps on the request.
+
+The apps ask for permission on first use. iOS needs the microphone and speech recognition usage descriptions in
+`Info.plist`; Android needs `RECORD_AUDIO` and the speech-service `<queries>` entry in `AndroidManifest.xml`. Both are
+in place. Recognition language follows the device language.
+
 ## Subscriptions
 
 Two plans: **Free** (2 recommendation requests a day) and **Advanced** (15 a day, a monthly subscription). The
