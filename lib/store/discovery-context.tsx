@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import type { DiscoveryFilters, HistoryEntry, MoodObjective, RecommendationRequest, RecommendationResponse, UserMoodId } from '@/lib/types'
+import type { DiscoveryFilters, HistoryEntry, MoodObjective, PromptInputType, RecommendationRequest, RecommendationResponse, UserMoodId } from '@/lib/types'
 import { buildRecommendBody } from '@/lib/api/adapters'
 import { RecommendationError, requestRecommendations, type RecommendationErrorKind } from '@/lib/api/recommendations'
 import { useLibrary } from '@/lib/store/library-context'
@@ -15,6 +15,8 @@ export const EMPTY_FILTERS: DiscoveryFilters = {}
 
 export interface DiscoveryContextValue {
   prompt: string
+  /** Whether the current prompt was typed or dictated. */
+  promptSource: PromptInputType
   moods: UserMoodId[]
   /** Match the mood the user is in, or lift it. */
   objective: MoodObjective
@@ -26,7 +28,7 @@ export interface DiscoveryContextValue {
   error: string | null
   errorKind: RecommendationErrorKind | null
   activeFilterCount: number
-  setPrompt: (prompt: string) => void
+  setPrompt: (prompt: string, source?: PromptInputType) => void
   toggleMood: (mood: UserMoodId) => void
   setMoods: (moods: UserMoodId[]) => void
   setObjective: (objective: MoodObjective) => void
@@ -57,7 +59,8 @@ export function DiscoveryProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth()
   const { recordUsage } = useBilling()
   const library = useLibrary()
-  const [prompt, setPrompt] = useState('')
+  const [prompt, setPromptText] = useState('')
+  const [promptSource, setPromptSource] = useState<PromptInputType>('text')
   const [moods, setMoods] = useState<UserMoodId[]>([])
   const [objective, setObjective] = useState<MoodObjective>('keep')
   const [filters, setFilters] = useState<DiscoveryFilters>(EMPTY_FILTERS)
@@ -75,8 +78,13 @@ export function DiscoveryProvider({ children }: { children: ReactNode }) {
 
   const resetFilters = useCallback(() => setFilters(EMPTY_FILTERS), [])
 
+  const setPrompt = useCallback((text: string, source: PromptInputType = 'text') => {
+    setPromptText(text)
+    setPromptSource(text.trim() ? source : 'text')
+  }, [])
+
   const run = useCallback(
-    async (nextPrompt: string, nextMoods: UserMoodId[], nextObjective: MoodObjective) => {
+    async (nextPrompt: string, nextMoods: UserMoodId[], nextObjective: MoodObjective, inputType: PromptInputType) => {
       const seq = ++requestSeq.current
       setStatus('loading')
       setError(null)
@@ -87,6 +95,7 @@ export function DiscoveryProvider({ children }: { children: ReactNode }) {
         moods: nextMoods,
         objective: nextObjective,
         filters: countActiveFilters(filters) > 0 ? filters : undefined,
+        inputType,
       }
 
       try {
@@ -120,16 +129,16 @@ export function DiscoveryProvider({ children }: { children: ReactNode }) {
     [filters, preferences.streamingProviders, addHistoryEntry, recordUsage],
   )
 
-  const findMovies = useCallback(() => run(prompt, moods, objective), [run, prompt, moods, objective])
+  const findMovies = useCallback(() => run(prompt, moods, objective, promptSource), [run, prompt, moods, objective, promptSource])
 
   const rerun = useCallback(
     async (nextPrompt: string, nextMoods: UserMoodId[], nextObjective: MoodObjective = objective) => {
       setPrompt(nextPrompt)
       setMoods(nextMoods)
       setObjective(nextObjective)
-      await run(nextPrompt, nextMoods, nextObjective)
+      await run(nextPrompt, nextMoods, nextObjective, 'text')
     },
-    [run, objective],
+    [run, objective, setPrompt],
   )
 
   const reset = useCallback(() => {
@@ -148,11 +157,12 @@ export function DiscoveryProvider({ children }: { children: ReactNode }) {
     setPrompt('')
     setMoods([])
     setFilters(EMPTY_FILTERS)
-  }, [userId, reset])
+  }, [userId, reset, setPrompt])
 
   const value = useMemo<DiscoveryContextValue>(
     () => ({
       prompt,
+      promptSource,
       moods,
       objective,
       filters,
@@ -172,7 +182,7 @@ export function DiscoveryProvider({ children }: { children: ReactNode }) {
       rerun,
       reset,
     }),
-    [prompt, moods, objective, filters, status, response, historyId, error, errorKind, toggleMood, resetFilters, findMovies, rerun, reset],
+    [prompt, promptSource, moods, objective, filters, status, response, historyId, error, errorKind, setPrompt, toggleMood, resetFilters, findMovies, rerun, reset],
   )
 
   return <DiscoveryContext.Provider value={value}>{children}</DiscoveryContext.Provider>

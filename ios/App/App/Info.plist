@@ -35,6 +35,10 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>UpMyMood listens to you describe your mood so you can speak instead of typing.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>UpMyMood turns what you say into the text of your request.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

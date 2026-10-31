@@ -143,6 +143,7 @@ export function buildRecommendBody(request: RecommendationRequest): ApiRecommend
   const body: ApiRecommendBody = {
     text: textFor(request.prompt, request.moods),
     objective: request.objective,
+    inputType: request.inputType === 'voice' ? 'voice' : undefined,
     mediaTypes: mediaTypesFor(filters),
     moods: request.moods.length > 0 ? request.moods : undefined,
     services: filters?.providers?.length ? filters.providers : undefined,

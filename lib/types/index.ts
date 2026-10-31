@@ -167,11 +167,15 @@ export interface DiscoveryFilters {
 /** Whether to match the mood the user is in, or lift it. */
 export type MoodObjective = 'keep' | 'improve'
 
+export type PromptInputType = 'text' | 'voice'
+
 export interface RecommendationRequest {
   prompt: string
   moods: UserMoodId[]
   objective: MoodObjective
   filters?: DiscoveryFilters
+  /** Whether the words were typed or spoken. Kept with the request on the server. */
+  inputType?: PromptInputType
 }
 
 export interface MoodInterpretation {
