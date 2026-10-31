@@ -1,0 +1,19 @@
+.gitignore
+  s_d38d57ead48d53::t_12f41a94cca7d2 19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "efaae99a0ca0f8e6e0012ad91eedbb84ac5b212a",
+  "prompts": {},
+  "sessions": {
+    "s_d38d57ead48d53": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "35272b22-e545-4c09-974f-46608b06b576",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Yanick Kazadi <yanickkazadi@Mac.cgocable.net>"
+    }
+  }
+}
