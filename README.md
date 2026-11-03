@@ -130,6 +130,28 @@ Closing the browser without finishing clears the spinner; nothing is reported.
 4. **Google**: create an OAuth client in Google Cloud with authorized redirect URI `https://<your-cognito-domain>/oauth2/idpresponse`. Add Google as an identity provider in the pool (scopes `openid email profile`) and map `email → email`, `name → name`, `picture → picture`.
 5. **Hosted UI on the app client**: enable Google and the Cognito user pool as identity providers, OAuth grant *Authorization code*, scopes `openid email profile`, callback URL `http://localhost:3000/auth/callback` (plus production), sign-out URL `http://localhost:3000/login` (plus production).
 
+## Languages
+
+The interface is in English, French and Spanish (`lib/i18n`, i18next). Because the site is a static export that also
+runs inside Capacitor, the language lives on the client rather than in the URL: the device language on first run,
+then the person's choice from the switcher on the auth pages, the onboarding header or the user menu, kept in
+localStorage. `DEFAULT_LOCALE` in `lib/i18n/index.ts` applies when neither is available. Nothing under the
+language provider renders until the language is resolved on the client, so server and client HTML always match.
+
+- **Strings** live in `lib/i18n/messages/{en,fr,es}.json`, one key tree per language. Components use
+  `useTranslation()`; services, sagas and formatters import `t` from `@/lib/i18n`. Plurals use i18next's `_one` /
+  `_other` suffixes, and sentences with links or emphasis use `<Trans>` with named tags such as `<em>` or `<terms>`.
+- **Data labels** (moods, genres, content ratings, feedback, example prompts) are keyed by their ids, which the API
+  still receives unchanged.
+- **Formatting** follows the chosen language: runtimes, dates, relative times, lists, numbers, language and country
+  names (the last two from `Intl.DisplayNames`, so every country is covered without a translation file). Voice input
+  dictates in the chosen language.
+- **Server text**: the daily-limit message is rebuilt in the user's language from the 429's details, and every API
+  call sends `Accept-Language`. Mood readings, "why" lines and film descriptions are still English from the backend
+  and TMDB.
+
+Adding a key means adding it to all three files; a key missing from French or Spanish falls back to English.
+
 ## Voice input
 
 The microphone in the prompt box dictates into it. `lib/speech/recognizer.ts` hides two engines behind one

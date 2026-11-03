@@ -1,11 +1,13 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
 import { Button, type ButtonProps } from '@/components/shared/button'
 
-export function GoogleButton({ children = 'Continue with Google', ...props }: Omit<ButtonProps, 'variant' | 'leadingIcon'>) {
+export function GoogleButton({ children, ...props }: Omit<ButtonProps, 'variant' | 'leadingIcon'>) {
+  const { t } = useTranslation()
   return (
     <Button variant="secondary" size="lg" fullWidth leadingIcon={<GoogleGlyph />} {...props}>
-      {children}
+      {children ?? t('auth.google.button')}
     </Button>
   )
 }

@@ -20,6 +20,17 @@ export const WORLD_COUNTRIES: WorldCountry[] = (flagIconCountries as FlagIconCou
 
 const BY_CODE = new Map(WORLD_COUNTRIES.map((country) => [country.code, country]))
 
+/** Every country with its name in the interface language, sorted for that language. */
+export function localizedWorldCountries(locale: string): WorldCountry[] {
+  let names: Intl.DisplayNames | null = null
+  try {
+    names = new Intl.DisplayNames([locale], { type: 'region' })
+  } catch {
+    names = null
+  }
+  return WORLD_COUNTRIES.map((country) => ({ ...country, name: names?.of(country.code) ?? country.name })).sort((a, b) => a.name.localeCompare(b.name, locale))
+}
+
 export function findWorldCountry(code: string | undefined | null): WorldCountry | undefined {
   return code ? BY_CODE.get(code.toUpperCase()) : undefined
 }

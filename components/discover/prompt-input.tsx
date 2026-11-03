@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
 import { useEffect, useRef, type KeyboardEvent } from 'react'
 import { ArrowRight, Mic, Sparkles, Square } from 'lucide-react'
 import { useSpeechInput } from '@/lib/speech/use-speech-input'
@@ -18,10 +19,9 @@ interface PromptInputProps {
   children?: React.ReactNode
 }
 
-const PLACEHOLDER = 'Long day at work. I want something funny, relaxing and easy to watch...'
-const LISTENING_PLACEHOLDER = 'Listening… tell me how you feel and what you’re in the mood for.'
 
 export function PromptInput({ value, onChange, onVoiceChange, onSubmit, loading = false, canSubmit = true, className, children }: PromptInputProps) {
+  const { t } = useTranslation()
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const speech = useSpeechInput({ onText: onVoiceChange ?? onChange })
   const listening = speech.status !== 'idle'
@@ -60,7 +60,7 @@ export function PromptInput({ value, onChange, onVoiceChange, onSubmit, loading 
           <Sparkles className="size-5 animate-glow" />
         </div>
         <label htmlFor="mood-prompt" className="sr-only">
-          Describe how you feel and what you want to watch
+          {t('discover.describe')}
         </label>
         <textarea
           id="mood-prompt"
@@ -71,7 +71,7 @@ export function PromptInput({ value, onChange, onVoiceChange, onSubmit, loading 
             onChange(event.target.value)
           }}
           onKeyDown={handleKeyDown}
-          placeholder={listening ? LISTENING_PLACEHOLDER : PLACEHOLDER}
+          placeholder={listening ? t('discover.listeningPlaceholder') : t('discover.placeholder')}
           rows={2}
           disabled={loading}
           enterKeyHint="search"
@@ -87,8 +87,8 @@ export function PromptInput({ value, onChange, onVoiceChange, onSubmit, loading 
             onClick={() => void speech.toggle(value)}
             disabled={loading || speech.status === 'starting'}
             aria-pressed={listening}
-            aria-label={listening ? 'Stop listening' : 'Speak instead of typing'}
-            title={listening ? 'Stop listening' : 'Speak instead of typing'}
+            aria-label={listening ? t('discover.stopListening') : t('discover.speak')}
+            title={listening ? t('discover.stopListening') : t('discover.speak')}
             className={cn(
               'absolute right-4 top-4 flex size-10 items-center justify-center rounded-full transition-all outline-none focus-visible:ring-2 focus-visible:ring-brand/70 disabled:opacity-50 sm:right-5 sm:top-5',
               listening ? 'bg-brand text-brand-foreground' : 'bg-white/6 text-white/60 hover:bg-white/10 hover:text-white',
@@ -101,7 +101,7 @@ export function PromptInput({ value, onChange, onVoiceChange, onSubmit, loading 
 
         {(listening || speech.error) && (
           <p role="status" aria-live="polite" className={cn('px-5 pb-1 text-xs sm:px-6', speech.error ? 'text-destructive' : 'text-brand/80')}>
-            {speech.error ?? 'Listening… tap the square when you’re done.'}
+            {speech.error ?? t('discover.listening')}
           </p>
         )}
 
@@ -112,7 +112,7 @@ export function PromptInput({ value, onChange, onVoiceChange, onSubmit, loading 
               <kbd className="rounded border border-white/15 px-1.5 py-0.5 font-sans">⌘</kbd> + <kbd className="rounded border border-white/15 px-1.5 py-0.5 font-sans">↵</kbd>
             </span>
             <Button size="lg" onClick={onSubmit} loading={loading} disabled={!canSubmit} trailingIcon={<ArrowRight />} className="w-full sm:w-auto">
-              {loading ? 'Finding your movie' : 'Find my movie'}
+              {loading ? t('discover.finding') : t('discover.findMovie')}
             </Button>
           </div>
         </div>

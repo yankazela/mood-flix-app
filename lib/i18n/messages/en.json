@@ -1,0 +1,650 @@
+{
+  "common": {
+    "appName": "UpMyMood",
+    "back": "Back",
+    "continue": "Continue",
+    "finish": "Finish",
+    "saveChanges": "Save changes",
+    "done": "Done",
+    "close": "Close",
+    "tryAgain": "Try again",
+    "loading": "Loading",
+    "search": "Search",
+    "dismiss": "Dismiss",
+    "backToDiscover": "Back to Discover",
+    "notSet": "Not set",
+    "upgrade": "Upgrade",
+    "manage": "Manage",
+    "scrollLeft": "Scroll left",
+    "scrollRight": "Scroll right",
+    "home": "UpMyMood home",
+    "language": "Language",
+    "and": "and",
+    "soon": "in a moment",
+    "languages": {
+      "en": "English",
+      "fr": "Français",
+      "es": "Español"
+    }
+  },
+  "nav": {
+    "discover": "Discover",
+    "myMovies": "My Movies",
+    "history": "History",
+    "search": "Search",
+    "primary": "Primary",
+    "primaryMobile": "Primary mobile",
+    "searchMovies": "Search movies"
+  },
+  "auth": {
+    "tagline": "Movies that match your mood",
+    "hero": {
+      "line1": "Stop scrolling.",
+      "line2": "Start <em>feeling</em> something.",
+      "body": "Tell UpMyMood how your day went. It understands what you need tonight and finds it on the services you already pay for.",
+      "footer": "© {{year}} UpMyMood. Movie data and artwork via TMDB."
+    },
+    "fields": {
+      "email": "Email",
+      "password": "Password",
+      "fullName": "Full name",
+      "confirmPassword": "Confirm password",
+      "code": "Verification code",
+      "country": "Country",
+      "emailPlaceholder": "you@example.com",
+      "passwordPlaceholder": "Your password",
+      "namePlaceholder": "Jamie Rivera",
+      "newPasswordPlaceholder": "At least 8 characters",
+      "confirmPlaceholder": "Type it once more",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
+      "strength": {
+        "weak": "Weak",
+        "fair": "Fair",
+        "good": "Good",
+        "strong": "Strong"
+      },
+      "selectCountry": "Select your country",
+      "searchCountries": "Search countries",
+      "noCountryMatch": "No country matches “{{query}}”."
+    },
+    "validation": {
+      "emailRequired": "Enter your email address.",
+      "emailInvalid": "That doesn’t look like a valid email.",
+      "passwordRequired": "Enter your password.",
+      "nameRequired": "Tell us your name.",
+      "countryRequired": "Choose your country.",
+      "passwordShort": "Use at least 8 characters.",
+      "passwordMismatch": "Passwords don’t match.",
+      "codeInvalid": "Enter the 6-digit code from the email.",
+      "resetEmail": "Enter the email you signed up with."
+    },
+    "login": {
+      "title": "Welcome back",
+      "subtitle": "Log in to pick up where your mood left off.",
+      "newHere": "New to UpMyMood?",
+      "createAccount": "Create an account",
+      "orEmail": "or log in with email",
+      "verified": "Your email is verified. Log in to continue.",
+      "unverified": "You haven’t verified this email yet.",
+      "sendNewCode": "Send me a new code",
+      "remember": "Remember me on this device",
+      "submit": "Log in",
+      "forgot": "Forgot password?",
+      "demo": "Just exploring?",
+      "demoCta": "Use the demo account"
+    },
+    "signup": {
+      "title": "Create your account",
+      "subtitle": "Two minutes to set up. A lifetime of better movie nights.",
+      "haveAccount": "Already have an account?",
+      "login": "Log in",
+      "orEmail": "or sign up with email",
+      "submit": "Create account",
+      "terms": "By creating an account you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>.",
+      "confirmTitle": "Check your inbox",
+      "confirmSubtitle": "We sent a 6-digit code to <strong>{{destination}}</strong>. Enter it below to verify your email.",
+      "differentEmail": "Use a different email",
+      "verifyContinue": "Verify and continue",
+      "didntGet": "Didn’t get it?",
+      "sending": "Sending…",
+      "resendIn": "Resend in {{seconds}}s",
+      "sendNewCode": "Send a new code",
+      "verifiedTitle": "Email verified",
+      "verifiedSubtitle": "Your account is ready. Log in to finish setting up UpMyMood."
+    },
+    "forgot": {
+      "title": "Reset your password",
+      "sentTitle": "Check your inbox",
+      "subtitle": "Enter your email and we’ll send you a link to get back in.",
+      "sentSubtitle": "We sent a reset link to {{email}}. It expires in 30 minutes.",
+      "backToLogin": "Back to log in",
+      "spam": "Didn’t get it? Check your spam folder, or",
+      "tryDifferent": "Try a different email",
+      "submit": "Send reset link"
+    },
+    "google": {
+      "button": "Continue with Google",
+      "signingIn": "Signing you in with Google…",
+      "tookTooLong": "Google sign-in took too long. Please try again."
+    },
+    "errors": {
+      "invalid-credentials": "That email and password combination doesn’t match our records.",
+      "user-not-found": "We couldn’t find an account with that email.",
+      "email-in-use": "An account with this email already exists. Try logging in instead.",
+      "user-not-confirmed": "Your email isn’t verified yet.",
+      "weak-password": "Your password needs at least 8 characters, including a number, an uppercase letter and a symbol.",
+      "code-mismatch": "That code isn’t right. Check the email and try again.",
+      "code-expired": "That code has expired. We can send you a new one.",
+      "too-many-attempts": "Too many attempts. Please wait a few minutes and try again.",
+      "unsupported-step": "This account needs an extra sign-in step that UpMyMood doesn’t support yet.",
+      "network": "We couldn’t reach the sign-in service. Check your connection.",
+      "unknown": "Something went wrong. Please try again.",
+      "profileUnavailable": "Unable to load your account profile.",
+      "signInFailed": "Unable to sign in. Please try again.",
+      "googleIncomplete": "Google sign-in didn’t complete. Please try again.",
+      "googleNoTokens": "Google sign-in did not return a valid session. Please try again.",
+      "googleNotConfigured": "Google sign-in isn’t configured for this environment.",
+      "googleStorage": "Google token storage is not available for this auth provider.",
+      "loginToSave": "Please log in to save your preferences.",
+      "createdButSignInFailed": "Account was created, but sign-in failed. Please log in.",
+      "sessionExpired": "Your session has expired. Please log in again.",
+      "refreshFailed": "We couldn’t refresh your session. Check your connection and try again.",
+      "generic": "Something went wrong. Please try again."
+    }
+  },
+  "onboarding": {
+    "steps": {
+      "services": "Services",
+      "genres": "Genres",
+      "rating": "Rating"
+    },
+    "progress": "Setup progress",
+    "services": {
+      "eyebrowEdit": "Your streaming services",
+      "eyebrow": "Step 1 of 3 · {{greeting}}",
+      "hi": "Hi {{name}}",
+      "welcome": "Welcome",
+      "title": "Where do you <em>watch?</em>",
+      "body": "Pick the services you already pay for and we’ll only recommend movies you can press play on tonight. Availability depends on your region.",
+      "countryLabel": "Country / region",
+      "countryAria": "Country or region"
+    },
+    "provider": {
+      "included": "Included in your results",
+      "tap": "Tap to add",
+      "unavailable": "Not available in your region"
+    },
+    "genres": {
+      "eyebrowEdit": "Your favourite genres",
+      "eyebrow": "Step 2 of 3 · Your taste",
+      "title": "What do you usually <em>love?</em>",
+      "body": "Pick a few genres you keep coming back to. Your mood still leads every search; this just helps us break ties in your favour."
+    },
+    "rating": {
+      "eyebrowEdit": "Your content rating",
+      "eyebrow": "Step 3 of 3 · Comfort level",
+      "title": "How far should we <em>go?</em>",
+      "body": "Choose the most mature rating you’re comfortable with. Great for shared accounts, family TVs, or just knowing what you’re in for.",
+      "upTo": "Up to {{rating}} · {{title}}",
+      "maxAria": "Maximum content rating",
+      "note": "We’ll keep anything above your limit out of your recommendations. You can change this any time from your profile."
+    },
+    "footer": {
+      "selectService": "Select at least one service to continue.",
+      "servicesSelected_one": "<strong>{{count}}</strong> service selected",
+      "servicesSelected_other": "<strong>{{count}}</strong> services selected",
+      "pickGenre": "Pick at least one genre. Three or more gives the sharpest picks.",
+      "genresSelected_one": "<strong>{{count}}</strong> genre selected",
+      "genresSelected_other": "<strong>{{count}}</strong> genres selected",
+      "ratingUpTo": "Up to <strong>{{rating}}</strong> · {{title}}"
+    }
+  },
+  "data": {
+    "moods": {
+      "stressed": "Stressed",
+      "tired": "Tired",
+      "sad": "Sad",
+      "happy": "Happy",
+      "bored": "Bored",
+      "romantic": "Romantic",
+      "excited": "Excited",
+      "relax": "Need to relax"
+    },
+    "moodPhrases": {
+      "relax": "in need of some relaxation"
+    },
+    "genres": {
+      "comedy": {
+        "label": "Comedy",
+        "blurb": "Make me laugh"
+      },
+      "drama": {
+        "label": "Drama",
+        "blurb": "Make me feel"
+      },
+      "action": {
+        "label": "Action",
+        "blurb": "Keep it moving"
+      },
+      "thriller": {
+        "label": "Thriller",
+        "blurb": "Edge of my seat"
+      },
+      "romance": {
+        "label": "Romance",
+        "blurb": "Love stories"
+      },
+      "science-fiction": {
+        "label": "Sci-Fi",
+        "blurb": "Big ideas"
+      },
+      "animation": {
+        "label": "Animation",
+        "blurb": "Drawn worlds"
+      },
+      "mystery": {
+        "label": "Mystery",
+        "blurb": "Whodunits"
+      },
+      "horror": {
+        "label": "Horror",
+        "blurb": "Scare me"
+      },
+      "adventure": {
+        "label": "Adventure",
+        "blurb": "Take me places"
+      },
+      "family": {
+        "label": "Family",
+        "blurb": "For everyone"
+      },
+      "crime": {
+        "label": "Crime",
+        "blurb": "Heists and cops"
+      },
+      "fantasy": {
+        "label": "Fantasy",
+        "blurb": "Magic and myth"
+      },
+      "music": {
+        "label": "Music",
+        "blurb": "Songs and rhythm"
+      },
+      "documentary": {
+        "label": "Documentary",
+        "blurb": "True stories"
+      },
+      "war": {
+        "label": "War",
+        "blurb": "Front lines"
+      },
+      "western": {
+        "label": "Western",
+        "blurb": "Wide open plains"
+      },
+      "history": {
+        "label": "History",
+        "blurb": "The past, retold"
+      }
+    },
+    "ratings": {
+      "G": {
+        "title": "All ages",
+        "description": "Gentle films with nothing to worry about."
+      },
+      "PG": {
+        "title": "Family friendly",
+        "description": "Mild themes. Fine with kids in the room."
+      },
+      "PG-13": {
+        "title": "Teens and up",
+        "description": "Some intensity, language or violence."
+      },
+      "R": {
+        "title": "Everything",
+        "description": "Adult themes welcome. Show me it all."
+      }
+    },
+    "feedback": {
+      "perfect": "Perfect",
+      "good": "Good",
+      "okay": "Okay",
+      "not-for-me": "Not for me"
+    },
+    "examples": {
+      "after-work": {
+        "label": "After a long day",
+        "prompt": "Long day at work. I want something funny, relaxing and easy to watch."
+      },
+      "friends": {
+        "label": "Saturday night with friends",
+        "prompt": "Saturday night with friends. Something exciting, loud and fun."
+      },
+      "date-night": {
+        "label": "Date night",
+        "prompt": "Date night. Romantic, a little funny, nothing too heavy."
+      },
+      "something-smart": {
+        "label": "Something smart",
+        "prompt": "Bored and want something smart that makes me think. A twist would be great."
+      }
+    }
+  },
+  "discover": {
+    "title": "What do you feel like <em>watching?</em>",
+    "subtitle": "Tell us how you feel. We’ll find the perfect movie for this moment.",
+    "placeholder": "Long day at work. I want something funny, relaxing and easy to watch...",
+    "listeningPlaceholder": "Listening… tell me how you feel and what you’re in the mood for.",
+    "listening": "Listening… tap the square when you’re done.",
+    "speak": "Speak instead of typing",
+    "stopListening": "Stop listening",
+    "describe": "Describe how you feel and what you want to watch",
+    "findMovie": "Find my movie",
+    "finding": "Finding your movie",
+    "allServices": "All services",
+    "moreServices": "+{{count}}",
+    "feeling": "I’m feeling",
+    "moodsLabel": "Moods",
+    "pickMood": "Pick a mood or two",
+    "wantTo": "I’d like something to",
+    "objectiveLabel": "What the pick should do",
+    "choose": "Choose",
+    "keep": "Match my mood",
+    "keepHint": "Something that sits with how I feel",
+    "improve": "Lift my mood",
+    "improveHint": "Something that brightens it",
+    "examples": {
+      "notSure": "Not sure what to say?",
+      "tryOne": "Try one of these",
+      "label": "Example prompts"
+    },
+    "rows": {
+      "popularOnYours": "Popular tonight on your services",
+      "popular": "Popular tonight",
+      "popularSubOnYours": "What people are watching right now.",
+      "popularSub": "What people are watching right now where you live.",
+      "critics": "Critically loved",
+      "criticsSub": "Highly rated by audiences. Reliable picks when you can’t decide."
+    },
+    "saved": {
+      "title": "Saved for later",
+      "subtitle": "Movies you’ve saved. They’re waiting for the right mood."
+    },
+    "loading": {
+      "understanding": "Understanding your mood...",
+      "searching": "Searching thousands of movies...",
+      "finding": "Finding the perfect matches..."
+    },
+    "errors": {
+      "safety": "We’re here for you",
+      "rateLimit": "That’s all for today",
+      "rateLimitFree": "You’ve used today’s free picks",
+      "unavailable": "We’re still warming up",
+      "invalid": "We need a little more",
+      "generic": "We couldn’t find your movie",
+      "upgrade": "Upgrade to Advanced",
+      "resets": "Your picks reset {{when}}."
+    },
+    "catalog": {
+      "nothing": "Nothing matched just yet",
+      "nothingBody": "Try loosening a filter, or describe the mood a different way.",
+      "eyebrow": "Your recommendations",
+      "title": "Picks for your mood",
+      "subtitleImprove": "A lift from feeling {{emotion}}, with {{summary}}.",
+      "subtitleKeep": "Because you’re feeling {{emotion}} and looking for {{summary}}.",
+      "fewMatches": "Only a few titles matched everything you asked for, even after relaxing the runtime and rating limits.",
+      "topPicks": "Top picks for you",
+      "moreForMood": "More for your mood",
+      "moreForMoodSub": "Other titles that fit how you feel right now."
+    },
+    "usage": {
+      "left": "{{remaining}}/{{limit}} picks left",
+      "today": " today",
+      "resets": "Picks reset {{when}}",
+      "upgrade": "Upgrade"
+    }
+  },
+  "filters": {
+    "button": "Filters",
+    "title": "Fine-tune your results",
+    "subtitle": "Your words still lead. These just narrow the field.",
+    "close": "Close filters",
+    "runtime": "Maximum runtime",
+    "anyLength": "Any length",
+    "any": "Any",
+    "type": "Type",
+    "movies": "Movies",
+    "tv": "TV shows",
+    "both": "Both",
+    "genre": "Genre",
+    "year": "Release year",
+    "anyYear": "Any year",
+    "y2020": "2020s",
+    "y2010": "2010s and newer",
+    "y2000": "2000s and newer",
+    "y1990": "1990s and newer",
+    "language": "Language",
+    "anyLanguage": "Any language",
+    "minRating": "Minimum rating",
+    "platform": "Streaming platform",
+    "yours": "· yours",
+    "reset": "Reset",
+    "apply_one": "Apply {{count}} filter",
+    "apply_other": "Apply {{count}} filters",
+    "done": "Done"
+  },
+  "movie": {
+    "back": "Back to Discover",
+    "close": "Close details",
+    "forHowYouFeel": "for how you feel right now",
+    "contentRating": "Content rating",
+    "watchOn": "Watch now on {{service}}",
+    "watchOnGeneric": "Watch on {{service}}",
+    "findWhere": "Find where to watch",
+    "save": "Add to My Movies",
+    "unsave": "Remove from My Movies",
+    "like": "Like",
+    "dislike": "Dislike",
+    "markWatched": "Mark as watched",
+    "markUnwatched": "Mark as not watched",
+    "overview": "Overview",
+    "createdBy": "Created by",
+    "director": "Director",
+    "cast": "Cast",
+    "details": "Details",
+    "type": "Type",
+    "film": "Film",
+    "tvSeries": "TV series",
+    "runtime": "Runtime",
+    "episodeLength": "Episode length",
+    "seasons": "Seasons",
+    "episodes": "Episodes",
+    "language": "Language",
+    "rated": "Rated",
+    "perEpisode": " / episode",
+    "availableOn": "Available on",
+    "streamingIn": "Streaming in",
+    "included": "Included with a service you already have.",
+    "notOnYours": "Not on your services yet.",
+    "notStreaming": "Not currently streaming in {{country}}.",
+    "opening": "Opening “{{title}}” on {{service}}…",
+    "why": "Why we picked this for you",
+    "match": "{{score}}% match",
+    "matchAria": "{{score}} percent match",
+    "ratedTitle": "Rated {{rating}}",
+    "ratingsTitle": "{{rating}} from {{votes}} ratings",
+    "availableOnService": "Available on {{service}}",
+    "viewDetails": "View details for {{title}}",
+    "detailsBtn": "Details",
+    "saved": "Saved",
+    "view": "View {{title}}",
+    "notFound": "We couldn’t find that movie",
+    "removed": "It may have been removed from the catalog.",
+    "noMovieSelected": "No movie selected."
+  },
+  "feedback": {
+    "title": "Was this a good recommendation?",
+    "subtitle": "Your feedback trains your personal recommendation engine.",
+    "thanks": "Thanks! This helps us learn your taste.",
+    "alreadyWatched": "Already watched",
+    "saveLater": "Save for later",
+    "saved": "Saved",
+    "like": "Like",
+    "dislike": "Dislike"
+  },
+  "toasts": {
+    "removedSaved": "Removed “{{title}}” from My Movies",
+    "savedTo": "Saved “{{title}}” to My Movies",
+    "liked": "Liked “{{title}}”. We’ll find more like it.",
+    "disliked": "Got it. Fewer movies like “{{title}}”.",
+    "markedWatched": "Marked “{{title}}” as watched",
+    "markedUnwatched": "Marked “{{title}}” as not watched",
+    "saveFailed": "We couldn’t save that change. {{detail}}",
+    "saveError": "Something went wrong while saving. Please try again."
+  },
+  "history": {
+    "eyebrow": "Recommendation history",
+    "title": "How you’ve been feeling",
+    "subtitle": "Every request, what we suggested, what you picked and how it landed. This is what trains your recommendations.",
+    "loadFailed": "We couldn’t load your history right now. {{detail}}",
+    "empty": "No requests yet",
+    "emptyBody": "Tell us how you feel on Discover and your requests will show up here.",
+    "findFirst": "Find my first movie",
+    "wantedLift": "Wanted a lift",
+    "matched": "Matched the mood",
+    "moodsAria": "Moods",
+    "noFeedback": "No feedback yet",
+    "runAgain": "Run again",
+    "recommended": "Movies recommended",
+    "gone": "These titles are no longer in the catalog.",
+    "selected": "Movie selected",
+    "noPick": "You didn’t pick one this time.",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "daysAgo": "{{count}} days ago"
+  },
+  "library": {
+    "eyebrow": "Your library",
+    "title": "My Movies",
+    "subtitle": "Everything you’ve saved, loved and watched, in one place.",
+    "sections": "Library sections",
+    "saved": "Saved",
+    "liked": "Liked",
+    "watched": "Watched",
+    "savedEmpty": "Nothing saved yet",
+    "savedEmptyBody": "Tap the bookmark on any movie to keep it for later.",
+    "likedEmpty": "No likes yet",
+    "likedEmptyBody": "Liking movies teaches us your taste and sharpens every recommendation.",
+    "watchedEmpty": "No watch history yet",
+    "watchedEmptyBody": "Movies you watch or mark as watched will appear here.",
+    "loadFailed": "We couldn’t load your library right now. {{detail}}",
+    "discover": "Discover movies"
+  },
+  "search": {
+    "placeholder": "Search by title, director, actor or genre",
+    "close": "Close search",
+    "start": "Start typing to search the catalog.",
+    "searching": "Searching…",
+    "noMatches": "No matches for “{{query}}” on your region’s services.",
+    "unavailable": "Search is unavailable right now."
+  },
+  "menu": {
+    "plan": "Plan",
+    "free": "Free",
+    "advanced": "Advanced",
+    "picksLeft": "{{remaining}}/{{limit}} picks left today",
+    "picksDepend": "Picks per day depend on your plan",
+    "renews": "Renews {{date}}",
+    "ends": "Ends {{date}}",
+    "yourServices": "Your services",
+    "noServices": "No services selected",
+    "genres": "Genres",
+    "rating": "Rating",
+    "upTo": "Up to {{rating}}",
+    "edit": "Edit services, genres and rating",
+    "history": "Recommendation history",
+    "signOut": "Sign out",
+    "language": "Language"
+  },
+  "billing": {
+    "title": "Go Advanced",
+    "lead": "{{limit}} mood-matched picks a day instead of {{free}}, for {{price}}.",
+    "free": "Free",
+    "advanced": "Advanced",
+    "freePicks": "{{count}} mood-matched picks a day",
+    "explainable": "Explainable recommendations",
+    "lists": "Saved, liked and watched lists",
+    "advancedPicks": "{{count}} mood-matched picks a day",
+    "everything": "Everything in Free",
+    "cancel": "Cancel any time",
+    "intro": "Introductory price: {{intro}} for your first {{period}}, then {{price}}.",
+    "subscribe": "Subscribe for {{price}}",
+    "checking": "Checking the price",
+    "notAvailable": "Not available right now",
+    "retry": "Try loading the price again",
+    "storeNoPrice": "The store could not provide the price.",
+    "storeSaid": " It said: “{{message}}”",
+    "noProduct": "The store has no Advanced product to offer this app yet.",
+    "restore": "Restore purchases",
+    "webNote": "Subscribe from the UpMyMood app on iPhone or Android. Your plan follows your account, so it works here too.",
+    "nativeUnavailable": "Subscriptions aren’t available in this version of the app yet. Please update the app, or check back soon.",
+    "disclosure": "Payment is charged to your {{account}} when you confirm. The subscription renews automatically every {{period}} at the same price unless you cancel at least 24 hours before the end of the current period. Manage or cancel it in your {{store}} subscription settings.",
+    "disclosureWeb": "Subscriptions renew automatically each month unless cancelled through the store they were bought from.",
+    "terms": "Terms of Use",
+    "privacy": "Privacy Policy",
+    "onAdvanced": "You’re on Advanced",
+    "onAdvancedBody": "{{limit}} picks a day.",
+    "renews": "Renews {{date}}.",
+    "ends": "Ends {{date}}.",
+    "manageSub": "Manage subscription",
+    "done": "Done",
+    "welcome": "Welcome to Advanced. Enjoy your picks.",
+    "pending": "Your purchase is waiting for approval. Your plan updates once it goes through.",
+    "restored": "Your subscription is back on this account.",
+    "noneFound": "No active subscription was found for this store account.",
+    "period": {
+      "month": "month",
+      "year": "year",
+      "week": "week"
+    },
+    "appStore": "the App Store",
+    "googlePlay": "Google Play",
+    "appleAccount": "Apple Account",
+    "googleAccount": "Google Play account",
+    "errors": {
+      "purchaseFailed": "The purchase did not go through.",
+      "restoreFailed": "Restoring purchases did not work.",
+      "storeNoAnswer": "The store did not answer.",
+      "storeNoResponse": "The store did not respond. Please try again.",
+      "subsUnavailableNative": "Subscriptions aren’t available in this version of the app yet.",
+      "subsUnavailableWeb": "Subscriptions work in the UpMyMood app for iPhone and Android.",
+      "restoreUnavailableNative": "Restoring purchases isn’t available in this version of the app yet.",
+      "restoreUnavailableWeb": "Restoring purchases works in the UpMyMood app for iPhone and Android."
+    }
+  },
+  "speech": {
+    "permission": "Microphone access was turned down. Allow it in your device settings to speak your mood.",
+    "unavailable": "Voice input is not available in this browser.",
+    "network": "Voice input needs a connection. Check yours and try again.",
+    "couldntHear": "We couldn’t hear you. Please try again.",
+    "couldntStart": "We couldn’t start listening. Please try again."
+  },
+  "api": {
+    "loadFailed": "We couldn’t load recommendations right now.",
+    "warming": "Recommendations are warming up. Please try again in a moment.",
+    "loadFailedRetry": "We couldn’t load recommendations right now. Please try again.",
+    "generic": "Something went wrong. Please try again.",
+    "dailyLimitFree": "You’ve used your {{limit}} free picks for today. Upgrade to Advanced for {{advanced}} a day, or come back tomorrow.",
+    "dailyLimitPaid": "You’ve used all {{limit}} picks for today. Come back tomorrow."
+  },
+  "notFound": {
+    "title": "This scene doesn’t exist",
+    "body": "The page you’re looking for has left the theatre."
+  },
+  "format": {
+    "hours": "{{hours}}h",
+    "minutes": "{{minutes}}m",
+    "hoursMinutes": "{{hours}}h {{minutes}}m"
+  }
+}

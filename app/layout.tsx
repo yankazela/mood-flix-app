@@ -3,6 +3,7 @@ import { Inter, Instrument_Serif } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { AppProviders } from '@/components/providers'
 import { ReduxProvider } from './redux-provider'
+import { LanguageProvider } from '@/lib/i18n/language-context'
 import './globals.css'
 
 const inter = Inter({
@@ -44,9 +45,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" className={`dark ${inter.variable} ${instrumentSerif.variable}`} suppressHydrationWarning>
       <body className="min-h-dvh bg-ink text-foreground antialiased">
-        <ReduxProvider>
-          <AppProviders>{children}</AppProviders>
-        </ReduxProvider>
+        <LanguageProvider>
+          <ReduxProvider>
+            <AppProviders>{children}</AppProviders>
+          </ReduxProvider>
+        </LanguageProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

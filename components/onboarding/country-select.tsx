@@ -1,8 +1,11 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
 import { ChevronDown, Globe } from 'lucide-react'
 import type { CountryCode } from '@/lib/types'
-import { WORLD_COUNTRIES } from '@/lib/data/world-countries'
+import { localizedWorldCountries } from '@/lib/data/world-countries'
+import { useLocale } from '@/lib/i18n/language-context'
+import { useMemo } from 'react'
 import { Flag } from '@/components/shared/flag'
 
 interface CountrySelectProps {
@@ -11,13 +14,16 @@ interface CountrySelectProps {
 }
 
 export function CountrySelect({ value, onChange }: CountrySelectProps) {
-  const current = WORLD_COUNTRIES.find((country) => country.code === value) ?? WORLD_COUNTRIES[0]
+  const { t } = useTranslation()
+  const { locale } = useLocale()
+  const countries = useMemo(() => localizedWorldCountries(locale), [locale])
+  const current = countries.find((country) => country.code === value) ?? countries[0]
   return (
     <label className="group relative flex h-14 cursor-pointer items-center gap-3 rounded-2xl border border-white/10 bg-surface/70 px-4 transition hover:border-white/20 focus-within:border-brand/60 focus-within:ring-4 focus-within:ring-brand/10">
       <Flag code={current.code} label={current.name} className="text-2xl" />
       <span className="flex min-w-0 flex-1 flex-col">
         <span className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/40">
-          <Globe className="size-3" /> Country / region
+          <Globe className="size-3" /> {t('onboarding.services.countryLabel')}
         </span>
         <span className="truncate text-sm font-medium text-white">{current.name}</span>
       </span>
@@ -25,10 +31,10 @@ export function CountrySelect({ value, onChange }: CountrySelectProps) {
       <select
         value={value}
         onChange={(event) => onChange(event.target.value as CountryCode)}
-        aria-label="Country or region"
+        aria-label={t('onboarding.services.countryAria')}
         className="absolute inset-0 cursor-pointer opacity-0"
       >
-        {WORLD_COUNTRIES.map((country) => (
+        {countries.map((country) => (
           <option key={country.code} value={country.code} className="bg-surface-2 text-white">
             {country.name}
           </option>

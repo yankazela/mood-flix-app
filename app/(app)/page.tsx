@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
 import { AlertTriangle, Heart, RotateCcw, Sparkles } from 'lucide-react'
 import { useDiscovery } from '@/lib/store/discovery-context'
 import { useBilling } from '@/lib/store/billing-context'
@@ -12,18 +13,19 @@ import { MovieCatalog } from '@/components/movies/movie-catalog'
 import { Button } from '@/components/shared/button'
 
 const ERROR_COPY = {
-  safety: { title: 'We’re here for you', tone: 'care' },
-  'rate-limit': { title: 'That’s all for today', tone: 'notice' },
-  unavailable: { title: 'We’re still warming up', tone: 'notice' },
-  invalid: { title: 'We need a little more', tone: 'notice' },
-  generic: { title: 'We couldn’t find your movie', tone: 'error' },
+  safety: { title: 'discover.errors.safety', tone: 'care' },
+  'rate-limit': { title: 'discover.errors.rateLimit', tone: 'notice' },
+  unavailable: { title: 'discover.errors.unavailable', tone: 'notice' },
+  invalid: { title: 'discover.errors.invalid', tone: 'notice' },
+  generic: { title: 'discover.errors.generic', tone: 'error' },
 } as const
 
 export default function DiscoverPage() {
+  const { t } = useTranslation()
   const { status, response, error, errorKind, findMovies } = useDiscovery()
   const { plan, usage, openPaywall } = useBilling()
   const limited = errorKind === 'rate-limit'
-  const copy = limited && plan === 'free' ? { title: 'You’ve used today’s free picks', tone: 'notice' as const } : ERROR_COPY[errorKind ?? 'generic']
+  const copy = limited && plan === 'free' ? { title: 'discover.errors.rateLimitFree', tone: 'notice' as const } : ERROR_COPY[errorKind ?? 'generic']
   // A supportive message or a daily limit is not something a retry fixes.
   const retryable = errorKind !== 'safety' && !limited
 
@@ -41,20 +43,20 @@ export default function DiscoverPage() {
               {copy.tone === 'error' ? <AlertTriangle className="size-6" /> : limited ? <Sparkles className="size-6" /> : <Heart className="size-6" />}
             </span>
             <div>
-              <h2 className="text-lg font-semibold text-white">{copy.title}</h2>
+              <h2 className="text-lg font-semibold text-white">{t(copy.title)}</h2>
               <p className="mt-1 text-sm leading-6 text-white/65 text-pretty">{error}</p>
             </div>
             {retryable && (
               <Button variant="secondary" onClick={findMovies} leadingIcon={<RotateCcw />}>
-                Try again
+                {t('common.tryAgain')}
               </Button>
             )}
             {limited && plan === 'free' && (
               <Button onClick={openPaywall} leadingIcon={<Sparkles />}>
-                Upgrade to Advanced
+                {t('discover.errors.upgrade')}
               </Button>
             )}
-            {limited && usage && <p className="text-xs text-white/45">Your picks reset {formatResetsIn(usage.resetsAt)}.</p>}
+            {limited && usage && <p className="text-xs text-white/45">{t('discover.errors.resets', { when: formatResetsIn(usage.resetsAt) })}</p>}
           </div>
         </div>
       )}

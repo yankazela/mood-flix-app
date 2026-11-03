@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslation } from 'react-i18next'
 import type { ServiceRef } from '@/lib/types'
 import { getProvider } from '@/lib/data/providers'
 import { cn } from '@/lib/utils'
@@ -18,9 +21,10 @@ const SIZES = {
 
 /** A service chip. Services the app knows get their brand colours; any other service the catalogue names gets a neutral chip. */
 export function StreamingProviderBadge({ service, size = 'sm', variant = 'subtle', className }: StreamingProviderBadgeProps) {
+  const { t } = useTranslation()
   const provider = service.providerId ? getProvider(service.providerId) : undefined
   const label = provider?.shortName ?? service.name
-  const title = `Available on ${provider?.name ?? service.name}`
+  const title = t('movie.availableOnService', { service: provider?.name ?? service.name })
 
   if (variant === 'solid') {
     return (

@@ -1,3 +1,4 @@
+import { t } from '@/lib/i18n'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { eventChannel, type EventChannel, type SagaIterator } from 'redux-saga'
 import type { AxiosResponse } from 'axios'
@@ -43,14 +44,14 @@ async function fetchBackendUser(tokens?: AuthTokens): Promise<UserDetails> {
     MOOD_API_URL,
   )
   const user = response.data.user;
-  if (!user?.userId || !user.email) throw new Error('Unable to load your account profile.')
+  if (!user?.userId || !user.email) throw new Error(t('auth.errors.profileUnavailable'))
   return user
 }
 
 function* completeGoogleSession(identity: User): SagaIterator<UserDetails> {
-  if (!authService.getSessionTokens) throw new Error('Google token storage is not available for this auth provider.')
+  if (!authService.getSessionTokens) throw new Error(t('auth.errors.googleStorage'))
   const tokens: AuthTokens | null = yield call([authService, authService.getSessionTokens])
-  if (!tokens) throw new Error('Google sign-in did not return a valid token session. Please try again.')
+  if (!tokens) throw new Error(t('auth.errors.googleNoTokens'))
   // yield call(registerUserWithBackend, identity)
   const user: UserDetails = yield call(fetchBackendUser, tokens)
   yield call(saveBackendSession, { outcome: 'authenticated', tokens, user }, user)
@@ -85,7 +86,7 @@ function* handleUpdateUser(action: PayloadAction<UpdateUserRequest>): SagaIterat
     const user: UserDetails | null = yield select((state: RootState) => state.auth.user)
     
     if (!user) {
-      throw new Error('Please log in to save your preferences.')
+      throw new Error(t('auth.errors.loginToSave'))
     }
 
     const response: { user: UserDetails } = yield call(sendUpdateUserRequest, action.payload)
@@ -138,7 +139,7 @@ function* restoreSession(): SagaIterator {
 function* handleSignIn(action: PayloadAction<SignInInput>): SagaIterator {
   try {
     const auth: AuthResponse = yield call(authenticateWithBackend, action.payload)
-    if (auth.outcome !== 'authenticated') throw new Error('Unable to sign in. Please try again.')
+    if (auth.outcome !== 'authenticated') throw new Error(t('auth.errors.signInFailed'))
 
   
     yield call(saveBackendSession, auth, auth.user, action.payload.remember ?? true)
@@ -216,7 +217,7 @@ function* watchRedirects(): SagaIterator {
           continue
         }
         const identity: User | null = yield call([authService, authService.getCurrentUser])
-        if (!identity) throw new Error('Google sign-in did not complete. Please try again.')
+        if (!identity) throw new Error(t('auth.errors.googleIncomplete'))
         const user: UserDetails = yield call(completeGoogleSession, identity)
         yield put(signInSucceeded(user))
       } catch (error) {

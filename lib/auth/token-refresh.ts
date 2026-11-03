@@ -1,3 +1,4 @@
+import { t } from '@/lib/i18n'
 import axios from 'axios'
 import type { AuthTokens } from '@/app/(auth)/signup/store/state'
 import { MOOD_API_URL } from '@/app/api/requests/types'
@@ -57,8 +58,8 @@ async function renew(): Promise<string> {
     // A rejected refresh token ends the session; a dropped connection should not.
     if (status === 400 || status === 401 || status === 403) {
       notifySessionExpired()
-      throw new Error('Your session has expired. Please log in again.')
+      throw new Error(t('auth.errors.sessionExpired'))
     }
-    throw new Error('We couldn’t refresh your session. Check your connection and try again.')
+    throw new Error(t('auth.errors.refreshFailed'))
   }
 }

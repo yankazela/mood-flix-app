@@ -1,3 +1,4 @@
+import { t } from '@/lib/i18n'
 import type { User } from '@/lib/types'
 import type { AuthTokens } from '@/app/(auth)/signup/store/state'
 
@@ -84,5 +85,5 @@ export interface AuthProvider {
 export function authErrorMessage(error: unknown): string {
   if (error instanceof AuthError) return error.message
   if (error instanceof Error && error.message) return error.message
-  return 'Something went wrong. Please try again.'
+  return t('auth.errors.generic')
 }

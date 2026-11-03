@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { AlertTriangle, Clock3, MessageSquareQuote, Play, RotateCcw, Sparkles } from 'lucide-react'
@@ -14,23 +15,24 @@ import { SectionHeading } from '@/components/shared/section-heading'
 import { Button, buttonStyles } from '@/components/shared/button'
 import { cn } from '@/lib/utils'
 
-const FEEDBACK: Record<FeedbackRating, { emoji: string; label: string }> = {
-  perfect: { emoji: '😍', label: 'Perfect' },
-  good: { emoji: '🙂', label: 'Good' },
-  okay: { emoji: '😐', label: 'Okay' },
-  'not-for-me': { emoji: '👎', label: 'Not for me' },
+const FEEDBACK: Record<FeedbackRating, { emoji: string }> = {
+  perfect: { emoji: '😍' },
+  good: { emoji: '🙂' },
+  okay: { emoji: '😐' },
+  'not-for-me': { emoji: '👎' },
 }
 
 export default function HistoryPage() {
+  const { t } = useTranslation()
   const { history, ready, loadError } = useLibrary()
 
   return (
     <div className="mx-auto max-w-[1600px] page-gutter pb-28 pt-8 sm:pt-12 md:pb-16">
       <SectionHeading
         size="lg"
-        eyebrow={<><Clock3 className="size-3.5" /> Recommendation history</>}
-        title="How you’ve been feeling"
-        subtitle="Every request, what we suggested, what you picked and how it landed. This is what trains your recommendations."
+        eyebrow={<><Clock3 className="size-3.5" /> {t('history.eyebrow')}</>}
+        title={t('history.title')}
+        subtitle={t('history.subtitle')}
         className="mb-8 animate-fade-up"
       />
 
@@ -39,7 +41,7 @@ export default function HistoryPage() {
       ) : loadError && history.length === 0 ? (
         <div role="alert" className="flex flex-col items-center gap-3 rounded-3xl border border-destructive/20 bg-destructive/8 px-6 py-12 text-center animate-fade-up">
           <AlertTriangle className="size-6 text-destructive" />
-          <p className="max-w-sm text-sm text-white/60">We couldn’t load your history right now. {loadError}</p>
+          <p className="max-w-sm text-sm text-white/60">{t('history.loadFailed', { detail: loadError })}</p>
         </div>
       ) : history.length === 0 ? (
         <div className="flex flex-col items-center gap-4 rounded-3xl border border-dashed border-white/10 px-6 py-16 text-center animate-fade-up">
@@ -47,11 +49,11 @@ export default function HistoryPage() {
             <Clock3 className="size-6" />
           </span>
           <div>
-            <h2 className="text-lg font-semibold text-white">No requests yet</h2>
-            <p className="mx-auto mt-1 max-w-sm text-sm text-white/50">Tell us how you feel on Discover and your requests will show up here.</p>
+            <h2 className="text-lg font-semibold text-white">{t('history.empty')}</h2>
+            <p className="mx-auto mt-1 max-w-sm text-sm text-white/50">{t('history.emptyBody')}</p>
           </div>
           <Link href="/" className={buttonStyles({ variant: 'secondary' })}>
-            <Sparkles className="size-4" /> Find my first movie
+            <Sparkles className="size-4" /> {t('history.findFirst')}
           </Link>
         </div>
       ) : (
@@ -76,6 +78,7 @@ function HistorySkeleton() {
 }
 
 function HistoryCard({ entry, index }: { entry: HistoryEntry; index: number }) {
+  const { t } = useTranslation()
   const router = useRouter()
   const { rerun } = useDiscovery()
   const { open } = useMovieDetails()
@@ -105,7 +108,7 @@ function HistoryCard({ entry, index }: { entry: HistoryEntry; index: number }) {
               <span>{formatTime(entry.createdAt)}</span>
               <span>·</span>
               <span className="truncate">
-                {entry.interpretation.objective === 'improve' ? 'Wanted a lift' : 'Matched the mood'}: {entry.interpretation.summary}
+                {entry.interpretation.objective === 'improve' ? t('history.wantedLift') : t('history.matched')}: {entry.interpretation.summary}
               </span>
             </div>
             <blockquote className="mt-3 flex gap-3">
@@ -113,12 +116,12 @@ function HistoryCard({ entry, index }: { entry: HistoryEntry; index: number }) {
               <p className="text-lg font-medium leading-snug tracking-[-0.01em] text-white text-pretty sm:text-xl">“{entry.prompt}”</p>
             </blockquote>
             {entry.moods.length > 0 && (
-              <ul className="mt-4 flex flex-wrap gap-2" aria-label="Moods">
+              <ul className="mt-4 flex flex-wrap gap-2" aria-label={t('history.moodsAria')}>
                 {entry.moods.map((id) => {
                   const mood = getMood(id)
                   return (
                     <li key={id} className="inline-flex h-7 items-center gap-1.5 rounded-full border border-white/10 bg-white/4 px-2.5 text-xs text-white/70">
-                      <span aria-hidden>{mood.emoji}</span> {mood.label}
+                      <span aria-hidden>{mood.emoji}</span> {t(`data.moods.${id}`)}
                     </li>
                   )
                 })}
@@ -129,20 +132,20 @@ function HistoryCard({ entry, index }: { entry: HistoryEntry; index: number }) {
           <div className="flex shrink-0 flex-wrap items-center gap-3 lg:flex-col lg:items-end">
             {feedback ? (
               <span className="inline-flex h-9 items-center gap-2 rounded-full border border-brand/40 bg-brand/10 px-3 text-sm font-medium text-brand">
-                <span aria-hidden>{feedback.emoji}</span> {feedback.label}
+                <span aria-hidden>{feedback.emoji}</span> {t(`data.feedback.${entry.feedback}`)}
               </span>
             ) : (
-              <span className="inline-flex h-9 items-center rounded-full border border-white/10 px-3 text-sm text-white/45">No feedback yet</span>
+              <span className="inline-flex h-9 items-center rounded-full border border-white/10 px-3 text-sm text-white/45">{t('history.noFeedback')}</span>
             )}
             <Button variant="secondary" size="sm" onClick={runAgain} leadingIcon={<RotateCcw />}>
-              Run again
+              {t('history.runAgain')}
             </Button>
           </div>
         </div>
 
         <div className="grid gap-5 border-t border-white/6 p-5 sm:grid-cols-[1fr_auto] sm:p-6">
           <div>
-            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/40">Movies recommended</p>
+            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/40">{t('history.recommended')}</p>
             {recommended.length > 0 ? (
               <ul className="flex gap-2.5 overflow-x-auto no-scrollbar">
                 {recommended.map((movie) => (
@@ -151,7 +154,7 @@ function HistoryCard({ entry, index }: { entry: HistoryEntry; index: number }) {
                       type="button"
                       onClick={() => open(movie)}
                       className={cn('block w-[72px] overflow-hidden rounded-xl ring-1 ring-white/10 transition hover:scale-[1.04] hover:ring-white/30 sm:w-[84px]', selected?.id === movie.id && 'ring-2 ring-brand')}
-                      aria-label={`View ${movie.title}`}
+                      aria-label={t('movie.view', { title: movie.title })}
                     >
                       <PosterImage movie={movie} className="aspect-[2/3]" sizes="84px" />
                     </button>
@@ -159,11 +162,11 @@ function HistoryCard({ entry, index }: { entry: HistoryEntry; index: number }) {
                 ))}
               </ul>
             ) : (
-              <p className="text-sm text-white/45">These titles are no longer in the catalog.</p>
+              <p className="text-sm text-white/45">{t('history.gone')}</p>
             )}
           </div>
           <div className="sm:w-[260px] sm:border-l sm:border-white/6 sm:pl-5">
-            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/40">Movie selected</p>
+            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/40">{t('history.selected')}</p>
             {selected ? (
               <button type="button" onClick={() => open(selected)} className="group flex w-full items-center gap-3 rounded-2xl border border-white/8 bg-surface-2/60 p-2.5 text-left transition hover:border-white/20">
                 <PosterImage movie={selected} className="aspect-[2/3] w-11 shrink-0 rounded-lg" sizes="44px" />
@@ -174,7 +177,7 @@ function HistoryCard({ entry, index }: { entry: HistoryEntry; index: number }) {
                 <Play className="size-4 shrink-0 text-white/35 transition group-hover:text-brand" />
               </button>
             ) : (
-              <p className="text-sm text-white/45">You didn’t pick one this time.</p>
+              <p className="text-sm text-white/45">{t('history.noPick')}</p>
             )}
           </div>
         </div>

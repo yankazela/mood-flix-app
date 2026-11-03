@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
 import { useState } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, Bookmark, BookmarkCheck, Clock, Eye, ExternalLink, Play, ThumbsDown, ThumbsUp, X } from 'lucide-react'
@@ -32,6 +33,7 @@ interface MovieDetailsProps {
 }
 
 export function MovieDetails({ movie, recommendation, variant = 'modal', onClose }: MovieDetailsProps) {
+  const { t } = useTranslation()
   const { preferences } = usePreferences()
   const library = useLibrary()
   const { response, historyId } = useDiscovery()
@@ -58,17 +60,17 @@ export function MovieDetails({ movie, recommendation, variant = 'modal', onClose
     if (activeHistoryId) library.recordSelection(activeHistoryId, movie)
     library.markWatched(movie)
     window.open(watchUrl, '_blank', 'noopener,noreferrer')
-    toast.show(`Opening “${movie.title}” on ${primaryService ? primaryService.name : 'TMDB'}…`, 'success')
+    toast.show(t('movie.opening', { title: movie.title, service: primaryService ? primaryService.name : 'TMDB' }), 'success')
     setTimeout(() => setLaunching(false), 1400)
   }
 
   const facts = [
-    { label: 'Type', value: movie.mediaType === 'tv' ? 'TV series' : 'Film' },
-    { label: movie.mediaType === 'tv' ? 'Episode length' : 'Runtime', value: formatRuntime(movie.runtimeMinutes) },
-    { label: 'Seasons', value: movie.seasons ? String(movie.seasons) : '' },
-    { label: 'Episodes', value: movie.episodes ? String(movie.episodes) : '' },
-    { label: 'Language', value: movie.language ? formatLanguage(movie.language) : '' },
-    { label: 'Rated', value: movie.contentRating ?? '' },
+    { label: t('movie.type'), value: movie.mediaType === 'tv' ? t('movie.tvSeries') : t('movie.film') },
+    { label: movie.mediaType === 'tv' ? t('movie.episodeLength') : t('movie.runtime'), value: formatRuntime(movie.runtimeMinutes) },
+    { label: t('movie.seasons'), value: movie.seasons ? String(movie.seasons) : '' },
+    { label: t('movie.episodes'), value: movie.episodes ? String(movie.episodes) : '' },
+    { label: t('movie.language'), value: movie.language ? formatLanguage(movie.language) : '' },
+    { label: t('movie.rated'), value: movie.contentRating ?? '' },
   ].filter((fact) => fact.value)
 
   return (
@@ -99,13 +101,13 @@ export function MovieDetails({ movie, recommendation, variant = 'modal', onClose
               href="/"
               className="inline-flex h-10 items-center gap-2 rounded-full bg-black/55 pl-3 pr-4 text-sm font-medium text-white/85 transition hover:bg-black/70 hover:text-white"
             >
-              <ArrowLeft className="size-4" /> Back to Discover
+              <ArrowLeft className="size-4" /> {t('movie.back')}
             </Link>
           ) : (
             <span />
           )}
           {onClose && (
-            <IconButton label="Close details" onClick={onClose} className="bg-black/40 hover:bg-black/60" autoFocus>
+            <IconButton label={t('movie.close')} onClick={onClose} className="bg-black/40 hover:bg-black/60" autoFocus>
               <X />
             </IconButton>
           )}
@@ -125,7 +127,7 @@ export function MovieDetails({ movie, recommendation, variant = 'modal', onClose
             {recommendation && recommendation.matchScore > 0 && (
               <div className="mb-3 flex items-center gap-2">
                 <MatchBadge score={recommendation.matchScore} size="lg" />
-                <span className="text-xs text-white/50">for how you feel right now</span>
+                <span className="text-xs text-white/50">{t('movie.forHowYouFeel')}</span>
               </div>
             )}
             <h1 className={cn('font-medium tracking-[-0.04em] text-white text-balance', variant === 'page' ? 'text-4xl sm:text-5xl lg:text-6xl' : 'text-3xl sm:text-4xl lg:text-[2.75rem]')}>
@@ -135,7 +137,7 @@ export function MovieDetails({ movie, recommendation, variant = 'modal', onClose
             <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-white/65">
               {movie.rating !== null && <RatingBadge rating={movie.rating} voteCount={movie.voteCount || undefined} size="md" />}
               {movie.contentRating && (
-                <span className="rounded-md border border-white/25 px-1.5 py-0.5 text-[11px] font-bold tracking-wide text-white/85" title="Content rating">
+                <span className="rounded-md border border-white/25 px-1.5 py-0.5 text-[11px] font-bold tracking-wide text-white/85" title={t('movie.contentRating')}>
                   {movie.contentRating}
                 </span>
               )}
@@ -143,7 +145,7 @@ export function MovieDetails({ movie, recommendation, variant = 'modal', onClose
               {movie.runtimeMinutes && (
                 <span className="inline-flex items-center gap-1.5">
                   <Clock className="size-3.5" /> {formatRuntime(movie.runtimeMinutes)}
-                  {movie.mediaType === 'tv' && ' / episode'}
+                  {movie.mediaType === 'tv' && t('movie.perEpisode')}
                 </span>
               )}
               {movie.language && <span>{formatLanguage(movie.language)}</span>}
@@ -159,19 +161,19 @@ export function MovieDetails({ movie, recommendation, variant = 'modal', onClose
             <div className="mt-6 flex flex-wrap items-center gap-2.5">
               {watchUrl && (
                 <Button size="lg" onClick={handleWatch} loading={launching} leadingIcon={<Play className="fill-current" />} trailingIcon={<ExternalLink />}>
-                  {primaryService?.providerId ? `Watch now on ${primaryService.name}` : primaryService ? `Watch on ${primaryService.name}` : 'Find where to watch'}
+                  {primaryService?.providerId ? t('movie.watchOn', { service: primaryService.name }) : primaryService ? t('movie.watchOnGeneric', { service: primaryService.name }) : t('movie.findWhere')}
                 </Button>
               )}
-              <IconButton label={saved ? 'Remove from My Movies' : 'Add to My Movies'} size="lg" variant="solid" active={saved} onClick={toggleSaved}>
+              <IconButton label={saved ? t('movie.unsave') : t('movie.save')} size="lg" variant="solid" active={saved} onClick={toggleSaved}>
                 {saved ? <BookmarkCheck /> : <Bookmark />}
               </IconButton>
-              <IconButton label="Like" size="lg" variant="solid" active={liked} onClick={like}>
+              <IconButton label={t('movie.like')} size="lg" variant="solid" active={liked} onClick={like}>
                 <ThumbsUp />
               </IconButton>
-              <IconButton label="Dislike" size="lg" variant="solid" active={disliked} onClick={dislike}>
+              <IconButton label={t('movie.dislike')} size="lg" variant="solid" active={disliked} onClick={dislike}>
                 <ThumbsDown />
               </IconButton>
-              <IconButton label={watched ? 'Mark as not watched' : 'Mark as watched'} size="lg" variant="solid" active={watched} onClick={toggleWatched}>
+              <IconButton label={watched ? t('movie.markUnwatched') : t('movie.markWatched')} size="lg" variant="solid" active={watched} onClick={toggleWatched}>
                 <Eye />
               </IconButton>
             </div>
@@ -184,7 +186,7 @@ export function MovieDetails({ movie, recommendation, variant = 'modal', onClose
 
             {movie.overview && (
               <section>
-                <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/40">Overview</h2>
+                <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/40">{t('movie.overview')}</h2>
                 <p className="mt-3 text-[15px] leading-7 text-white/80 text-pretty">{movie.overview}</p>
               </section>
             )}
@@ -193,13 +195,13 @@ export function MovieDetails({ movie, recommendation, variant = 'modal', onClose
               <section className="grid gap-6 sm:grid-cols-[1fr_1.4fr]">
                 {movie.director && (
                   <div>
-                    <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/40">{movie.mediaType === 'tv' ? 'Created by' : 'Director'}</h2>
+                    <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/40">{movie.mediaType === 'tv' ? t('movie.createdBy') : t('movie.director')}</h2>
                     <p className="mt-3 text-sm font-medium text-white">{movie.director}</p>
                   </div>
                 )}
                 {movie.cast.length > 0 && (
                   <div>
-                    <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/40">Cast</h2>
+                    <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/40">{t('movie.cast')}</h2>
                     <ul className="mt-3 space-y-2">
                       {movie.cast.map((member) => (
                         <li key={member.name} className="flex items-baseline justify-between gap-3 text-sm">
@@ -217,7 +219,7 @@ export function MovieDetails({ movie, recommendation, variant = 'modal', onClose
           <div className="space-y-6">
             {facts.length > 0 && (
               <section className="rounded-3xl border border-white/8 bg-surface-2/60 p-5">
-                <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/40">Details</h2>
+                <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/40">{t('movie.details')}</h2>
                 <dl className="mt-4 space-y-2.5">
                   {facts.map((fact) => (
                     <div key={fact.label} className="flex items-baseline justify-between gap-4 text-sm">
@@ -230,7 +232,7 @@ export function MovieDetails({ movie, recommendation, variant = 'modal', onClose
             )}
 
             <section className="rounded-3xl border border-white/8 bg-surface-2/60 p-5">
-              <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/40">Available on</h2>
+              <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/40">{t('movie.availableOn')}</h2>
               {services.length > 0 ? (
                 <>
                   <div className="mt-4 flex flex-wrap gap-2">
@@ -241,11 +243,11 @@ export function MovieDetails({ movie, recommendation, variant = 'modal', onClose
                     ))}
                   </div>
                   <p className="mt-3 text-xs text-white/45">
-                    Streaming in <Flag code={country.code} /> {country.name}. {ownsOne ? 'Included with a service you already have.' : 'Not on your services yet.'}
+                    {t('movie.streamingIn')} <Flag code={country.code} /> {country.name}. {ownsOne ? t('movie.included') : t('movie.notOnYours')}
                   </p>
                 </>
               ) : (
-                <p className="mt-3 text-sm text-white/50">Not currently streaming in {country.name}.</p>
+                <p className="mt-3 text-sm text-white/50">{t('movie.notStreaming', { country: country.name })}</p>
               )}
             </section>
           </div>

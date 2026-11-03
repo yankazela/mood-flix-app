@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { getValidIdToken, refreshSession } from "@/lib/auth/token-refresh";
+import { currentLocale } from "@/lib/i18n";
 import { EbaseUrls, RequestParams } from "./types";
 
 /** An API failure, with the HTTP status when the server answered (absent for network errors). */
@@ -33,6 +34,8 @@ type Method = "get" | "post" | "put" | "patch" | "delete";
  */
 async function send<T>(method: Method, params: RequestParams, baseUrl: EbaseUrls | string, retried = false): Promise<AxiosResponse<T>> {
     const headers: Record<string, string> = { ...(params.headers || {}) };
+    // A CORS-safelisted header, so no preflight change is needed on the API.
+    headers["Accept-Language"] = currentLocale();
 
     if (params.auth) {
         try {

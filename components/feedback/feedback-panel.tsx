@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
 import { Bookmark, BookmarkCheck, Check, Eye, ThumbsDown, ThumbsUp } from 'lucide-react'
 import type { FeedbackRating, Movie } from '@/lib/types'
 import { useLibrary } from '@/lib/store/library-context'
@@ -14,14 +15,15 @@ interface FeedbackPanelProps {
   className?: string
 }
 
-const RATINGS: { value: FeedbackRating; emoji: string; label: string }[] = [
-  { value: 'perfect', emoji: '😍', label: 'Perfect' },
-  { value: 'good', emoji: '🙂', label: 'Good' },
-  { value: 'okay', emoji: '😐', label: 'Okay' },
-  { value: 'not-for-me', emoji: '👎', label: 'Not for me' },
+const RATINGS: { value: FeedbackRating; emoji: string }[] = [
+  { value: 'perfect', emoji: '😍' },
+  { value: 'good', emoji: '🙂' },
+  { value: 'okay', emoji: '😐' },
+  { value: 'not-for-me', emoji: '👎' },
 ]
 
 export function FeedbackPanel({ movie, historyId, className }: FeedbackPanelProps) {
+  const { t } = useTranslation()
   const library = useLibrary()
   const toast = useToast()
   const { feedback, saved, liked, disliked, watched, toggleSaved, like, dislike, toggleWatched } = useMovieActions(movie)
@@ -30,15 +32,15 @@ export function FeedbackPanel({ movie, historyId, className }: FeedbackPanelProp
   const rate = (rating: FeedbackRating) => {
     library.rateMovie(movie, rating)
     if (historyId) library.recordHistoryFeedback(historyId, rating)
-    toast.show('Thanks! This helps us learn your taste.', 'success')
+    toast.show(t('feedback.thanks'), 'success')
   }
 
   return (
     <section className={cn('rounded-3xl border border-white/8 bg-surface p-5 sm:p-6', className)}>
       <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
         <div className="min-w-0 flex-1">
-          <h3 className="text-base font-semibold text-white">Was this a good recommendation?</h3>
-          <p className="mt-1 text-sm text-white/45">Your feedback trains your personal recommendation engine.</p>
+          <h3 className="text-base font-semibold text-white">{t('feedback.title')}</h3>
+          <p className="mt-1 text-sm text-white/45">{t('feedback.subtitle')}</p>
           <div className="mt-4 grid grid-cols-4 gap-2 sm:flex sm:flex-wrap">
             {RATINGS.map((option) => {
               const active = current === option.value
@@ -58,7 +60,7 @@ export function FeedbackPanel({ movie, historyId, className }: FeedbackPanelProp
                   <span className="text-xl leading-none sm:text-lg" aria-hidden>
                     {option.emoji}
                   </span>
-                  {option.label}
+                  {t(`data.feedback.${option.value}`)}
                   {active && <Check className="hidden size-3.5 sm:block" strokeWidth={3} />}
                 </button>
               )
@@ -67,14 +69,14 @@ export function FeedbackPanel({ movie, historyId, className }: FeedbackPanelProp
         </div>
 
         <div className="flex flex-wrap gap-2 md:max-w-[280px] md:justify-end">
-          <ToggleChip active={liked} onClick={like} icon={<ThumbsUp className="size-3.5" />} label="Like" />
-          <ToggleChip active={disliked} onClick={dislike} icon={<ThumbsDown className="size-3.5" />} label="Dislike" />
-          <ToggleChip active={watched} onClick={toggleWatched} icon={<Eye className="size-3.5" />} label="Already watched" />
+          <ToggleChip active={liked} onClick={like} icon={<ThumbsUp className="size-3.5" />} label={t('feedback.like')} />
+          <ToggleChip active={disliked} onClick={dislike} icon={<ThumbsDown className="size-3.5" />} label={t('feedback.dislike')} />
+          <ToggleChip active={watched} onClick={toggleWatched} icon={<Eye className="size-3.5" />} label={t('feedback.alreadyWatched')} />
           <ToggleChip
             active={saved}
             onClick={toggleSaved}
             icon={saved ? <BookmarkCheck className="size-3.5" /> : <Bookmark className="size-3.5" />}
-            label={saved ? 'Saved' : 'Save for later'}
+            label={saved ? t('feedback.saved') : t('feedback.saveLater')}
           />
         </div>
       </div>

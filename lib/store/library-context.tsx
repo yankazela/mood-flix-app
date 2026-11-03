@@ -1,5 +1,7 @@
 'use client'
 
+import { useLocale } from '@/lib/i18n/language-context'
+import { t } from '@/lib/i18n'
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import type { FeedbackRating, HistoryEntry, Movie, MovieFeedback } from '@/lib/types'
 import type { ApiLibraryPatch } from '@/lib/api/types'
@@ -69,12 +71,14 @@ function rememberMovie(movies: Record<string, Movie>, movie: Movie): Record<stri
 }
 
 function errorMessage(error: unknown): string {
-  return error instanceof Error && error.message ? error.message : 'Something went wrong while saving. Please try again.'
+  return error instanceof Error && error.message ? error.message : t('toasts.saveError')
 }
 
 export function LibraryProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth()
   const userId = user?.userId ?? null
+  // Saved and watched titles come back in the interface language, so a language switch reloads them.
+  const { locale } = useLocale()
   const [state, setState] = useState<LibraryState>(EMPTY_STATE)
   const [ready, setReady] = useState(false)
   const [loadError, setLoadError] = useState<string | null>(null)
@@ -136,7 +140,7 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true
     }
-  }, [userId, load, commit])
+  }, [userId, locale, load, commit])
 
   /** Runs saves one after another, so the server sees changes in the order they were made. */
   const enqueue = useCallback(

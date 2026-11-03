@@ -1,3 +1,4 @@
+import { t } from '@/lib/i18n'
 import {
   autoSignIn,
   confirmSignUp,
@@ -47,9 +48,9 @@ function toAuthError(error: unknown): AuthError {
   if (error instanceof AuthError) return error
   const name = (error as { name?: string })?.name ?? ''
   const mapped = COGNITO_ERRORS[name]
-  if (mapped) return new AuthError(mapped[0], mapped[1])
+  if (mapped) return new AuthError(mapped[0], t(`auth.errors.${mapped[0]}`))
   const message = (error as { message?: string })?.message
-  return new AuthError('unknown', message || 'Something went wrong. Please try again.')
+  return new AuthError('unknown', message || t('auth.errors.unknown'))
 }
 
 function isFederatedGoogle(username: string, identities?: string): boolean {
@@ -106,9 +107,9 @@ export class CognitoAuthProvider implements AuthProvider {
       const { isSignedIn, nextStep } = await signIn({ username: email.trim().toLowerCase(), password })
       if (isSignedIn) return loadUser()
       if (nextStep.signInStep === 'CONFIRM_SIGN_UP') {
-        throw new AuthError('user-not-confirmed', 'Your email isn’t verified yet.')
+        throw new AuthError('user-not-confirmed', t('auth.errors.user-not-confirmed'))
       }
-      throw new AuthError('unsupported-step', `This account needs an extra sign-in step (${nextStep.signInStep}) that UpMyMood doesn’t support yet.`)
+      throw new AuthError('unsupported-step', `${t('auth.errors.unsupported-step')} (${nextStep.signInStep})`)
     } catch (error) {
       if ((error as { name?: string })?.name === 'UserAlreadyAuthenticatedException') return loadUser()
       throw toAuthError(error)
@@ -164,7 +165,7 @@ export class CognitoAuthProvider implements AuthProvider {
 
   async signInWithGoogle(): Promise<User | null> {
     if (!this.googleEnabled) {
-      throw new AuthError('unknown', 'Google sign-in isn’t configured for this environment.')
+      throw new AuthError('unknown', t('auth.errors.googleNotConfigured'))
     }
     setRememberSession(true)
     try {
@@ -237,7 +238,7 @@ export class CognitoAuthProvider implements AuthProvider {
       if (payload.event === 'signInWithRedirect') callback({ type: 'success' })
       if (payload.event === 'signInWithRedirect_failure') {
         const message = (payload.data as { error?: { message?: string } } | undefined)?.error?.message
-        callback({ type: 'failure', message: message || 'Google sign-in didn’t complete. Please try again.' })
+        callback({ type: 'failure', message: message || t('auth.errors.googleIncomplete') })
       }
     })
   }

@@ -1,3 +1,4 @@
+import { t } from '@/lib/i18n'
 import { Capacitor } from '@capacitor/core'
 import { LOG_LEVEL, PURCHASES_ERROR_CODE, Purchases, type CustomerInfo, type PurchasesPackage } from '@revenuecat/purchases-capacitor'
 import { ENTITLEMENT_ID, OFFERING_ID, revenueCatApiKey } from '@/lib/billing/config'
@@ -62,7 +63,7 @@ export async function loadOffer(): Promise<OfferLookup> {
   const pkg = offering?.monthly ?? offering?.availablePackages[0] ?? null
   if (pkg) return { offer: toOffer(pkg), detail: null }
 
-  const store = Capacitor.getPlatform() === 'android' ? 'Google Play' : 'the App Store'
+  const store = Capacitor.getPlatform() === 'android' ? 'Google Play' : 'the App Store' // diagnostic text, kept in English
   if (!offering) {
     const known = Object.keys(all)
     return {
@@ -79,7 +80,7 @@ export async function loadOffer(): Promise<OfferLookup> {
 }
 
 export async function purchase(offer: BillingOffer): Promise<PurchaseOutcome> {
-  if (!storeAvailable()) throw new Error(unavailableMessage('Subscriptions'))
+  if (!storeAvailable()) throw new Error(t(Capacitor.isNativePlatform() ? 'billing.errors.subsUnavailableNative' : 'billing.errors.subsUnavailableWeb'))
   try {
     const { customerInfo } = await Purchases.purchasePackage({ aPackage: offer.package })
     return isEntitled(customerInfo) ? 'purchased' : 'pending'
@@ -91,7 +92,7 @@ export async function purchase(offer: BillingOffer): Promise<PurchaseOutcome> {
 
 /** Re-attaches purchases made with this store account. Resolves to whether Advanced is active afterwards. */
 export async function restore(): Promise<boolean> {
-  if (!storeAvailable()) throw new Error(unavailableMessage('Restoring purchases'))
+  if (!storeAvailable()) throw new Error(t(Capacitor.isNativePlatform() ? 'billing.errors.restoreUnavailableNative' : 'billing.errors.restoreUnavailableWeb'))
   try {
     const { customerInfo } = await Purchases.restorePurchases()
     return isEntitled(customerInfo)
@@ -109,12 +110,6 @@ export async function managementUrl(): Promise<string | null> {
   } catch {
     return null
   }
-}
-
-function unavailableMessage(what: string): string {
-  return Capacitor.isNativePlatform()
-    ? `${what} aren’t available in this version of the app yet.`
-    : `${what} work in the UpMyMood app for iPhone and Android.`
 }
 
 /** Says, once per session and only in an app build, which key is missing; the UI itself stays quiet about it. */
@@ -149,5 +144,5 @@ function isCancellation(error: unknown): boolean {
 function storeErrorMessage(error: unknown): string {
   const failure = error as { message?: unknown; underlyingErrorMessage?: unknown } | null
   const message = [failure?.message, failure?.underlyingErrorMessage].find((text) => typeof text === 'string' && text.trim())
-  return typeof message === 'string' ? message : 'The store did not respond. Please try again.'
+  return typeof message === 'string' ? message : t('billing.errors.storeNoResponse')
 }

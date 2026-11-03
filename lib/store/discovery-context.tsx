@@ -1,5 +1,6 @@
 'use client'
 
+import { t } from '@/lib/i18n'
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import type { DiscoveryFilters, HistoryEntry, MoodObjective, PromptInputType, RecommendationRequest, RecommendationResponse, UserMoodId } from '@/lib/types'
 import { buildRecommendBody } from '@/lib/api/adapters'
@@ -118,7 +119,7 @@ export function DiscoveryProvider({ children }: { children: ReactNode }) {
       } catch (err) {
         if (seq !== requestSeq.current) return
         setStatus('error')
-        setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
+        setError(err instanceof Error ? err.message : t('api.generic'))
         setErrorKind(err instanceof RecommendationError ? err.kind : 'generic')
         // A 429 says exactly where the person stands; show it rather than a stale count.
         if (err instanceof RecommendationError && err.rateLimit) {

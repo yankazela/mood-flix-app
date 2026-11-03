@@ -1,5 +1,7 @@
 'use client'
 
+import { useLocale } from '@/lib/i18n/language-context'
+import { useTranslation } from 'react-i18next'
 import { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
@@ -20,10 +22,12 @@ export default function MoviePage() {
 
 /** Served at /movie?id=<item id>; static export cannot prebuild a page per catalogue item. */
 function MovieContent() {
+  const { t } = useTranslation()
+  const { locale } = useLocale()
   const id = useSearchParams().get('id') ?? ''
   const { data: movie, loading, error } = useAsync<Movie | null>(
-    () => (id ? fetchMovie(id) : Promise.reject(new Error('No movie selected.'))),
-    id,
+    () => (id ? fetchMovie(id) : Promise.reject(new Error(t('movie.noMovieSelected')))),
+    `${locale}:${id}`,
     null,
   )
 
@@ -32,10 +36,10 @@ function MovieContent() {
   if (!movie) {
     return (
       <div className="page-gutter flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
-        <h1 className="text-2xl font-medium text-white">We couldn’t find that movie</h1>
-        <p className="text-sm text-white/50">{error ?? 'It may have been removed from the catalog.'}</p>
+        <h1 className="text-2xl font-medium text-white">{t('movie.notFound')}</h1>
+        <p className="text-sm text-white/50">{error ?? t('movie.removed')}</p>
         <Link href="/" className={buttonStyles({ variant: 'secondary' })}>
-          Back to Discover
+          {t('common.backToDiscover')}
         </Link>
       </div>
     )

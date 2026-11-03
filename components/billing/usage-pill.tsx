@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
 import { Sparkles } from 'lucide-react'
 import { formatResetsIn } from '@/lib/billing/format'
 import { useBilling } from '@/lib/store/billing-context'
@@ -8,6 +9,7 @@ import { cn } from '@/lib/utils'
 /** How many picks are left today, with the way up for people on the free plan. */
 export function UsagePill({ className }: { className?: string }) {
   const { usage, plan, openPaywall } = useBilling()
+  const { t } = useTranslation()
   if (!usage) return null
   const exhausted = usage.remaining <= 0
 
@@ -22,16 +24,17 @@ export function UsagePill({ className }: { className?: string }) {
       <Sparkles className="size-3 shrink-0 text-brand" aria-hidden />
       <span className="truncate">
         {exhausted ? (
-          `Picks reset ${formatResetsIn(usage.resetsAt)}`
+          t('discover.usage.resets', { when: formatResetsIn(usage.resetsAt) })
         ) : (
           <>
-            {usage.remaining}/{usage.limit} picks left<span className="hidden sm:inline"> today</span>
+            {t('discover.usage.left', { remaining: usage.remaining, limit: usage.limit })}
+            <span className="hidden sm:inline">{t('discover.usage.today')}</span>
           </>
         )}
       </span>
       {plan === 'free' && (
         <button type="button" onClick={openPaywall} className="shrink-0 font-semibold text-brand outline-none hover:underline focus-visible:underline">
-          Upgrade
+          {t('discover.usage.upgrade')}
         </button>
       )}
     </span>

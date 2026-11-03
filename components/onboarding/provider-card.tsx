@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
 import { Check } from 'lucide-react'
 import type { StreamingProvider } from '@/lib/types'
 import { cn } from '@/lib/utils'
@@ -13,7 +14,8 @@ interface ProviderCardProps {
 }
 
 export function ProviderCard({ provider, selected, onToggle, index = 0, unavailable = false }: ProviderCardProps) {
-  const status = unavailable ? 'Not available in your region' : selected ? 'Included in your results' : 'Tap to add'
+  const { t } = useTranslation()
+  const status = unavailable ? t('onboarding.provider.unavailable') : selected ? t('onboarding.provider.included') : t('onboarding.provider.tap')
 
   return (
     <button

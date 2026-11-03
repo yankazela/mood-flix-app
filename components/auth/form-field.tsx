@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
 import { forwardRef, useId, useState, type InputHTMLAttributes, type ReactNode } from 'react'
 import { AlertCircle, Eye, EyeOff } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -52,6 +53,7 @@ export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(function F
 type PasswordInputProps = Omit<FormFieldProps, 'type' | 'trailing'>
 
 export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(function PasswordInput(props, ref) {
+  const { t } = useTranslation()
   const [visible, setVisible] = useState(false)
   return (
     <FormField
@@ -61,7 +63,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(fu
         <button
           type="button"
           onClick={() => setVisible((v) => !v)}
-          aria-label={visible ? 'Hide password' : 'Show password'}
+          aria-label={visible ? t('auth.fields.hidePassword') : t('auth.fields.showPassword')}
           aria-pressed={visible}
           className="flex size-9 items-center justify-center rounded-lg text-white/45 transition hover:bg-white/8 hover:text-white"
         >
@@ -74,8 +76,9 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(fu
 })
 
 export function PasswordStrength({ password }: { password: string }) {
+  const { t } = useTranslation()
   const score = [password.length >= 8, /[A-Z]/.test(password), /[0-9]/.test(password), /[^A-Za-z0-9]/.test(password)].filter(Boolean).length
-  const label = password.length === 0 ? '' : score <= 1 ? 'Weak' : score === 2 ? 'Fair' : score === 3 ? 'Good' : 'Strong'
+  const label = password.length === 0 ? '' : t(`auth.fields.strength.${score <= 1 ? 'weak' : score === 2 ? 'fair' : score === 3 ? 'good' : 'strong'}`)
   if (!password) return null
   return (
     <div className="flex items-center gap-2 animate-fade-in" aria-live="polite">
@@ -84,7 +87,7 @@ export function PasswordStrength({ password }: { password: string }) {
           <span key={index} className={cn('h-1 flex-1 rounded-full transition-colors', index < score ? (score <= 1 ? 'bg-destructive' : score === 2 ? 'bg-amber-400' : 'bg-brand') : 'bg-white/10')} />
         ))}
       </div>
-      <span className="w-12 text-right text-[11px] text-white/50">{label}</span>
+      <span className="min-w-12 text-right text-[11px] text-white/50">{label}</span>
     </div>
   )
 }

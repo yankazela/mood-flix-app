@@ -1,3 +1,5 @@
+import { t } from '@/lib/i18n'
+import { PLAN_LIMITS } from '@/lib/billing/config'
 import type { FeedbackRating, HistoryEntry, Movie, Plan, RecommendationRequest, RecommendationResponse, StreamingProviderId } from '@/lib/types'
 import type { ApiHistoryEntry, ApiRecommendationResult } from '@/lib/api/types'
 import { ApiError } from '@/app/api/requests'
@@ -42,13 +44,22 @@ function rateLimitDetails(data: unknown): RateLimitDetails | undefined {
 function toRecommendationError(error: unknown): RecommendationError {
   if (error instanceof RecommendationError) return error
   const status = error instanceof ApiError ? error.status : undefined
-  const message = error instanceof Error && error.message ? error.message : 'We couldn’t load recommendations right now.'
+  const message = error instanceof Error && error.message ? error.message : t('api.loadFailed')
   // The server's message is the person-facing text for these: the supportive note, the daily limit, what to fix.
   if (status === 422) return new RecommendationError(message, 'safety', status)
-  if (status === 429) return new RecommendationError(message, 'rate-limit', status, error instanceof ApiError ? rateLimitDetails(error.data) : undefined)
+  if (status === 429) {
+    const details = error instanceof ApiError ? rateLimitDetails(error.data) : undefined
+    // The server's English sentence is replaced by one in the interface language, built from the same facts.
+    const localized = details
+      ? details.plan === 'free'
+        ? t('api.dailyLimitFree', { limit: details.limit, advanced: PLAN_LIMITS.advanced })
+        : t('api.dailyLimitPaid', { limit: details.limit })
+      : message
+    return new RecommendationError(localized, 'rate-limit', status, details)
+  }
   if (status === 400 || status === 404) return new RecommendationError(message, 'invalid', status)
-  if (status === 503) return new RecommendationError('Recommendations are warming up. Please try again in a moment.', 'unavailable', status)
-  if (status === undefined || status >= 500) return new RecommendationError('We couldn’t load recommendations right now. Please try again.', 'generic', status)
+  if (status === 503) return new RecommendationError(t('api.warming'), 'unavailable', status)
+  if (status === undefined || status >= 500) return new RecommendationError(t('api.loadFailedRetry'), 'generic', status)
   return new RecommendationError(message, 'generic', status)
 }
 

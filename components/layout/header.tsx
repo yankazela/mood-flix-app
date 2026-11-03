@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -10,9 +11,9 @@ import { UserMenu } from '@/components/layout/user-menu'
 import { cn } from '@/lib/utils'
 
 export const NAV_ITEMS = [
-  { href: '/', label: 'Discover' },
-  { href: '/my-movies', label: 'My Movies' },
-  { href: '/history', label: 'History' },
+  { href: '/', label: 'nav.discover' },
+  { href: '/my-movies', label: 'nav.myMovies' },
+  { href: '/history', label: 'nav.history' },
 ] as const
 
 interface HeaderProps {
@@ -20,6 +21,7 @@ interface HeaderProps {
 }
 
 export function Header({ onOpenSearch }: HeaderProps) {
+  const { t } = useTranslation()
   const pathname = usePathname()
   const [scrolled, setScrolled] = useState(false)
 
@@ -35,7 +37,7 @@ export function Header({ onOpenSearch }: HeaderProps) {
       <div className="page-gutter mx-auto flex h-16 max-w-[1600px] items-center justify-between gap-6 sm:h-[72px]">
         <div className="flex items-center gap-10">
           <Logo />
-          <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
+          <nav className="hidden items-center gap-1 md:flex" aria-label={t('nav.primary')}>
             {NAV_ITEMS.map((item) => {
               const active = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)
               return (
@@ -48,7 +50,7 @@ export function Header({ onOpenSearch }: HeaderProps) {
                     active ? 'text-white' : 'text-white/50 hover:text-white',
                   )}
                 >
-                  {item.label}
+                  {t(item.label)}
                   {active && <span className="absolute inset-x-3.5 -bottom-0.5 h-px bg-brand" aria-hidden />}
                 </Link>
               )
@@ -56,7 +58,7 @@ export function Header({ onOpenSearch }: HeaderProps) {
           </nav>
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
-          <IconButton label="Search movies" variant="ghost" onClick={onOpenSearch}>
+          <IconButton label={t('nav.searchMovies')} variant="ghost" onClick={onOpenSearch}>
             <Search />
           </IconButton>
           <UserMenu />

@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
 import { Suspense, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAppSelector } from '@/store/hooks'
@@ -21,6 +22,7 @@ export default function AuthCallbackPage() {
 }
 
 function AuthCallback() {
+  const { t } = useTranslation()
   const router = useRouter()
   const searchParams = useSearchParams()
   const status = useAppSelector((state) => state.auth.status)
@@ -39,20 +41,21 @@ function AuthCallback() {
   useEffect(() => {
     if (status === 'authenticated') return
     const timer = setTimeout(() => {
-      router.replace(`/login?error=${encodeURIComponent('Google sign-in took too long. Please try again.')}`)
+      router.replace(`/login?error=${encodeURIComponent(t('auth.google.tookTooLong'))}`)
     }, TIMEOUT_MS)
     return () => clearTimeout(timer)
-  }, [status, router])
+  }, [status, router, t])
 
   return <CallbackSplash />
 }
 
 function CallbackSplash() {
+  const { t } = useTranslation()
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center gap-5 bg-ink px-6 text-center">
       <Logo size="lg" href="" className="animate-pulse" />
       <p className="text-sm text-white/55" aria-live="polite">
-        Signing you in with Google…
+        {t('auth.google.signingIn')}
       </p>
     </div>
   )
