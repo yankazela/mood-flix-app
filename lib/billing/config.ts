@@ -7,9 +7,9 @@ export const ENTITLEMENT_ID = process.env.NEXT_PUBLIC_REVENUECAT_ENTITLEMENT || 
 /** The RevenueCat offering to sell from when none is marked current in the dashboard. */
 export const OFFERING_ID = process.env.NEXT_PUBLIC_REVENUECAT_OFFERING || 'upmymood_advanced'
 
-/** Apple requires both links on a paywall. The Terms default is Apple's standard EULA. */
-export const TERMS_URL = process.env.NEXT_PUBLIC_TERMS_URL || 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/'
-export const PRIVACY_URL = process.env.NEXT_PUBLIC_PRIVACY_URL || ''
+/** Apple requires both links on a paywall. They default to the app's own /terms and /privacy pages. */
+export const TERMS_URL = process.env.NEXT_PUBLIC_TERMS_URL || '/terms'
+export const PRIVACY_URL = process.env.NEXT_PUBLIC_PRIVACY_URL || '/privacy'
 
 /** Shown only where the store price cannot be read (the web). Native screens always show the store's own price. */
 export const ADVANCED_PRICE_LABEL = process.env.NEXT_PUBLIC_ADVANCED_PRICE_LABEL || 'US$3.99 / month'

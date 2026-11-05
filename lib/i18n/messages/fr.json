@@ -646,5 +646,14 @@
     "hours": "{{hours}} h",
     "minutes": "{{minutes}} min",
     "hoursMinutes": "{{hours}} h {{minutes}}"
+  },
+  "legal": {
+    "updated": "Dernière mise à jour : {{date}}",
+    "contactFallback": "l’adresse de contact indiquée sur notre fiche dans les stores",
+    "jurisdictionFallback": "celui où {{operator}} est établi",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions d’utilisation",
+    "legal": "Mentions légales",
+    "back": "Retour"
   }
 }

@@ -155,6 +155,11 @@ export function UserMenu() {
             >
               <LogOut /> {t('menu.signOut')}
             </button>
+            <p className="px-3 pb-1.5 pt-1 text-[11px] text-white/35">
+              <Link href="/terms" onClick={() => setOpen(false)} className="hover:text-white/70">{t('legal.terms')}</Link>
+              {' · '}
+              <Link href="/privacy" onClick={() => setOpen(false)} className="hover:text-white/70">{t('legal.privacy')}</Link>
+            </p>
           </div>
         </div>
       )}

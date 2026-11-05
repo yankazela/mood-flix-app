@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import { useEffect } from 'react'
 import { Capacitor } from '@capacitor/core'
@@ -179,15 +180,15 @@ export function PaywallModal() {
               {canPurchase
                 ? t('billing.disclosure', { account: accountName, period, store: storeName })
                 : t('billing.disclosureWeb')}{' '}
-              <a href={TERMS_URL} target="_blank" rel="noopener noreferrer" className="underline hover:text-white/70">
+              <LegalLink href={TERMS_URL} onNavigate={closePaywall}>
                 {t('billing.terms')}
-              </a>
+              </LegalLink>
               {PRIVACY_URL && (
                 <>
                   {' · '}
-                  <a href={PRIVACY_URL} target="_blank" rel="noopener noreferrer" className="underline hover:text-white/70">
+                  <LegalLink href={PRIVACY_URL} onNavigate={closePaywall}>
                     {t('billing.privacy')}
-                  </a>
+                  </LegalLink>
                 </>
               )}
             </p>
@@ -195,6 +196,22 @@ export function PaywallModal() {
         )}
       </div>
     </div>
+  )
+}
+
+/** The app's own pages open in place (closing the sheet); an external URL opens in a new tab. */
+function LegalLink({ href, onNavigate, children }: { href: string; onNavigate: () => void; children: React.ReactNode }) {
+  if (href.startsWith('/')) {
+    return (
+      <Link href={href} onClick={onNavigate} className="underline hover:text-white/70">
+        {children}
+      </Link>
+    )
+  }
+  return (
+    <a href={href} target="_blank" rel="noopener noreferrer" className="underline hover:text-white/70">
+      {children}
+    </a>
   )
 }
 

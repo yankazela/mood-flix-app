@@ -646,5 +646,14 @@
     "hours": "{{hours}} h",
     "minutes": "{{minutes}} min",
     "hoursMinutes": "{{hours}} h {{minutes}} min"
+  },
+  "legal": {
+    "updated": "Última actualización: {{date}}",
+    "contactFallback": "la dirección de contacto que figura en nuestra ficha de la tienda de apps",
+    "jurisdictionFallback": "aquel en el que {{operator}} está establecido",
+    "privacy": "Política de privacidad",
+    "terms": "Términos del servicio",
+    "legal": "Legal",
+    "back": "Atrás"
   }
 }

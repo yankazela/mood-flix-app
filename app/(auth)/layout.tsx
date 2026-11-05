@@ -1,6 +1,7 @@
 'use client'
 
 import type { ReactNode } from 'react'
+import Link from 'next/link'
 import { Sparkles } from 'lucide-react'
 import { Trans, useTranslation } from 'react-i18next'
 import { PosterWall } from '@/components/auth/poster-wall'
@@ -27,7 +28,12 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
             </h2>
             <p className="mt-6 max-w-md text-base leading-7 text-white/55">{t('auth.hero.body')}</p>
           </div>
-          <p className="text-xs text-white/35">{t('auth.hero.footer', { year: new Date().getFullYear() })}</p>
+          <p className="text-xs text-white/35">
+            {t('auth.hero.footer', { year: new Date().getFullYear() })}{' '}
+            <Link href="/terms" className="underline-offset-4 hover:text-white hover:underline">{t('legal.terms')}</Link>
+            {' · '}
+            <Link href="/privacy" className="underline-offset-4 hover:text-white hover:underline">{t('legal.privacy')}</Link>
+          </p>
         </aside>
         <main className="flex items-center justify-center px-5 py-10 sm:px-8 lg:px-12">{children}</main>
       </div>

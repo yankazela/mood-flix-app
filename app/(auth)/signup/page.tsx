@@ -150,8 +150,8 @@ function DetailsStep() {
         <Trans
           i18nKey="auth.signup.terms"
           components={{
-            terms: <Link href="#" className="text-white/70 underline-offset-4 hover:text-brand hover:underline" />,
-            privacy: <Link href="#" className="text-white/70 underline-offset-4 hover:text-brand hover:underline" />,
+            terms: <Link href="/terms" className="text-white/70 underline-offset-4 hover:text-brand hover:underline" />,
+            privacy: <Link href="/privacy" className="text-white/70 underline-offset-4 hover:text-brand hover:underline" />,
           }}
         />
       </p>

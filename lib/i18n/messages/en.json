@@ -646,5 +646,14 @@
     "hours": "{{hours}}h",
     "minutes": "{{minutes}}m",
     "hoursMinutes": "{{hours}}h {{minutes}}m"
+  },
+  "legal": {
+    "updated": "Last updated {{date}}",
+    "contactFallback": "the contact address shown on our app store listing",
+    "jurisdictionFallback": "the country where {{operator}} is established",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "legal": "Legal",
+    "back": "Back"
   }
 }
