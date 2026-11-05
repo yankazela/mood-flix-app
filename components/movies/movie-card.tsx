@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
 import { Bookmark, BookmarkCheck, Info, ThumbsDown, ThumbsUp } from 'lucide-react'
 import type { Movie, Recommendation } from '@/lib/types'
 import { movieMeta } from '@/lib/format'
@@ -37,6 +38,7 @@ const WIDTHS: Record<MovieCardSize, string> = {
 }
 
 export function MovieCard({ movie, recommendation, size = 'md', fluid = false, rank, index = 0, className, priority }: MovieCardProps) {
+  const { t } = useTranslation()
   const { preferences } = usePreferences()
   const { open } = useMovieDetails()
   const { saved, liked, disliked, toggleSaved, like, dislike } = useMovieActions(movie)
@@ -73,7 +75,7 @@ export function MovieCard({ movie, recommendation, size = 'md', fluid = false, r
         <button
           type="button"
           onClick={() => open(movie, recommendation)}
-          aria-label={`View details for ${movie.title}`}
+          aria-label={t('movie.viewDetails', { title: movie.title })}
           className="absolute inset-0 z-10 cursor-pointer rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand"
         />
 
@@ -99,7 +101,7 @@ export function MovieCard({ movie, recommendation, size = 'md', fluid = false, r
             <div className="mb-2 flex items-center gap-1.5">
               <StreamingProviderBadge service={provider} size="xs" />
               {saved && (
-                <span className="flex size-5 items-center justify-center rounded-md bg-brand text-brand-foreground" aria-label="Saved">
+                <span className="flex size-5 items-center justify-center rounded-md bg-brand text-brand-foreground" aria-label={t('movie.saved')}>
                   <BookmarkCheck className="size-3" strokeWidth={2.5} />
                 </span>
               )}
@@ -115,15 +117,15 @@ export function MovieCard({ movie, recommendation, size = 'md', fluid = false, r
               onClick={() => open(movie, recommendation)}
               className="flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg bg-white text-xs font-semibold text-ink transition hover:bg-brand"
             >
-              <Info className="size-3.5" /> Details
+              <Info className="size-3.5" /> {t('movie.detailsBtn')}
             </button>
-            <QuickAction label={saved ? 'Remove from My Movies' : 'Add to My Movies'} active={saved} onClick={toggleSaved}>
+            <QuickAction label={saved ? t('movie.unsave') : t('movie.save')} active={saved} onClick={toggleSaved}>
               {saved ? <BookmarkCheck className="size-3.5" /> : <Bookmark className="size-3.5" />}
             </QuickAction>
-            <QuickAction label="Like" active={liked} onClick={like}>
+            <QuickAction label={t('movie.like')} active={liked} onClick={like}>
               <ThumbsUp className="size-3.5" />
             </QuickAction>
-            <QuickAction label="Dislike" active={disliked} onClick={dislike}>
+            <QuickAction label={t('movie.dislike')} active={disliked} onClick={dislike}>
               <ThumbsDown className="size-3.5" />
             </QuickAction>
           </div>

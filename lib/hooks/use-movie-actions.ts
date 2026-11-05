@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
 import { useCallback } from 'react'
 import type { Movie } from '@/lib/types'
 import { useLibrary } from '@/lib/store/library-context'
@@ -8,6 +9,7 @@ import { useToast } from '@/components/shared/toast'
 
 /** Bundles the per-movie library actions with user-facing confirmations. */
 export function useMovieActions(movie: Movie) {
+  const { t } = useTranslation()
   const library = useLibrary()
   const { response } = useDiscovery()
   const toast = useToast()
@@ -23,23 +25,23 @@ export function useMovieActions(movie: Movie) {
 
   const toggleSaved = useCallback(() => {
     library.toggleSaved(movie)
-    toast.show(saved ? `Removed “${movie.title}” from My Movies` : `Saved “${movie.title}” to My Movies`, saved ? 'default' : 'success')
-  }, [library, movie, saved, toast])
+    toast.show(saved ? t('toasts.removedSaved', { title: movie.title }) : t('toasts.savedTo', { title: movie.title }), saved ? 'default' : 'success')
+  }, [library, movie, saved, toast, t])
 
   const like = useCallback(() => {
     library.setLiked(movie, true, requestId)
-    if (!liked) toast.show(`Liked “${movie.title}”. We’ll find more like it.`, 'success')
-  }, [library, movie, liked, requestId, toast])
+    if (!liked) toast.show(t('toasts.liked', { title: movie.title }), 'success')
+  }, [library, movie, liked, requestId, toast, t])
 
   const dislike = useCallback(() => {
     library.setLiked(movie, false, requestId)
-    if (!disliked) toast.show(`Got it. Fewer movies like “${movie.title}”.`)
-  }, [library, movie, disliked, requestId, toast])
+    if (!disliked) toast.show(t('toasts.disliked', { title: movie.title }))
+  }, [library, movie, disliked, requestId, toast, t])
 
   const toggleWatched = useCallback(() => {
     library.toggleWatched(movie)
-    toast.show(watched ? `Marked “${movie.title}” as not watched` : `Marked “${movie.title}” as watched`)
-  }, [library, movie, watched, toast])
+    toast.show(watched ? t('toasts.markedUnwatched', { title: movie.title }) : t('toasts.markedWatched', { title: movie.title }))
+  }, [library, movie, watched, toast, t])
 
   return { feedback, saved, liked, disliked, watched, toggleSaved, like, dislike, toggleWatched }
 }

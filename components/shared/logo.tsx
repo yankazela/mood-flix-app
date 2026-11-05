@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslation } from 'react-i18next'
 import Link from 'next/link'
 import { Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -17,6 +20,7 @@ const SIZES = {
 } as const
 
 export function Logo({ href = '/', size = 'md', className, markOnly = false }: LogoProps) {
+  const { t } = useTranslation()
   const sizes = SIZES[size]
   const content = (
     <>
@@ -29,7 +33,7 @@ export function Logo({ href = '/', size = 'md', className, markOnly = false }: L
   const classes = cn('flex items-center gap-2.5 outline-none focus-visible:ring-2 focus-visible:ring-brand/60 rounded-xl', className)
   if (!href) return <div className={classes}>{content}</div>
   return (
-    <Link href={href} className={classes} aria-label="UpMyMood home">
+    <Link href={href} className={classes} aria-label={t('common.home')}>
       {content}
     </Link>
   )

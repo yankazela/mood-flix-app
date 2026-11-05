@@ -1,5 +1,6 @@
 'use client'
 
+import { Trans, useTranslation } from 'react-i18next'
 import { useDiscovery } from '@/lib/store/discovery-context'
 import { usePreferences } from '@/lib/store/preferences-context'
 import { getCountry } from '@/lib/data/countries'
@@ -13,6 +14,7 @@ import { UsagePill } from '@/components/billing/usage-pill'
 import { cn } from '@/lib/utils'
 
 export function HeroSection() {
+  const { t } = useTranslation()
   const { prompt, moods, objective, filters, status, setPrompt, toggleMood, setObjective, setFilters, resetFilters, findMovies, activeFilterCount } = useDiscovery()
   const { preferences } = usePreferences()
   const loading = status === 'loading'
@@ -38,7 +40,7 @@ export function HeroSection() {
               compact ? 'text-3xl sm:text-4xl' : 'text-[2.75rem] leading-[1.02] sm:text-6xl lg:text-7xl',
             )}
           >
-            What do you feel like <span className="font-display italic text-brand">watching?</span>
+            <Trans i18nKey="discover.title" components={{ em: <span className="font-display italic text-brand" /> }} />
           </h1>
           <p
             className={cn(
@@ -47,7 +49,7 @@ export function HeroSection() {
             )}
             style={{ '--stagger-index': 1 } as React.CSSProperties}
           >
-            Tell us how you feel. We’ll find the perfect movie for this moment.
+            {t('discover.subtitle')}
           </p>
         </div>
 
@@ -56,7 +58,7 @@ export function HeroSection() {
             <FiltersPanel filters={filters} onChange={setFilters} onReset={resetFilters} activeCount={activeFilterCount} disabled={loading} />
             <UsagePill />
             <span className="hidden truncate sm:inline">
-              {services.length > 0 ? `${services.slice(0, 3).join(', ')}${services.length > 3 ? ` +${services.length - 3}` : ''}` : 'All services'} · <Flag code={country.code} /> {country.name}
+              {services.length > 0 ? `${services.slice(0, 3).join(', ')}${services.length > 3 ? ` ${t('discover.moreServices', { count: services.length - 3 })}` : ''}` : t('discover.allServices')} · <Flag code={country.code} /> {country.name}
             </span>
           </PromptInput>
         </div>

@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
 import { useState, type FormEvent } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, ArrowRight, MailCheck } from 'lucide-react'
@@ -10,6 +11,7 @@ import { Button } from '@/components/shared/button'
 import { EMAIL_PATTERN } from '@/components/auth/use-auth-redirect'
 
 export default function ForgotPasswordPage() {
+  const { t } = useTranslation()
   const [email, setEmail] = useState('')
   const [error, setError] = useState<string | undefined>()
   const [pending, setPending] = useState(false)
@@ -18,7 +20,7 @@ export default function ForgotPasswordPage() {
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
     if (!EMAIL_PATTERN.test(email)) {
-      setError('Enter the email you signed up with.')
+      setError(t('auth.validation.resetEmail'))
       return
     }
     setPending(true)
@@ -27,7 +29,7 @@ export default function ForgotPasswordPage() {
       await authService.requestPasswordReset(email)
       setSent(true)
     } catch (err) {
-      setError(err instanceof AuthError ? err.message : 'Something went wrong. Please try again.')
+      setError(err instanceof AuthError ? err.message : t('auth.errors.generic'))
     } finally {
       setPending(false)
     }
@@ -35,11 +37,11 @@ export default function ForgotPasswordPage() {
 
   return (
     <AuthCard
-      title={sent ? 'Check your inbox' : 'Reset your password'}
-      subtitle={sent ? `We sent a reset link to ${email}. It expires in 30 minutes.` : 'Enter your email and we’ll send you a link to get back in.'}
+      title={sent ? t('auth.forgot.sentTitle') : t('auth.forgot.title')}
+      subtitle={sent ? t('auth.forgot.sentSubtitle', { email }) : t('auth.forgot.subtitle')}
       footer={
         <Link href="/login" className="inline-flex items-center gap-1.5 font-semibold text-white underline-offset-4 hover:text-brand hover:underline">
-          <ArrowLeft className="size-3.5" /> Back to log in
+          <ArrowLeft className="size-3.5" /> {t('auth.forgot.backToLogin')}
         </Link>
       }
     >
@@ -48,16 +50,16 @@ export default function ForgotPasswordPage() {
           <span className="flex size-14 items-center justify-center rounded-2xl bg-brand/15 text-brand">
             <MailCheck className="size-7" />
           </span>
-          <p className="text-sm text-white/55">Didn’t get it? Check your spam folder, or</p>
+          <p className="text-sm text-white/55">{t('auth.forgot.spam')}</p>
           <Button variant="secondary" onClick={() => setSent(false)}>
-            Try a different email
+            {t('auth.forgot.tryDifferent')}
           </Button>
         </div>
       ) : (
         <form onSubmit={handleSubmit} noValidate className="space-y-4">
-          <FormField label="Email" type="email" name="email" autoComplete="email" inputMode="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} error={error} />
+          <FormField label={t('auth.fields.email')} type="email" name="email" autoComplete="email" inputMode="email" placeholder={t('auth.fields.emailPlaceholder')} value={email} onChange={(e) => setEmail(e.target.value)} error={error} />
           <Button type="submit" size="lg" fullWidth loading={pending} trailingIcon={<ArrowRight />}>
-            Send reset link
+            {t('auth.forgot.submit')}
           </Button>
         </form>
       )}

@@ -1,3 +1,4 @@
+import i18n, { t } from '@/lib/i18n'
 import type {
   DiscoveryFilters,
   FeedbackRating,
@@ -129,7 +130,7 @@ function textFor(prompt: string, moods: UserMoodId[]): string {
   const typed = prompt.trim()
   if (typed.length >= 3) return typed.slice(0, MAX_TEXT)
   if (typed) return `${typed} movie`
-  return `I’m feeling ${joinNatural(moods.map((id) => getMood(id).phrase ?? getMood(id).label.toLowerCase()))}`.slice(0, MAX_TEXT)
+  return `${t('discover.feeling')} ${joinNatural(moods.map((id) => (i18n.exists(`data.moodPhrases.${id}`) ? t(`data.moodPhrases.${id}`) : t(`data.moods.${id}`).toLowerCase())))}`.slice(0, MAX_TEXT)
 }
 
 function mediaTypesFor(filters: DiscoveryFilters | undefined): ApiMediaType[] | undefined {

@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslation } from 'react-i18next'
 import { Sparkles } from 'lucide-react'
 import type { Recommendation } from '@/lib/types'
 import { cn } from '@/lib/utils'
@@ -8,11 +11,12 @@ interface RecommendationReasonProps {
 }
 
 export function RecommendationReason({ recommendation, className }: RecommendationReasonProps) {
+  const { t } = useTranslation()
   return (
     <section className={cn('relative overflow-hidden rounded-2xl border border-brand/25 bg-brand/8 p-5 sm:p-6', className)}>
       <div className="pointer-events-none absolute -right-24 -top-24 size-64 rounded-full bg-[radial-gradient(closest-side,rgba(217,246,107,0.16),transparent)]" aria-hidden />
       <h3 className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-brand">
-        <Sparkles className="size-3.5" /> Why we picked this for you
+        <Sparkles className="size-3.5" /> {t('movie.why')}
       </h3>
       <p className="mt-3 text-[15px] leading-7 text-white/85 text-pretty">{recommendation.reason}</p>
       {recommendation.highlights.length > 0 && (

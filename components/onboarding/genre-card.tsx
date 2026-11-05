@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
 import { Check } from 'lucide-react'
 import type { GenreOption } from '@/lib/data/genres'
 import { cn } from '@/lib/utils'
@@ -12,6 +13,7 @@ interface GenreCardProps {
 }
 
 export function GenreCard({ genre, selected, onToggle, index = 0 }: GenreCardProps) {
+  const { t } = useTranslation()
   return (
     <button
       type="button"
@@ -45,8 +47,8 @@ export function GenreCard({ genre, selected, onToggle, index = 0 }: GenreCardPro
         </span>
       </div>
       <div>
-        <p className={cn('text-[15px] font-semibold', selected ? 'text-brand' : 'text-white')}>{genre.label}</p>
-        <p className="mt-0.5 text-xs text-white/45">{genre.blurb}</p>
+        <p className={cn('text-[15px] font-semibold', selected ? 'text-brand' : 'text-white')}>{t(`data.genres.${genre.id}.label`, { defaultValue: genre.label })}</p>
+        <p className="mt-0.5 text-xs text-white/45">{t(`data.genres.${genre.id}.blurb`, { defaultValue: genre.blurb })}</p>
       </div>
     </button>
   )

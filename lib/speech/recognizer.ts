@@ -1,3 +1,4 @@
+import { t } from '@/lib/i18n'
 import { Capacitor } from '@capacitor/core'
 import { SpeechRecognition } from '@capgo/capacitor-speech-recognition'
 
@@ -28,7 +29,7 @@ export interface SpeechRecognizer {
 /** The person said no to the microphone or speech permission. */
 export class SpeechPermissionError extends Error {
   constructor() {
-    super('Microphone access was turned down. Allow it in your device settings to speak your mood.')
+    super(t('speech.permission'))
     this.name = 'SpeechPermissionError'
   }
 }
@@ -132,7 +133,7 @@ const webRecognizer: SpeechRecognizer = {
 
   async start(language, handlers) {
     const Recognition = webRecognitionConstructor()
-    if (!Recognition) throw new Error('Voice input is not available in this browser.')
+    if (!Recognition) throw new Error(t('speech.unavailable'))
 
     const recognition = new Recognition()
     recognition.lang = language
@@ -175,6 +176,6 @@ const webRecognizer: SpeechRecognizer = {
 
 function speechErrorMessage(error: unknown): string {
   const text = typeof error === 'string' ? error : ((error as { message?: unknown } | null)?.message as string | undefined)
-  if (text && /network/i.test(text)) return 'Voice input needs a connection. Check yours and try again.'
-  return 'We couldn’t hear you. Please try again.'
+  if (text && /network/i.test(text)) return t('speech.network')
+  return t('speech.couldntHear')
 }

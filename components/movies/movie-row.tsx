@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import type { Movie, Recommendation } from '@/lib/types'
@@ -23,6 +24,7 @@ interface MovieRowProps {
 }
 
 export function MovieRow({ title, subtitle, items, cardSize = 'md', className, loading = false }: MovieRowProps) {
+  const { t } = useTranslation()
   const scroller = useRef<HTMLDivElement>(null)
   const [canLeft, setCanLeft] = useState(false)
   const [canRight, setCanRight] = useState(false)
@@ -63,10 +65,10 @@ export function MovieRow({ title, subtitle, items, cardSize = 'md', className, l
         className="page-gutter mb-4"
         action={
           <div className="hidden items-center gap-2 md:flex">
-            <IconButton label="Scroll left" size="sm" variant="solid" onClick={() => scrollBy(-1)} disabled={!canLeft}>
+            <IconButton label={t('common.scrollLeft')} size="sm" variant="solid" onClick={() => scrollBy(-1)} disabled={!canLeft}>
               <ChevronLeft />
             </IconButton>
-            <IconButton label="Scroll right" size="sm" variant="solid" onClick={() => scrollBy(1)} disabled={!canRight}>
+            <IconButton label={t('common.scrollRight')} size="sm" variant="solid" onClick={() => scrollBy(1)} disabled={!canRight}>
               <ChevronRight />
             </IconButton>
           </div>

@@ -1,18 +1,18 @@
 'use client'
 
+import Link from 'next/link'
+import { useTranslation } from 'react-i18next'
 import { useEffect } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { Check, RotateCcw, Sparkles, X } from 'lucide-react'
 import { ADVANCED_PRICE_LABEL, PLAN_LIMITS, PRIVACY_URL, TERMS_URL } from '@/lib/billing/config'
-import { formatPlanDate } from '@/lib/billing/format'
+import { formatPlanDate, periodName } from '@/lib/billing/format'
 import { useBilling } from '@/lib/store/billing-context'
 import { useScrollLock } from '@/lib/hooks/use-scroll-lock'
 import { Button } from '@/components/shared/button'
 import { useToast } from '@/components/shared/toast'
 import { cn } from '@/lib/utils'
 
-const FREE_POINTS = [`${PLAN_LIMITS.free} mood-matched picks a day`, 'Explainable recommendations', 'Saved, liked and watched lists']
-const ADVANCED_POINTS = [`${PLAN_LIMITS.advanced} mood-matched picks a day`, 'Everything in Free', 'Cancel any time']
 
 /**
  * The upgrade sheet. On iPhone and Android it sells through the store; on the web it explains
@@ -23,6 +23,7 @@ export function PaywallModal() {
   const billing = useBilling()
   const { paywallOpen, closePaywall } = billing
   const toast = useToast()
+  const { t } = useTranslation()
   useScrollLock(paywallOpen)
 
   useEffect(() => {
@@ -38,18 +39,20 @@ export function PaywallModal() {
 
   const { plan, offer, offerStatus, offerError, canPurchase, busy, error } = billing
   const platform = Capacitor.getPlatform()
-  const storeName = platform === 'android' ? 'Google Play' : 'the App Store'
-  const accountName = platform === 'android' ? 'Google Play account' : 'Apple Account'
-  const price = offer ? `${offer.priceString} / ${offer.period}` : ADVANCED_PRICE_LABEL
-  const period = offer?.period ?? 'month'
+  const storeName = platform === 'android' ? t('billing.googlePlay') : t('billing.appStore')
+  const accountName = platform === 'android' ? t('billing.googleAccount') : t('billing.appleAccount')
+  const period = periodName(offer?.period ?? 'month')
+  const price = offer ? `${offer.priceString} / ${period}` : ADVANCED_PRICE_LABEL
+  const freePoints = [t('billing.freePicks', { count: PLAN_LIMITS.free }), t('billing.explainable'), t('billing.lists')]
+  const advancedPoints = [t('billing.advancedPicks', { count: PLAN_LIMITS.advanced }), t('billing.everything'), t('billing.cancel')]
 
   const handlePurchase = async () => {
     const result = await billing.purchase()
     if (result === 'purchased') {
-      toast.show('Welcome to Advanced. Enjoy your picks.', 'success')
+      toast.show(t('billing.welcome'), 'success')
       closePaywall()
     } else if (result === 'pending') {
-      toast.show('Your purchase is waiting for approval. Your plan updates once it goes through.')
+      toast.show(t('billing.pending'))
       closePaywall()
     }
   }
@@ -57,10 +60,10 @@ export function PaywallModal() {
   const handleRestore = async () => {
     const result = await billing.restore()
     if (result === 'restored') {
-      toast.show('Your subscription is back on this account.', 'success')
+      toast.show(t('billing.restored'), 'success')
       closePaywall()
     } else if (result === 'none') {
-      toast.show('No active subscription was found for this store account.')
+      toast.show(t('billing.noneFound'))
     }
   }
 
@@ -79,7 +82,7 @@ export function PaywallModal() {
         <button
           type="button"
           onClick={closePaywall}
-          aria-label="Close"
+          aria-label={t('common.close')}
           disabled={busy !== null}
           className="absolute right-4 top-4 flex size-9 items-center justify-center rounded-full text-white/50 transition hover:bg-white/10 hover:text-white disabled:opacity-40"
         >
@@ -93,37 +96,37 @@ export function PaywallModal() {
         {plan === 'advanced' ? (
           <>
             <h2 id="paywall-title" className="mt-5 text-2xl font-semibold tracking-tight text-white">
-              You’re on Advanced
+              {t('billing.onAdvanced')}
             </h2>
             <p className="mt-2 text-sm leading-6 text-white/65">
-              {PLAN_LIMITS.advanced} picks a day.
-              {billing.expiresAt && ` ${billing.willRenew ? 'Renews' : 'Ends'} ${formatPlanDate(billing.expiresAt)}.`}
+              {t('billing.onAdvancedBody', { limit: PLAN_LIMITS.advanced })}
+              {billing.expiresAt && ` ${billing.willRenew ? t('billing.renews', { date: formatPlanDate(billing.expiresAt) }) : t('billing.ends', { date: formatPlanDate(billing.expiresAt) })}`}
             </p>
             <div className="mt-6 flex flex-col gap-2 sm:flex-row">
               <Button variant="secondary" onClick={() => void billing.manageSubscription()}>
-                Manage subscription
+                {t('billing.manageSub')}
               </Button>
               <Button variant="ghost" onClick={closePaywall}>
-                Done
+                {t('billing.done')}
               </Button>
             </div>
           </>
         ) : (
           <>
             <h2 id="paywall-title" className="mt-5 text-2xl font-semibold tracking-tight text-white">
-              Go Advanced
+              {t('billing.title')}
             </h2>
             <p className="mt-2 text-sm leading-6 text-white/65 text-pretty">
-              {PLAN_LIMITS.advanced} mood-matched picks a day instead of {PLAN_LIMITS.free}, for {price}.
+              {t('billing.lead', { limit: PLAN_LIMITS.advanced, free: PLAN_LIMITS.free, price })}
             </p>
 
             <div className="mt-6 grid gap-3 min-[400px]:grid-cols-2">
-              <PlanCard name="Free" points={FREE_POINTS} />
-              <PlanCard name="Advanced" points={ADVANCED_POINTS} highlighted />
+              <PlanCard name={t('billing.free')} points={freePoints} />
+              <PlanCard name={t('billing.advanced')} points={advancedPoints} highlighted />
             </div>
 
             {offer?.introPriceString && (
-              <p className="mt-4 text-sm text-brand">Introductory price: {offer.introPriceString} for your first {period}, then {offer.priceString} / {period}.</p>
+              <p className="mt-4 text-sm text-brand">{t('billing.intro', { intro: offer.introPriceString, period, price: `${offer.priceString} / ${period}` })}</p>
             )}
 
             {error && (
@@ -143,49 +146,49 @@ export function PaywallModal() {
                     disabled={!offer || busy !== null}
                     leadingIcon={<Sparkles />}
                   >
-                    {offerStatus === 'loading' ? 'Checking the price' : offer ? `Subscribe for ${price}` : 'Not available right now'}
+                    {offerStatus === 'loading' ? t('billing.checking') : offer ? t('billing.subscribe', { price }) : t('billing.notAvailable')}
                   </Button>
                   {offerStatus === 'error' && (
                     <>
                       <p role="status" className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs leading-5 text-white/60">
-                        The store could not provide the price.{offerError && ` It said: “${offerError}”`}
+                        {t('billing.storeNoPrice')}{offerError && t('billing.storeSaid', { message: offerError })}
                       </p>
                       <Button variant="ghost" size="sm" onClick={() => void billing.loadOffer()} leadingIcon={<RotateCcw />}>
-                        Try loading the price again
+                        {t('billing.retry')}
                       </Button>
                     </>
                   )}
                   {offerStatus === 'unavailable' && (
                     <p role="status" className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs leading-5 text-white/60">
-                      {offerError ?? 'The store has no Advanced product to offer this app yet.'}
+                      {offerError ?? t('billing.noProduct')}
                     </p>
                   )}
                   <Button variant="ghost" size="sm" onClick={() => void handleRestore()} loading={busy === 'restore'} disabled={busy !== null}>
-                    Restore purchases
+                    {t('billing.restore')}
                   </Button>
                 </>
               ) : (
                 <p className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm leading-6 text-white/70">
                   {Capacitor.isNativePlatform()
-                    ? 'Subscriptions aren’t available in this version of the app yet. Please update the app, or check back soon.'
-                    : 'Subscribe from the UpMyMood app on iPhone or Android. Your plan follows your account, so it works here too.'}
+                    ? t('billing.nativeUnavailable')
+                    : t('billing.webNote')}
                 </p>
               )}
             </div>
 
             <p className="mt-5 text-[11px] leading-5 text-white/40 text-pretty">
               {canPurchase
-                ? `Payment is charged to your ${accountName} when you confirm. The subscription renews automatically every ${period} at the same price unless you cancel at least 24 hours before the end of the current period. Manage or cancel it in your ${storeName} subscription settings.`
-                : 'Subscriptions renew automatically each month unless cancelled through the store they were bought from.'}{' '}
-              <a href={TERMS_URL} target="_blank" rel="noopener noreferrer" className="underline hover:text-white/70">
-                Terms of Use
-              </a>
+                ? t('billing.disclosure', { account: accountName, period, store: storeName })
+                : t('billing.disclosureWeb')}{' '}
+              <LegalLink href={TERMS_URL} onNavigate={closePaywall}>
+                {t('billing.terms')}
+              </LegalLink>
               {PRIVACY_URL && (
                 <>
                   {' · '}
-                  <a href={PRIVACY_URL} target="_blank" rel="noopener noreferrer" className="underline hover:text-white/70">
-                    Privacy Policy
-                  </a>
+                  <LegalLink href={PRIVACY_URL} onNavigate={closePaywall}>
+                    {t('billing.privacy')}
+                  </LegalLink>
                 </>
               )}
             </p>
@@ -193,6 +196,22 @@ export function PaywallModal() {
         )}
       </div>
     </div>
+  )
+}
+
+/** The app's own pages open in place (closing the sheet); an external URL opens in a new tab. */
+function LegalLink({ href, onNavigate, children }: { href: string; onNavigate: () => void; children: React.ReactNode }) {
+  if (href.startsWith('/')) {
+    return (
+      <Link href={href} onClick={onNavigate} className="underline hover:text-white/70">
+        {children}
+      </Link>
+    )
+  }
+  return (
+    <a href={href} target="_blank" rel="noopener noreferrer" className="underline hover:text-white/70">
+      {children}
+    </a>
   )
 }
 

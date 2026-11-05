@@ -1,8 +1,10 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
 import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import { AlertCircle, Check, ChevronDown, Search } from 'lucide-react'
-import { WORLD_COUNTRIES, findWorldCountry, type WorldCountry } from '@/lib/data/world-countries'
+import { localizedWorldCountries, type WorldCountry } from '@/lib/data/world-countries'
+import { useLocale } from '@/lib/i18n/language-context'
 import { Flag } from '@/components/shared/flag'
 import { cn } from '@/lib/utils'
 
@@ -17,7 +19,12 @@ interface CountryComboboxProps {
 }
 
 /** Searchable country picker (ARIA combobox + listbox) with flag-icons flags. */
-export function CountryCombobox({ label = 'Country', value, onChange, error, name = 'country', disabled = false }: CountryComboboxProps) {
+export function CountryCombobox({ label, value, onChange, error, name = 'country', disabled = false }: CountryComboboxProps) {
+  const { t } = useTranslation()
+  const { locale } = useLocale()
+  // Names and order follow the interface language; codes stay the same.
+  const countries = useMemo(() => localizedWorldCountries(locale), [locale])
+  const fieldLabel = label ?? t('auth.fields.country')
   const id = useId()
   const listId = `${id}-list`
   const errorId = `${id}-error`
@@ -28,26 +35,26 @@ export function CountryCombobox({ label = 'Country', value, onChange, error, nam
   const triggerRef = useRef<HTMLButtonElement>(null)
   const searchRef = useRef<HTMLInputElement>(null)
   const listRef = useRef<HTMLUListElement>(null)
-  const selected = findWorldCountry(value)
+  const selected = countries.find((country) => country.code === value?.toUpperCase())
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase()
-    if (!q) return WORLD_COUNTRIES
+    if (!q) return countries
     const starts: WorldCountry[] = []
     const contains: WorldCountry[] = []
-    for (const country of WORLD_COUNTRIES) {
+    for (const country of countries) {
       const n = country.name.toLowerCase()
       if (n.startsWith(q) || country.code.toLowerCase() === q) starts.push(country)
       else if (n.includes(q)) contains.push(country)
     }
     return [...starts, ...contains]
-  }, [query])
+  }, [query, countries])
 
   const openList = () => {
     if (disabled) return
     setQuery('')
     setOpen(true)
-    const index = WORLD_COUNTRIES.findIndex((country) => country.code === value)
+    const index = countries.findIndex((country) => country.code === value)
     setActive(index >= 0 ? index : 0)
   }
 
@@ -103,7 +110,7 @@ export function CountryCombobox({ label = 'Country', value, onChange, error, nam
   return (
     <div ref={rootRef} className="relative space-y-1.5">
       <label htmlFor={`${id}-trigger`} className="text-[13px] font-medium text-white/80">
-        {label}
+        {fieldLabel}
       </label>
       <button
         ref={triggerRef}
@@ -135,7 +142,7 @@ export function CountryCombobox({ label = 'Country', value, onChange, error, nam
             <span className="text-xs font-medium tabular-nums text-white/35">{selected.code}</span>
           </>
         ) : (
-          <span className="flex-1 text-white/30">Select your country</span>
+          <span className="flex-1 text-white/30">{t('auth.fields.selectCountry')}</span>
         )}
         <ChevronDown className={cn('size-4 shrink-0 text-white/40 transition-transform', open && 'rotate-180')} />
       </button>
@@ -149,7 +156,7 @@ export function CountryCombobox({ label = 'Country', value, onChange, error, nam
             <input
               ref={searchRef}
               role="combobox"
-              aria-label="Search countries"
+              aria-label={t('auth.fields.searchCountries')}
               aria-expanded
               aria-controls={listId}
               aria-autocomplete="list"
@@ -160,13 +167,13 @@ export function CountryCombobox({ label = 'Country', value, onChange, error, nam
                 setActive(0)
               }}
               onKeyDown={onSearchKeyDown}
-              placeholder="Search countries"
+              placeholder={t('auth.fields.searchCountries')}
               autoComplete="off"
               className="h-11 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-white/30"
             />
           </div>
-          <ul ref={listRef} id={listId} role="listbox" aria-label={label} className="max-h-64 overflow-y-auto py-1.5 [scrollbar-width:thin]">
-            {results.length === 0 && <li className="px-4 py-6 text-center text-sm text-white/40">No country matches “{query}”.</li>}
+          <ul ref={listRef} id={listId} role="listbox" aria-label={fieldLabel} className="max-h-64 overflow-y-auto py-1.5 [scrollbar-width:thin]">
+            {results.length === 0 && <li className="px-4 py-6 text-center text-sm text-white/40">{t('auth.fields.noCountryMatch', { query })}</li>}
             {results.map((country, index) => {
               const isSelected = country.code === value
               return (

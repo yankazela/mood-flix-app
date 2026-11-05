@@ -1,7 +1,11 @@
+'use client'
+
+import { useTranslation } from 'react-i18next'
 import type { Plan } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
 export function PlanBadge({ plan, className }: { plan: Plan; className?: string }) {
+  const { t } = useTranslation()
   return (
     <span
       className={cn(
@@ -10,7 +14,7 @@ export function PlanBadge({ plan, className }: { plan: Plan; className?: string 
         className,
       )}
     >
-      {plan === 'advanced' ? 'Advanced' : 'Free'}
+      {plan === 'advanced' ? t('menu.advanced') : t('menu.free')}
     </span>
   )
 }

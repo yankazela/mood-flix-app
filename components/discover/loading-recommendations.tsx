@@ -1,15 +1,17 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
 import { useEffect, useState } from 'react'
 import { Sparkles } from 'lucide-react'
 import { MovieCardSkeleton } from '@/components/movies/movie-card'
 import { Skeleton } from '@/components/shared/skeleton'
 import { cn } from '@/lib/utils'
 
-const STAGES = ['Understanding your mood...', 'Searching thousands of movies...', 'Finding the perfect matches...']
+const STAGES = ['discover.loading.understanding', 'discover.loading.searching', 'discover.loading.finding']
 const STAGE_MS = 1100
 
 export function LoadingRecommendations() {
+  const { t } = useTranslation()
   const [stage, setStage] = useState(0)
 
   useEffect(() => {
@@ -33,7 +35,7 @@ export function LoadingRecommendations() {
                   index === stage ? 'translate-y-0 opacity-100' : index < stage ? '-translate-y-6 opacity-0' : 'translate-y-6 opacity-0',
                 )}
               >
-                {message}
+                {t(message)}
               </p>
             ))}
           </div>

@@ -1,11 +1,12 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Check, RotateCcw, SlidersHorizontal, X } from 'lucide-react'
 import type { DiscoveryFilters, MovieGenre, StreamingProviderId } from '@/lib/types'
 import { STREAMING_PROVIDERS } from '@/lib/data/providers'
-import { formatGenre, formatRuntime } from '@/lib/format'
+import { formatGenre, formatLanguage, formatRuntime } from '@/lib/format'
 import { usePreferences } from '@/lib/store/preferences-context'
 import { useScrollLock } from '@/lib/hooks/use-scroll-lock'
 import { useMediaQuery } from '@/lib/hooks/use-media-query'
@@ -22,20 +23,14 @@ interface FiltersPanelProps {
 
 const GENRES: MovieGenre[] = ['comedy', 'drama', 'action', 'thriller', 'romance', 'science-fiction', 'animation', 'mystery', 'horror', 'adventure', 'family', 'crime']
 const YEARS = [
-  { label: 'Any year', value: undefined },
-  { label: '2020s', value: 2020 },
-  { label: '2010s and newer', value: 2010 },
-  { label: '2000s and newer', value: 2000 },
-  { label: '1990s and newer', value: 1990 },
+  { label: 'filters.anyYear', value: undefined },
+  { label: 'filters.y2020', value: 2020 },
+  { label: 'filters.y2010', value: 2010 },
+  { label: 'filters.y2000', value: 2000 },
+  { label: 'filters.y1990', value: 1990 },
 ]
 const RATINGS = [6, 7, 7.5, 8]
-const LANGUAGES = [
-  { label: 'Any language', value: 'any' },
-  { label: 'English', value: 'en' },
-  { label: 'French', value: 'fr' },
-  { label: 'Korean', value: 'ko' },
-  { label: 'Japanese', value: 'ja' },
-]
+const LANGUAGE_CODES = ['en', 'fr', 'es', 'ko', 'ja']
 
 const PANEL_WIDTH = 640
 const VIEWPORT_GUTTER = 20
@@ -54,6 +49,7 @@ export function FiltersPanel({ filters, onChange, onReset, activeCount, disabled
   const triggerRef = useRef<HTMLButtonElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
   const { preferences } = usePreferences()
+  const { t } = useTranslation()
   useScrollLock(open && !isDesktop)
 
   useEffect(() => setMounted(true), [])
@@ -116,7 +112,7 @@ export function FiltersPanel({ filters, onChange, onReset, activeCount, disabled
       <div
         ref={panelRef}
         role="dialog"
-        aria-label="Filters"
+        aria-label={t('filters.button')}
         className={cn(
           'fixed z-[75] flex flex-col bg-surface-2 shadow-2xl ring-1 ring-white/10',
           isDesktop ? 'rounded-3xl animate-scale-in' : 'inset-x-0 bottom-0 max-h-[88dvh] rounded-t-[28px] animate-fade-up',
@@ -125,16 +121,16 @@ export function FiltersPanel({ filters, onChange, onReset, activeCount, disabled
       >
         <div className="flex items-center justify-between border-b border-white/6 px-5 py-4">
           <div>
-            <h3 className="text-base font-semibold text-white">Fine-tune your results</h3>
-            <p className="text-xs text-white/45">Your words still lead. These just narrow the field.</p>
+            <h3 className="text-base font-semibold text-white">{t('filters.title')}</h3>
+            <p className="text-xs text-white/45">{t('filters.subtitle')}</p>
           </div>
-          <button type="button" onClick={() => setOpen(false)} aria-label="Close filters" className="flex size-9 items-center justify-center rounded-full text-white/50 hover:bg-white/8 hover:text-white">
+          <button type="button" onClick={() => setOpen(false)} aria-label={t('filters.close')} className="flex size-9 items-center justify-center rounded-full text-white/50 hover:bg-white/8 hover:text-white">
             <X className="size-4" />
           </button>
         </div>
 
         <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-5 py-5 [scrollbar-width:thin]">
-          <Field label="Maximum runtime" value={filters.maxRuntime ? formatRuntime(filters.maxRuntime) : 'Any length'}>
+          <Field label={t('filters.runtime')} value={filters.maxRuntime ? formatRuntime(filters.maxRuntime) : t('filters.anyLength')}>
             <input
               type="range"
               min={75}
@@ -146,27 +142,27 @@ export function FiltersPanel({ filters, onChange, onReset, activeCount, disabled
                 patch({ maxRuntime: value >= 185 ? undefined : value })
               }}
               className="w-full accent-brand"
-              aria-label="Maximum runtime"
+              aria-label={t('filters.runtime')}
             />
             <div className="mt-1 flex justify-between text-[11px] text-white/35">
-              <span>1h 15m</span>
-              <span>Any</span>
+              <span>{formatRuntime(75)}</span>
+              <span>{t('filters.any')}</span>
             </div>
           </Field>
 
-          <Field label="Type">
+          <Field label={t('filters.type')}>
             <Segmented
               options={[
-                { label: 'Movies', value: 'movie' },
-                { label: 'TV shows', value: 'tv' },
-                { label: 'Both', value: 'all' },
+                { label: t('filters.movies'), value: 'movie' },
+                { label: t('filters.tv'), value: 'tv' },
+                { label: t('filters.both'), value: 'all' },
               ]}
               value={filters.mediaType ?? 'all'}
               onChange={(value) => patch({ mediaType: value as DiscoveryFilters['mediaType'] })}
             />
           </Field>
 
-          <Field label="Genre">
+          <Field label={t('filters.genre')}>
             <div className="flex flex-wrap gap-2">
               {GENRES.map((genre) => (
                 <Chip key={genre} active={filters.genres?.includes(genre) ?? false} onClick={() => toggleGenre(genre)}>
@@ -177,22 +173,22 @@ export function FiltersPanel({ filters, onChange, onReset, activeCount, disabled
           </Field>
 
           <div className="grid gap-6 sm:grid-cols-2">
-            <Field label="Release year">
+            <Field label={t('filters.year')}>
               <Select
                 value={String(filters.releaseYearMin ?? '')}
                 onChange={(value) => patch({ releaseYearMin: value ? Number(value) : undefined })}
-                options={YEARS.map((year) => ({ label: year.label, value: year.value ? String(year.value) : '' }))}
+                options={YEARS.map((year) => ({ label: t(year.label), value: year.value ? String(year.value) : '' }))}
               />
             </Field>
-            <Field label="Language">
-              <Select value={filters.language ?? 'any'} onChange={(value) => patch({ language: value === 'any' ? undefined : value })} options={LANGUAGES} />
+            <Field label={t('filters.language')}>
+              <Select value={filters.language ?? 'any'} onChange={(value) => patch({ language: value === 'any' ? undefined : value })} options={[{ label: t('filters.anyLanguage'), value: 'any' }, ...LANGUAGE_CODES.map((code) => ({ label: formatLanguage(code), value: code }))]} />
             </Field>
           </div>
 
-          <Field label="Minimum rating">
+          <Field label={t('filters.minRating')}>
             <div className="flex flex-wrap gap-2">
               <Chip active={!filters.minRating} onClick={() => patch({ minRating: undefined })}>
-                Any
+                {t('filters.any')}
               </Chip>
               {RATINGS.map((rating) => (
                 <Chip key={rating} active={filters.minRating === rating} onClick={() => patch({ minRating: rating })}>
@@ -202,7 +198,7 @@ export function FiltersPanel({ filters, onChange, onReset, activeCount, disabled
             </div>
           </Field>
 
-          <Field label="Streaming platform">
+          <Field label={t('filters.platform')}>
             <div className="flex flex-wrap gap-2">
               {sortedProviders.map((provider) => {
                 const active = filters.providers?.includes(provider.id) ?? false
@@ -210,7 +206,7 @@ export function FiltersPanel({ filters, onChange, onReset, activeCount, disabled
                   <Chip key={provider.id} active={active} onClick={() => toggleProvider(provider.id)}>
                     <span className="size-2 rounded-full" style={{ backgroundColor: provider.brandColor }} aria-hidden />
                     {provider.shortName}
-                    {preferences.streamingProviders.includes(provider.id) && <span className="text-[10px] text-white/35">· yours</span>}
+                    {preferences.streamingProviders.includes(provider.id) && <span className="text-[10px] text-white/35">{t('filters.yours')}</span>}
                   </Chip>
                 )
               })}
@@ -220,10 +216,10 @@ export function FiltersPanel({ filters, onChange, onReset, activeCount, disabled
 
         <div className="flex items-center justify-between gap-3 border-t border-white/6 px-5 py-4 safe-bottom">
           <Button variant="ghost" size="sm" onClick={onReset} leadingIcon={<RotateCcw />} disabled={activeCount === 0}>
-            Reset
+            {t('filters.reset')}
           </Button>
           <Button size="md" onClick={() => setOpen(false)} leadingIcon={<Check />}>
-            {activeCount > 0 ? `Apply ${activeCount} filter${activeCount === 1 ? '' : 's'}` : 'Done'}
+            {activeCount > 0 ? t('filters.apply', { count: activeCount }) : t('filters.done')}
           </Button>
         </div>
       </div>
@@ -245,7 +241,7 @@ export function FiltersPanel({ filters, onChange, onReset, activeCount, disabled
         )}
       >
         <SlidersHorizontal className="size-3.5" />
-        Filters
+        {t('filters.button')}
         {activeCount > 0 && <span className="flex size-5 items-center justify-center rounded-full bg-brand text-[11px] font-bold text-brand-foreground">{activeCount}</span>}
       </button>
       {open && mounted && (isDesktop ? anchor !== null : true) && createPortal(panel, document.body)}

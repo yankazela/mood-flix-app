@@ -1,5 +1,6 @@
 'use client'
 
+import { regionalTag, t } from '@/lib/i18n'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createRecognizer, type SpeechSession } from '@/lib/speech/recognizer'
 
@@ -48,7 +49,7 @@ export function useSpeechInput({ onText }: UseSpeechInputOptions) {
       setStatus('starting')
       baseRef.current = currentText.trim()
       try {
-        sessionRef.current = await recognizer.start(navigator.language || 'en-US', {
+        sessionRef.current = await recognizer.start(regionalTag(), {
           onTranscript: (heard) => {
             const base = baseRef.current
             onTextRef.current(base ? `${base} ${heard}` : capitalise(heard))
@@ -63,7 +64,7 @@ export function useSpeechInput({ onText }: UseSpeechInputOptions) {
       } catch (cause) {
         sessionRef.current = null
         setStatus('idle')
-        setError(cause instanceof Error ? cause.message : 'We couldn’t start listening. Please try again.')
+        setError(cause instanceof Error ? cause.message : t('speech.couldntStart'))
       }
     },
     [recognizer, status],

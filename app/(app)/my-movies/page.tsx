@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
 import { useState } from 'react'
 import Link from 'next/link'
 import { Bookmark, Eye, Heart, Sparkles } from 'lucide-react'
@@ -11,13 +12,14 @@ import { cn } from '@/lib/utils'
 
 type Tab = 'saved' | 'liked' | 'watched'
 
-const TABS: { id: Tab; label: string; icon: typeof Bookmark; empty: { title: string; body: string } }[] = [
-  { id: 'saved', label: 'Saved', icon: Bookmark, empty: { title: 'Nothing saved yet', body: 'Tap the bookmark on any movie to keep it for later.' } },
-  { id: 'liked', label: 'Liked', icon: Heart, empty: { title: 'No likes yet', body: 'Liking movies teaches us your taste and sharpens every recommendation.' } },
-  { id: 'watched', label: 'Watched', icon: Eye, empty: { title: 'No watch history yet', body: 'Movies you watch or mark as watched will appear here.' } },
+const TABS: { id: Tab; icon: typeof Bookmark }[] = [
+  { id: 'saved', icon: Bookmark },
+  { id: 'liked', icon: Heart },
+  { id: 'watched', icon: Eye },
 ]
 
 export default function MyMoviesPage() {
+  const { t } = useTranslation()
   const { savedMovies, likedMovies, watchedMovies, ready, loadError } = useLibrary()
   const [tab, setTab] = useState<Tab>('saved')
 
@@ -27,9 +29,9 @@ export default function MyMoviesPage() {
 
   return (
     <div className="mx-auto max-w-[1600px] page-gutter pb-28 pt-8 sm:pt-12 md:pb-16">
-      <SectionHeading size="lg" eyebrow={<><Bookmark className="size-3.5" /> Your library</>} title="My Movies" subtitle="Everything you’ve saved, loved and watched, in one place." className="mb-8 animate-fade-up" />
+      <SectionHeading size="lg" eyebrow={<><Bookmark className="size-3.5" /> {t('library.eyebrow')}</>} title={t('library.title')} subtitle={t('library.subtitle')} className="mb-8 animate-fade-up" />
 
-      <div role="tablist" aria-label="Library sections" className="mb-8 flex w-full rounded-2xl border border-white/10 bg-surface/70 p-1 animate-fade-up stagger sm:inline-flex sm:w-auto" style={{ '--stagger-index': 1 } as React.CSSProperties}>
+      <div role="tablist" aria-label={t('library.sections')} className="mb-8 flex w-full rounded-2xl border border-white/10 bg-surface/70 p-1 animate-fade-up stagger sm:inline-flex sm:w-auto" style={{ '--stagger-index': 1 } as React.CSSProperties}>
         {TABS.map((item) => {
           const Icon = item.icon
           const selected = item.id === tab
@@ -47,7 +49,7 @@ export default function MyMoviesPage() {
               )}
             >
               <Icon className="size-4" />
-              {item.label}
+              {t(`library.${item.id}`)}
               <span className={cn('rounded-full px-1.5 py-0.5 text-[11px] tabular-nums', selected ? 'bg-ink/10 text-ink/70' : 'bg-white/8 text-white/50')}>{count}</span>
             </button>
           )
@@ -68,11 +70,11 @@ export default function MyMoviesPage() {
             <active.icon className="size-6" />
           </span>
           <div>
-            <h2 className="text-lg font-semibold text-white">{active.empty.title}</h2>
-            <p className="mx-auto mt-1 max-w-sm text-sm text-white/50">{loadError ? `We couldn’t load your library right now. ${loadError}` : active.empty.body}</p>
+            <h2 className="text-lg font-semibold text-white">{t(`library.${active.id}Empty`)}</h2>
+            <p className="mx-auto mt-1 max-w-sm text-sm text-white/50">{loadError ? t('library.loadFailed', { detail: loadError }) : t(`library.${active.id}EmptyBody`)}</p>
           </div>
           <Link href="/" className={buttonStyles({ variant: 'secondary' })}>
-            <Sparkles className="size-4" /> Discover movies
+            <Sparkles className="size-4" /> {t('library.discover')}
           </Link>
         </div>
       )}

@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Check, Info, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -22,6 +23,7 @@ const TOAST_MS = 2800
 
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([])
+  const { t } = useTranslation()
   const counter = useRef(0)
   const timers = useRef(new Map<number, ReturnType<typeof setTimeout>>())
 
@@ -72,7 +74,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             <button
               type="button"
               onClick={() => dismiss(toast.id)}
-              aria-label="Dismiss"
+              aria-label={t('common.dismiss')}
               className="ml-1 flex size-7 items-center justify-center rounded-full text-white/40 hover:bg-white/10 hover:text-white"
             >
               <X className="size-3.5" />

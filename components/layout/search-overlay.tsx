@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
 import { useEffect, useRef, useState } from 'react'
 import { AlertTriangle, Search, X } from 'lucide-react'
 import type { Movie } from '@/lib/types'
@@ -22,6 +23,7 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
   const [error, setError] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const { open: openDetails } = useMovieDetails()
+  const { t } = useTranslation()
   useScrollLock(open)
 
   useEffect(() => {
@@ -59,7 +61,7 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
       } catch (err) {
         if (cancelled) return
         setResults([])
-        setError(err instanceof Error ? err.message : 'Search is unavailable right now.')
+        setError(err instanceof Error ? err.message : t('search.unavailable'))
       } finally {
         if (!cancelled) setSearching(false)
       }
@@ -74,31 +76,31 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
 
   return (
     <div className="fixed inset-0 z-[85] flex items-start justify-center bg-ink/85 p-3 pt-[8vh] animate-fade-in sm:p-6 sm:pt-[12vh]" onClick={onClose}>
-      <div role="dialog" aria-modal="true" aria-label="Search movies" className="w-full max-w-2xl overflow-hidden rounded-3xl border border-white/10 bg-surface-2 shadow-2xl animate-scale-in" onClick={(event) => event.stopPropagation()}>
+      <div role="dialog" aria-modal="true" aria-label={t('nav.searchMovies')} className="w-full max-w-2xl overflow-hidden rounded-3xl border border-white/10 bg-surface-2 shadow-2xl animate-scale-in" onClick={(event) => event.stopPropagation()}>
         <div className="flex items-center gap-3 border-b border-white/6 px-4 py-3 sm:px-5">
           <Search className="size-5 shrink-0 text-white/40" />
           <input
             ref={inputRef}
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search by title, director, actor or genre"
+            placeholder={t('search.placeholder')}
             className="h-11 flex-1 bg-transparent text-base text-white outline-none placeholder:text-white/30"
             autoComplete="off"
           />
-          <button type="button" onClick={onClose} aria-label="Close search" className="flex size-9 items-center justify-center rounded-full text-white/50 hover:bg-white/8 hover:text-white">
+          <button type="button" onClick={onClose} aria-label={t('search.close')} className="flex size-9 items-center justify-center rounded-full text-white/50 hover:bg-white/8 hover:text-white">
             <X className="size-4" />
           </button>
         </div>
 
         <div className="max-h-[60vh] overflow-y-auto p-2 [scrollbar-width:thin]" aria-busy={searching}>
-          {!query.trim() && <p className="px-4 py-8 text-center text-sm text-white/40">Start typing to search the catalog.</p>}
-          {query.trim() && searching && results.length === 0 && <p className="px-4 py-8 text-center text-sm text-white/40">Searching…</p>}
+          {!query.trim() && <p className="px-4 py-8 text-center text-sm text-white/40">{t('search.start')}</p>}
+          {query.trim() && searching && results.length === 0 && <p className="px-4 py-8 text-center text-sm text-white/40">{t('search.searching')}</p>}
           {error && (
             <p role="alert" className="flex items-center justify-center gap-2 px-4 py-8 text-center text-sm text-destructive">
               <AlertTriangle className="size-4 shrink-0" /> {error}
             </p>
           )}
-          {query.trim() && !searching && !error && results.length === 0 && <p className="px-4 py-8 text-center text-sm text-white/40">No matches for “{query}” on your region’s services.</p>}
+          {query.trim() && !searching && !error && results.length === 0 && <p className="px-4 py-8 text-center text-sm text-white/40">{t('search.noMatches', { query })}</p>}
           {results.map((movie) => (
             <button
               key={movie.id}

@@ -1,8 +1,10 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { ChevronDown, Clapperboard, Clock3, LogOut, Settings2, Shield, Sparkles, Tv } from 'lucide-react'
+import { ChevronDown, Clapperboard, Clock3, Languages, LogOut, Settings2, Shield, Sparkles, Tv } from 'lucide-react'
+import { LanguageOptions } from '@/components/shared/language-switcher'
 import { useAuth } from '@/lib/store/auth-context'
 import { useBilling } from '@/lib/store/billing-context'
 import { usePreferences } from '@/lib/store/preferences-context'
@@ -20,6 +22,7 @@ export function UserMenu() {
   const { user, signOut } = useAuth()
   const { preferences } = usePreferences()
   const { plan, usage, expiresAt, willRenew, openPaywall, manageSubscription } = useBilling()
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
@@ -81,31 +84,31 @@ export function UserMenu() {
           <div className="flex items-center justify-between gap-3 border-b border-white/6 p-4">
             <div className="min-w-0">
               <p className="mb-1 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/40">
-                <Sparkles className="size-3" /> Plan
+                <Sparkles className="size-3" /> {t('menu.plan')}
               </p>
-              <p className="text-sm text-white">{plan === 'advanced' ? 'Advanced' : 'Free'}</p>
+              <p className="text-sm text-white">{plan === 'advanced' ? t('menu.advanced') : t('menu.free')}</p>
               <p className="text-xs text-white/45">
-                {usage ? `${usage.remaining}/${usage.limit} picks left today` : 'Picks per day depend on your plan'}
-                {plan === 'advanced' && expiresAt && ` · ${willRenew ? 'Renews' : 'Ends'} ${formatPlanDate(expiresAt)}`}
+                {usage ? t('menu.picksLeft', { remaining: usage.remaining, limit: usage.limit }) : t('menu.picksDepend')}
+                {plan === 'advanced' && expiresAt && ` · ${willRenew ? t('menu.renews', { date: formatPlanDate(expiresAt) }) : t('menu.ends', { date: formatPlanDate(expiresAt) })}`}
               </p>
             </div>
             {plan === 'free' ? (
               <Button size="sm" onClick={() => { setOpen(false); openPaywall() }} leadingIcon={<Sparkles />}>
-                Upgrade
+                {t('common.upgrade')}
               </Button>
             ) : (
               <Button size="sm" variant="secondary" onClick={() => { setOpen(false); void manageSubscription() }}>
-                Manage
+                {t('common.manage')}
               </Button>
             )}
           </div>
 
           <div className="border-b border-white/6 p-4">
             <p className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/40">
-              <Tv className="size-3" /> Your services · <Flag code={country.code} label={country.name} className="text-[13px]" /> {country.code}
+              <Tv className="size-3" /> {t('menu.yourServices')} · <Flag code={country.code} label={country.name} className="text-[13px]" /> {country.code}
             </p>
             <div className="flex flex-wrap gap-1.5">
-              {services.length === 0 && <span className="text-xs text-white/50">No services selected</span>}
+              {services.length === 0 && <span className="text-xs text-white/50">{t('menu.noServices')}</span>}
               {services.map((service) => (
                 <span key={service.id} className="rounded-md px-2 py-0.5 text-[11px] font-semibold" style={{ backgroundColor: service.brandColor, color: service.textColor }}>
                   {service.shortName}
@@ -115,27 +118,34 @@ export function UserMenu() {
             <div className="mt-3 grid grid-cols-2 gap-3">
               <div>
                 <p className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/40">
-                  <Clapperboard className="size-3" /> Genres
+                  <Clapperboard className="size-3" /> {t('menu.genres')}
                 </p>
                 <p className="truncate text-xs text-white/75">
-                  {preferences.favouriteGenres.length > 0 ? preferences.favouriteGenres.map((id) => GENRE_MAP[id]?.label ?? id).join(', ') : 'Not set'}
+                  {preferences.favouriteGenres.length > 0 ? preferences.favouriteGenres.map((id) => (GENRE_MAP[id] ? t(`data.genres.${id}.label`) : id)).join(', ') : t('common.notSet')}
                 </p>
               </div>
               <div>
                 <p className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/40">
-                  <Shield className="size-3" /> Rating
+                  <Shield className="size-3" /> {t('menu.rating')}
                 </p>
-                <p className="text-xs text-white/75">Up to {preferences.maxContentRating}</p>
+                <p className="text-xs text-white/75">{t('menu.upTo', { rating: preferences.maxContentRating })}</p>
               </div>
             </div>
           </div>
 
+          <div className="border-b border-white/6 p-4">
+            <p className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/40">
+              <Languages className="size-3" /> {t('menu.language')}
+            </p>
+            <LanguageOptions />
+          </div>
+
           <div className="p-1.5">
             <MenuItem href="/onboarding?edit=1" icon={<Settings2 />} onClick={() => setOpen(false)}>
-              Edit services, genres and rating
+              {t('menu.edit')}
             </MenuItem>
             <MenuItem href="/history" icon={<Clock3 />} onClick={() => setOpen(false)}>
-              Recommendation history
+              {t('menu.history')}
             </MenuItem>
             <button
               type="button"
@@ -143,8 +153,13 @@ export function UserMenu() {
               onClick={handleSignOut}
               className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-white/75 transition hover:bg-white/6 hover:text-white [&_svg]:size-4 [&_svg]:text-white/50"
             >
-              <LogOut /> Sign out
+              <LogOut /> {t('menu.signOut')}
             </button>
+            <p className="px-3 pb-1.5 pt-1 text-[11px] text-white/35">
+              <Link href="/terms" onClick={() => setOpen(false)} className="hover:text-white/70">{t('legal.terms')}</Link>
+              {' · '}
+              <Link href="/privacy" onClick={() => setOpen(false)} className="hover:text-white/70">{t('legal.privacy')}</Link>
+            </p>
           </div>
         </div>
       )}

@@ -1,5 +1,6 @@
 'use client'
 
+import { t } from '@/lib/i18n'
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import type { Plan, PlanSource, Usage } from '@/lib/types'
 import type { BillingOffer } from '@/lib/billing/types'
@@ -52,7 +53,7 @@ function storeMessage(cause: unknown): string {
   const failure = cause as { message?: unknown; underlyingErrorMessage?: unknown; readableErrorCode?: unknown } | null
   const parts = [failure?.message, failure?.underlyingErrorMessage].filter((text): text is string => typeof text === 'string' && text.trim() !== '')
   const code = typeof failure?.readableErrorCode === 'string' ? ` (${failure.readableErrorCode})` : ''
-  return parts.length > 0 ? `${parts.join(' ')}${code}` : 'The store did not answer.'
+  return parts.length > 0 ? `${parts.join(' ')}${code}` : t('billing.errors.storeNoAnswer')
 }
 
 /** After the reset time the API would report a fresh day, so show one. */
@@ -158,7 +159,7 @@ export function BillingProvider({ children }: { children: ReactNode }) {
       }
       return outcome
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : 'The purchase did not go through.')
+      setError(cause instanceof Error ? cause.message : t('billing.errors.purchaseFailed'))
       return 'failed'
     } finally {
       setBusy(null)
@@ -173,7 +174,7 @@ export function BillingProvider({ children }: { children: ReactNode }) {
       if (entitled) await refresh()
       return entitled ? 'restored' : 'none'
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : 'Restoring purchases did not work.')
+      setError(cause instanceof Error ? cause.message : t('billing.errors.restoreFailed'))
       return 'failed'
     } finally {
       setBusy(null)

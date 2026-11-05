@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
 import { Check, Shield } from 'lucide-react'
 import type { ContentRating } from '@/lib/types'
 import { CONTENT_RATINGS } from '@/lib/data/content-ratings'
@@ -12,8 +13,9 @@ interface ContentRatingSelectProps {
 
 /** Single-select ladder: "show me films rated up to …". */
 export function ContentRatingSelect({ value, onChange }: ContentRatingSelectProps) {
+  const { t } = useTranslation()
   return (
-    <div role="radiogroup" aria-label="Maximum content rating" className="grid gap-3 sm:grid-cols-2">
+    <div role="radiogroup" aria-label={t('onboarding.rating.maxAria')} className="grid gap-3 sm:grid-cols-2">
       {CONTENT_RATINGS.map((option, index) => {
         const selected = option.id === value
         return (
@@ -43,9 +45,9 @@ export function ContentRatingSelect({ value, onChange }: ContentRatingSelectProp
             </span>
             <span className="min-w-0 flex-1">
               <span className="flex items-center gap-2">
-                <span className={cn('text-[15px] font-semibold', selected ? 'text-brand' : 'text-white')}>Up to {option.id} · {option.title}</span>
+                <span className={cn('text-[15px] font-semibold', selected ? 'text-brand' : 'text-white')}>{t('onboarding.rating.upTo', { rating: option.id, title: t(`data.ratings.${option.id}.title`) })}</span>
               </span>
-              <span className="mt-0.5 block text-sm text-white/50">{option.description}</span>
+              <span className="mt-0.5 block text-sm text-white/50">{t(`data.ratings.${option.id}.description`)}</span>
             </span>
             <span
               className={cn(
@@ -61,7 +63,7 @@ export function ContentRatingSelect({ value, onChange }: ContentRatingSelectProp
       })}
       <p className="flex items-start gap-2 text-xs leading-5 text-white/40 sm:col-span-2">
         <Shield className="mt-0.5 size-3.5 shrink-0 text-brand" />
-        We’ll keep anything above your limit out of your recommendations. You can change this any time from your profile.
+        {t('onboarding.rating.note')}
       </p>
     </div>
   )

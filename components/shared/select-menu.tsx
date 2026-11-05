@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { Check, ChevronDown, X } from 'lucide-react'
@@ -42,6 +43,7 @@ const GUTTER = 16
  * WebView composites badly.
  */
 export function SelectMenu<T extends string>({ label, prefix, options, selected, onSelect, multiple = false, placeholder, disabled = false, className }: SelectMenuProps<T>) {
+  const { t } = useTranslation()
   const id = useId()
   const listId = `${id}-list`
   const [open, setOpen] = useState(false)
@@ -172,7 +174,7 @@ export function SelectMenu<T extends string>({ label, prefix, options, selected,
         {!isDesktop && (
           <div className="flex items-center justify-between border-b border-white/6 px-5 py-4">
             <h3 className="text-base font-semibold text-white">{label}</h3>
-            <button type="button" onClick={() => close()} aria-label="Close" className="flex size-9 items-center justify-center rounded-full text-white/50 hover:bg-white/8 hover:text-white">
+            <button type="button" onClick={() => close()} aria-label={t('common.close')} className="flex size-9 items-center justify-center rounded-full text-white/50 hover:bg-white/8 hover:text-white">
               <X className="size-4" />
             </button>
           </div>
@@ -181,7 +183,7 @@ export function SelectMenu<T extends string>({ label, prefix, options, selected,
         {!isDesktop && multiple && (
           <div className="border-t border-white/6 px-5 py-4 safe-bottom">
             <Button fullWidth onClick={() => close()} leadingIcon={<Check />}>
-              Done
+              {t('common.done')}
             </Button>
           </div>
         )}

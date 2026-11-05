@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
 import { Suspense, useEffect, useState, type FormEvent } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
@@ -23,6 +24,7 @@ export default function LoginPage() {
 }
 
 function LoginForm() {
+  const { t } = useTranslation()
   // Redirects to `?next=` (or /) as soon as the auth slice reports a session.
   const status = useRedirectIfAuthenticated()
   const dispatch = useAppDispatch()
@@ -43,9 +45,9 @@ function LoginForm() {
 
   const validate = () => {
     const next: typeof fieldErrors = {}
-    if (!email.trim()) next.email = 'Enter your email address.'
-    else if (!EMAIL_PATTERN.test(email)) next.email = 'That doesn’t look like a valid email.'
-    if (!password) next.password = 'Enter your password.'
+    if (!email.trim()) next.email = t('auth.validation.emailRequired')
+    else if (!EMAIL_PATTERN.test(email)) next.email = t('auth.validation.emailInvalid')
+    if (!password) next.password = t('auth.validation.passwordRequired')
     setFieldErrors(next)
     return Object.keys(next).length === 0
   }
@@ -70,13 +72,13 @@ function LoginForm() {
 
   return (
     <AuthCard
-      title="Welcome back"
-      subtitle="Log in to pick up where your mood left off."
+      title={t('auth.login.title')}
+      subtitle={t('auth.login.subtitle')}
       footer={
         <>
-          New to UpMyMood?{' '}
+          {t('auth.login.newHere')}{' '}
           <Link href="/signup" className="font-semibold text-white underline-offset-4 hover:text-brand hover:underline">
-            Create an account
+            {t('auth.login.createAccount')}
           </Link>
         </>
       }
@@ -84,23 +86,23 @@ function LoginForm() {
       {authService.googleEnabled && (
         <>
           <GoogleButton onClick={handleGoogleSignIn} loading={pending === 'google'} disabled={pending === 'password'} />
-          <AuthDivider label="or log in with email" />
+          <AuthDivider label={t('auth.login.orEmail')} />
         </>
       )}
 
       <form onSubmit={handleSubmit} noValidate className="space-y-4">
         {justVerified && !formError && !unconfirmedEmail && (
           <p role="status" className="rounded-xl border border-brand/30 bg-brand/10 px-4 py-3 text-sm text-brand animate-fade-in">
-            Your email is verified. Log in to continue.
+            {t('auth.login.verified')}
           </p>
         )}
         {unconfirmedEmail && (
           <div role="alert" className="flex items-start gap-3 rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-200 animate-fade-in">
             <MailWarning className="mt-0.5 size-4 shrink-0" />
             <p>
-              You haven’t verified this email yet.{' '}
+              {t('auth.login.unverified')}{' '}
               <Link href={`/signup?verify=${encodeURIComponent(unconfirmedEmail)}`} className="font-semibold text-white underline underline-offset-4">
-                Send me a new code
+                {t('auth.login.sendNewCode')}
               </Link>
             </p>
           </div>
@@ -110,18 +112,18 @@ function LoginForm() {
             {formError}
           </p>
         )}
-        <FormField label="Email" type="email" name="email" autoComplete="email" inputMode="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} error={fieldErrors.email} />
+        <FormField label={t('auth.fields.email')} type="email" name="email" autoComplete="email" inputMode="email" placeholder={t('auth.fields.emailPlaceholder')} value={email} onChange={(e) => setEmail(e.target.value)} error={fieldErrors.email} />
         <PasswordInput
-          label="Password"
+          label={t('auth.fields.password')}
           name="password"
           autoComplete="current-password"
-          placeholder="Your password"
+          placeholder={t('auth.fields.passwordPlaceholder')}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           error={fieldErrors.password}
           hint={
             <Link href="/forgot-password" className="text-brand underline-offset-4 hover:underline">
-              Forgot password?
+              {t('auth.login.forgot')}
             </Link>
           }
         />
@@ -131,16 +133,16 @@ function LoginForm() {
             <span className={cn('absolute inset-0 rounded-md border transition-all peer-focus-visible:ring-2 peer-focus-visible:ring-brand/70', remember ? 'border-brand bg-brand' : 'border-white/20 bg-white/4')} aria-hidden />
             {remember && <Check className="relative size-3.5 text-brand-foreground" strokeWidth={3} aria-hidden />}
           </span>
-          Remember me on this device
+          {t('auth.login.remember')}
         </label>
         <Button type="submit" size="lg" fullWidth loading={pending === 'password'} disabled={pending === 'google'} trailingIcon={<ArrowRight />}>
-          Log in
+          {t('auth.login.submit')}
         </Button>
       </form>
 
       {authService.kind === 'mock' && (
         <button type="button" onClick={useDemo} className="mt-5 w-full rounded-xl border border-dashed border-white/12 px-4 py-2.5 text-xs text-white/45 transition hover:border-brand/40 hover:text-white">
-          Just exploring? <span className="font-semibold text-brand">Use the demo account</span>
+          {t('auth.login.demo')} <span className="font-semibold text-brand">{t('auth.login.demoCta')}</span>
         </button>
       )}
     </AuthCard>

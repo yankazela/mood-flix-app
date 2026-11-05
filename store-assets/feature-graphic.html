@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Google Play feature graphic, 1024 x 500. Rendered to PNG with headless Chrome; see store-assets/README.md. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&family=Instrument+Serif:ital@1&display=block" rel="stylesheet">
+<style>
+  :root { --ink: #0a0b0d; --lime: #d9f66b; --lime-ink: #121410; }
+  * { margin: 0; box-sizing: border-box; }
+  html, body { width: 1024px; height: 500px; overflow: hidden; background: var(--ink); }
+  body { position: relative; font-family: Inter, system-ui, sans-serif; color: #fff; -webkit-font-smoothing: antialiased; }
+  .glow { position: absolute; border-radius: 50%; filter: blur(90px); }
+  .g1 { width: 620px; height: 420px; left: -120px; top: -160px; background: rgba(217, 246, 107, 0.16); }
+  .g2 { width: 520px; height: 420px; right: -120px; top: 40px; background: rgba(91, 75, 255, 0.20); }
+  .g3 { width: 420px; height: 320px; right: 160px; bottom: -220px; background: rgba(255, 77, 125, 0.12); }
+  .grain { position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px); background-size: 4px 4px; }
+  .content { position: absolute; inset: 0; display: flex; align-items: center; gap: 56px; padding: 0 84px; }
+  .icon { flex: none; width: 216px; height: 216px; border-radius: 50%; background: var(--lime); display: grid; place-items: center;
+          box-shadow: 0 30px 90px -20px rgba(217, 246, 107, 0.55), 0 0 0 10px rgba(217, 246, 107, 0.08); }
+  .icon svg { width: 118px; height: 118px; }
+  .brand { font-size: 26px; font-weight: 700; letter-spacing: -0.04em; color: rgba(255,255,255,0.92); display: flex; align-items: center; gap: 10px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--lime); }
+  h1 { margin-top: 18px; font-size: 64px; line-height: 1.02; font-weight: 600; letter-spacing: -0.05em; }
+  h1 em { font-family: 'Instrument Serif', Georgia, serif; font-style: italic; font-weight: 400; color: var(--lime); letter-spacing: -0.01em; }
+  p { margin-top: 18px; max-width: 520px; font-size: 21px; line-height: 1.45; font-weight: 500; color: rgba(255,255,255,0.6); }
+</style>
+</head>
+<body>
+  <div class="glow g1"></div><div class="glow g2"></div><div class="glow g3"></div><div class="grain"></div>
+  <div class="content">
+    <div class="icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#121410" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/>
+        <path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand"><span class="dot"></span>UpMyMood</div>
+      <h1>Movies that match<br>your <em>mood.</em></h1>
+      <p>Tell us how you feel. We’ll find the perfect movie on the services you already have.</p>
+    </div>
+  </div>
+</body>
+</html>

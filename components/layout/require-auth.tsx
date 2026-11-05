@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
 import { useEffect, type ReactNode } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/store/auth-context'
@@ -37,11 +38,12 @@ export function RequireAuth({ children, requireOnboarding = true }: RequireAuthP
 }
 
 export function Splash() {
+  const { t } = useTranslation()
   return (
     <div className="flex min-h-dvh items-center justify-center bg-ink">
       <div className="flex flex-col items-center gap-4 animate-fade-in">
         <Logo size="lg" href="" className="animate-pulse" />
-        <span className="sr-only">Loading</span>
+        <span className="sr-only">{t('common.loading')}</span>
       </div>
     </div>
   )

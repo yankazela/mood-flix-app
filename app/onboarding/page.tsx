@@ -1,5 +1,6 @@
 'use client'
 
+import { Trans, useTranslation } from 'react-i18next'
 import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ArrowLeft, ArrowRight, Check, Clapperboard, Shield, Tv } from 'lucide-react'
@@ -17,12 +18,11 @@ import { CountrySelect } from '@/components/onboarding/country-select'
 import { GenreCard } from '@/components/onboarding/genre-card'
 import { ContentRatingSelect } from '@/components/onboarding/content-rating-select'
 import { StepIndicator, type OnboardingStepMeta } from '@/components/onboarding/step-indicator'
+import { LanguageSwitcher } from '@/components/shared/language-switcher'
 
-const STEPS: OnboardingStepMeta[] = [
-  { id: 'services', label: 'Services' },
-  { id: 'genres', label: 'Genres' },
-  { id: 'rating', label: 'Rating' },
-]
+const STEP_IDS = ['services', 'genres', 'rating'] as const
+const EM = { em: <span className="font-display italic text-brand" /> }
+const STRONG = { strong: <span className="font-semibold text-white" /> }
 
 export default function OnboardingPage() {
   return (
@@ -33,6 +33,8 @@ export default function OnboardingPage() {
 }
 
 function Onboarding() {
+  const { t } = useTranslation()
+  const STEPS: OnboardingStepMeta[] = STEP_IDS.map((id) => ({ id, label: t(`onboarding.steps.${id}`) }))
   const router = useRouter()
   const dispatch = useAppDispatch()
   const { updateStatus, updateError } = useAppSelector((state) => state.auth)
@@ -96,7 +98,7 @@ function Onboarding() {
             Skip for now
           </button>
         ) : ( */}
-          <span className="hidden w-[88px] sm:block" aria-hidden />
+          <LanguageSwitcher />
       </header>
 
       <main inert={saving} className="relative z-10 page-gutter mx-auto max-w-5xl pb-40 pt-6 sm:pt-12">
@@ -105,13 +107,9 @@ function Onboarding() {
           <section key="services">
             <StepHeading
               icon={<Tv className="size-3.5" />}
-              eyebrow={editing ? 'Your streaming services' : `Step 1 of 3 · ${firstName ? `Hi ${firstName}` : 'Welcome'}`}
-              title={
-                <>
-                  Where do you <span className="font-display italic text-brand">watch?</span>
-                </>
-              }
-              body="Pick the services you already pay for and we’ll only recommend movies you can press play on tonight. Availability depends on your region."
+              eyebrow={editing ? t('onboarding.services.eyebrowEdit') : t('onboarding.services.eyebrow', { greeting: firstName ? t('onboarding.services.hi', { name: firstName }) : t('onboarding.services.welcome') })}
+              title={<Trans i18nKey="onboarding.services.title" components={EM} />}
+              body={t('onboarding.services.body')}
             />
             <div className="mt-8 max-w-sm animate-fade-up stagger" style={{ '--stagger-index': 1 } as React.CSSProperties}>
               <CountrySelect value={preferences.country} onChange={setCountry} />
@@ -133,13 +131,9 @@ function Onboarding() {
           <section key="genres">
             <StepHeading
               icon={<Clapperboard className="size-3.5" />}
-              eyebrow={editing ? 'Your favourite genres' : 'Step 2 of 3 · Your taste'}
-              title={
-                <>
-                  What do you usually <span className="font-display italic text-brand">love?</span>
-                </>
-              }
-              body="Pick a few genres you keep coming back to. Your mood still leads every search; this just helps us break ties in your favour."
+              eyebrow={editing ? t('onboarding.genres.eyebrowEdit') : t('onboarding.genres.eyebrow')}
+              title={<Trans i18nKey="onboarding.genres.title" components={EM} />}
+              body={t('onboarding.genres.body')}
             />
             <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5">
               {GENRE_OPTIONS.map((genre, index) => (
@@ -153,13 +147,9 @@ function Onboarding() {
           <section key="rating">
             <StepHeading
               icon={<Shield className="size-3.5" />}
-              eyebrow={editing ? 'Your content rating' : 'Step 3 of 3 · Comfort level'}
-              title={
-                <>
-                  How far should we <span className="font-display italic text-brand">go?</span>
-                </>
-              }
-              body="Choose the most mature rating you’re comfortable with. Great for shared accounts, family TVs, or just knowing what you’re in for."
+              eyebrow={editing ? t('onboarding.rating.eyebrowEdit') : t('onboarding.rating.eyebrow')}
+              title={<Trans i18nKey="onboarding.rating.title" components={EM} />}
+              body={t('onboarding.rating.body')}
             />
             <div className="mt-8 max-w-3xl">
               <ContentRatingSelect value={preferences.maxContentRating} onChange={setMaxContentRating} />
@@ -172,23 +162,21 @@ function Onboarding() {
         <div className="page-gutter mx-auto flex max-w-5xl items-center justify-between gap-4 py-3">
           <p className="min-w-0 text-sm text-white/55">
             {current === 'services' &&
-              (serviceCount === 0 ? 'Select at least one service to continue.' : <><span className="font-semibold text-white">{serviceCount}</span> service{serviceCount === 1 ? '' : 's'} selected</>)}
+              (serviceCount === 0 ? t('onboarding.footer.selectService') : <Trans i18nKey="onboarding.footer.servicesSelected" count={serviceCount} components={STRONG} />)}
             {current === 'genres' &&
-              (genreCount === 0 ? 'Pick at least one genre. Three or more gives the sharpest picks.' : <><span className="font-semibold text-white">{genreCount}</span> genre{genreCount === 1 ? '' : 's'} selected</>)}
+              (genreCount === 0 ? t('onboarding.footer.pickGenre') : <Trans i18nKey="onboarding.footer.genresSelected" count={genreCount} components={STRONG} />)}
             {current === 'rating' && (
-              <>
-                Up to <span className="font-semibold text-white">{rating.id}</span> · {rating.title}
-              </>
+              <Trans i18nKey="onboarding.footer.ratingUpTo" values={{ rating: rating.id, title: t(`data.ratings.${rating.id}.title`) }} components={STRONG} />
             )}
           </p>
           <div className="flex shrink-0 items-center gap-2">
             {step > 0 && (
               <Button variant="ghost" size="lg" onClick={back} disabled={saving} leadingIcon={<ArrowLeft />}>
-                <span className="hidden sm:inline">Back</span>
+                <span className="hidden sm:inline">{t('common.back')}</span>
               </Button>
             )}
             <Button size="lg" onClick={next} loading={saving} disabled={saving || missing} trailingIcon={isLast ? <Check /> : <ArrowRight />}>
-              {isLast ? (editing ? 'Save changes' : 'Finish') : 'Continue'}
+              {isLast ? (editing ? t('common.saveChanges') : t('common.finish')) : t('common.continue')}
             </Button>
           </div>
         </div>

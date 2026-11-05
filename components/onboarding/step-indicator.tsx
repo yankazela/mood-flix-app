@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
 import { Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -16,8 +17,9 @@ interface StepIndicatorProps {
 }
 
 export function StepIndicator({ steps, current, onSelect }: StepIndicatorProps) {
+  const { t } = useTranslation()
   return (
-    <ol className="flex items-center gap-2" aria-label="Setup progress">
+    <ol className="flex items-center gap-2" aria-label={t('onboarding.progress')}>
       {steps.map((step, index) => {
         const done = index < current
         const active = index === current

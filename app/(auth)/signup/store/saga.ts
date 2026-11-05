@@ -1,3 +1,4 @@
+import { t } from '@/lib/i18n'
 import { PayloadAction } from '@reduxjs/toolkit';
 import { takeLatest, put, call } from "redux-saga/effects";
 import { AxiosResponse } from "axios";
@@ -35,7 +36,7 @@ function* handleSubmitUser(action: PayloadAction<User>) {
             password: action.payload.password ?? '',
         });
         if (authResponse.outcome !== 'authenticated') {
-            throw new Error('Account was created, but sign-in failed. Please log in.');
+            throw new Error(t('auth.errors.createdButSignInFailed'));
         }
 
         yield call(saveBackendSession, authResponse, userDetails);
@@ -43,7 +44,7 @@ function* handleSubmitUser(action: PayloadAction<User>) {
         yield put(profileSynced(userDetails));
         yield put(submitUserSuccess(userDetails));
     } catch (error: any) {
-        yield put(submitUserError(error.message || "An unknown error occurred"));
+        yield put(submitUserError(error.message || t('auth.errors.generic')));
     }
 }
 

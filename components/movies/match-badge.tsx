@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 
 interface MatchBadgeProps {
@@ -7,6 +10,7 @@ interface MatchBadgeProps {
 }
 
 export function MatchBadge({ score, size = 'sm', className }: MatchBadgeProps) {
+  const { t } = useTranslation()
   const strong = score >= 90
   return (
     <span
@@ -18,9 +22,9 @@ export function MatchBadge({ score, size = 'sm', className }: MatchBadgeProps) {
         strong ? 'bg-brand text-brand-foreground' : 'border border-brand/40 bg-brand/15 text-brand',
         className,
       )}
-      aria-label={`${score} percent match`}
+      aria-label={t('movie.matchAria', { score })}
     >
-      {score}% match
+      {t('movie.match', { score })}
     </span>
   )
 }
